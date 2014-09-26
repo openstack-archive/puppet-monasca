@@ -1,0 +1,10 @@
+name    'puppet-monasca'
+version '0.1.0'
+source ''
+author 'Brad Klein, Ryan Bak'
+license 'Apache License, Version 2.0'
+summary 'Puppet module for OpenStack Monasca'
+description 'Puppet module to install and configure the OpenStack monitoring service, Monasca'
+project_page ''
+
+dependency 'puppetlabs/keystone', '>=4.0.0 <5.0.0'

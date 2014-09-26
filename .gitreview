@@ -2,3 +2,5 @@
 host=bfd-gerrit.os.cloud.twc.net
 port=29418
 project=puppet-monasca.git
+defaultbranch=master
+
