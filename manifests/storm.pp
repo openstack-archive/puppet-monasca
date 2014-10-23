@@ -1,7 +1,14 @@
 #
 # Class for installing storm
 #
-class monasca::storm {
+class monasca::storm(
+  $storm_version = 'apache-storm-0.9.2-incubating',
+  $mirror = 'http://mirror.cogentco.com/pub/apache/incubator/storm',
+  $install_dir = '/opt/storm',
+  $storm_user = 'storm',
+  $storm_group = 'storm',
+  $log_dir = '/var/log/storm',
+) {
   #
   # TODO: modules to be added to puppet file:
   #   maestrodev/wget
@@ -9,20 +16,13 @@ class monasca::storm {
 
   File {
     mode  => '0644',
-    owner => 'storm',
-    group => 'storm',
+    owner => $storm_user,
+    group => $storm_group,
   }
 
-  #
-  # TODO: pull these from hiera
-  #
-  $storm_version = 'apache-storm-0.9.2-incubating'
-  $mirror = 'http://mirror.cogentco.com/pub/apache/incubator/storm'
-
   $tarfile = "${storm_version}.tar.gz"
-  $install_dir = '/opt/storm'
 
-  file { '/opt/storm':
+  file { $install_dir:
     ensure => directory,
   }
 
@@ -36,8 +36,8 @@ class monasca::storm {
     path  => '/bin:/sbin:/usr/bin:/usr/sbin',
     cwd   => $install_dir,
     alias => 'untar-storm-package',
-    user  => 'storm',
-    group => 'storm',
+    user  => $storm_user,
+    group => $storm_group,
   }
 
   file { "${install_dir}/current":
@@ -45,7 +45,7 @@ class monasca::storm {
     target => "${install_dir}/${storm_version}"
   }
 
-  file { '/var/log/storm':
+  file { $log_dir:
     ensure => directory,
   }
 }
