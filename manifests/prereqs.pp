@@ -1,7 +1,8 @@
 #
-# Class for installing storm
+# Class for installing monasca api prerequisites that don't currently
+# have easy modules
 #
-class monasca::storm(
+class monasca::prereqs (
   $storm_version = 'apache-storm-0.9.2-incubating',
   $mirror = 'http://mirror.cogentco.com/pub/apache/incubator/storm',
   $install_dir = '/opt/storm',
@@ -9,10 +10,14 @@ class monasca::storm(
   $storm_group = 'storm',
   $log_dir = '/var/log/storm',
 ) {
-  #
-  # TODO: modules to be added to puppet file:
-  #   maestrodev/wget
-  #
+
+  user { $storm_user:
+    ensure => present,
+  }
+
+  group { $storm_group:
+    ensure => present,
+  }
 
   File {
     mode  => '0644',
