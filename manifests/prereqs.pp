@@ -11,6 +11,8 @@ class monasca::prereqs (
   $log_dir = '/var/log/storm',
 ) {
 
+  $storm_install_dir = "${install_dir}/current"
+
   user { $storm_user:
     ensure => present,
   }
@@ -25,11 +27,14 @@ class monasca::prereqs (
     group => $storm_group,
   }
 
-  $tarfile = "${storm_version}.tar.gz"
-
-  file { $install_dir:
+  file { ['/etc/storm',
+          '/usr/lib/storm',
+          '/usr/lib/storm/storm-local',
+          $install_dir]:
     ensure => directory,
   }
+
+  $tarfile = "${storm_version}.tar.gz"
 
   wget::fetch { "${mirror}/${storm_version}/${tarfile}":
     destination => "/tmp/${tarfile}",
@@ -45,12 +50,30 @@ class monasca::prereqs (
     group => $storm_group,
   }
 
-  file { "${install_dir}/current":
+  file { $storm_install_dir:
     ensure => link,
     target => "${install_dir}/${storm_version}"
   }
 
+  file { '/etc/storm/storm.yaml':
+    ensure => link,
+    target => "${install_dir}/${storm_version}/conf/storm.yaml"
+  }
+
   file { $log_dir:
     ensure => directory,
+  }
+
+  monasca::storm::startup_script {
+    '/etc/init.d/storm-ui':
+      storm_service     => 'ui',
+      storm_install_dir => $storm_install_dir,
+      storm_user        => $storm_user,
+  }
+  monasca::storm::startup_script {
+    '/etc/init.d/storm-supervisor':
+      storm_service     => 'supervisor',
+      storm_install_dir => $storm_install_dir,
+      storm_user        => $storm_user,
   }
 }

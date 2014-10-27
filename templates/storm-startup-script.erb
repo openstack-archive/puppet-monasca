@@ -1,0 +1,63 @@
+#!/bin/bash
+#
+# /etc/init.d/storm-<%= storm_service %>
+#
+# Startup script for storm-<%= storm_service %>
+#
+# description: Starts and stops storm-<%= storm_service %>
+#
+stormBin=<%= storm_install_dir %>/bin/storm
+stormSvc=<%= storm_service %>
+desc="Storm $stormSvc daemon"
+outFile="/var/log/storm/storm-$stormSvc.out"
+
+if ! [ -f $stormBin ]; then
+  echo "storm binary not found."
+  exit 5
+fi
+
+start() {
+  echo "Starting $desc (storm-$stormSvc): "
+  su <%= storm_user %> -c "nohup $stormBin <%= storm_service %> >>$outFile 2>&1 &"
+  RETVAL=$?
+  return $RETVAL
+}
+
+stop() {
+  echo "Shutting down $desc (storm-$stormSvc): "
+  if [ $stormSvc == "ui" ]; then
+    pkill -f backtype.storm.ui.core
+  else
+    pkill -f backtype.storm.daemon.$stormSvc
+  fi
+}
+
+restart() {
+  stop
+  start
+}
+
+status() {
+  if [ $stormSvc == "ui" ]; then
+    pid=$(pgrep -f backtype.storm.ui.core)
+  else
+    pid=$(pgrep -f backtype.storm.daemon.$stormSvc)
+  fi
+
+  if [ -z $pid ]; then
+    echo "storm-$stormSvc is NOT running."
+  else
+    echo "storm-$stormSvc is running (pid is $pid)."
+  fi
+
+}
+
+case "$1" in
+  start)   start;;
+stop)    stop;;
+restart) restart;;
+status)  status;;
+*)       echo "Usage: $0 {start|stop|restart}"
+  RETVAL=2;;
+esac
+exit $RETVAL
