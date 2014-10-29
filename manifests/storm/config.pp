@@ -1,14 +1,14 @@
 #
-# Class for installing monasca api prerequisites that don't currently
-# have easy modules
+# Class for configuring misc storm packages for use by monasca api server
 #
-class monasca::prereqs (
+class monasca::storm::config (
   $storm_version = 'apache-storm-0.9.2-incubating',
   $mirror = 'http://mirror.cogentco.com/pub/apache/incubator/storm',
   $install_dir = '/opt/storm',
   $storm_user = 'storm',
   $storm_group = 'storm',
   $log_dir = '/var/log/storm',
+  $nimbus_server = undef,
 ) {
 
   $storm_install_dir = "${install_dir}/current"
@@ -28,9 +28,9 @@ class monasca::prereqs (
   }
 
   file { ['/etc/storm',
-          '/usr/lib/storm',
-          '/usr/lib/storm/storm-local',
-          $install_dir]:
+  '/usr/lib/storm',
+  '/usr/lib/storm/storm-local',
+  $install_dir]:
     ensure => directory,
   }
 
@@ -75,5 +75,14 @@ class monasca::prereqs (
       storm_service     => 'supervisor',
       storm_install_dir => $storm_install_dir,
       storm_user        => $storm_user,
+  }
+
+  if ($nimbus_server == 'localhost' or $nimbus_server == $::fqdn) {
+    monasca::storm::startup_script {
+      '/etc/init.d/storm-nimbus':
+        storm_service     => 'nimbus',
+        storm_install_dir => $storm_install_dir,
+        storm_user        => $storm_user,
+    }
   }
 }
