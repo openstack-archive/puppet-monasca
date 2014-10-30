@@ -1,0 +1,49 @@
+#!/usr/bin/python
+import argparse
+from influxdb import InfluxDBClient
+
+#
+# TODO: Make sure influx is up, give it some time if needed
+#
+def main():
+    host='<%= influxdb_host %>'
+    port=<%= influxdb_port %>
+    user='<%= influxdb_user %>'
+    password='<%= influxdb_password %>'
+    dbuser_password='<%= influxdb_dbuser_password %>'
+    dbname = 'mon'
+    monusers = ['mon_api', 'mon_persister']
+    db_exists = False
+
+    client = InfluxDBClient(host, port, user, password, dbname)
+    dbs = client.get_database_list()
+    for db in dbs:
+        if db['name'] == dbname:
+            db_exists = True
+
+    if db_exists:
+        print("Database %s already exists, not adding." % dbname)
+    else:
+        print("Adding %s database." % dbname)
+        client.create_database(dbname)
+
+    for monuser in monusers:
+        add_user(client, monuser, dbuser_password)
+
+def add_user(client, user, dbuser_password):
+    user_exists = False
+    dbusers = client.get_database_users()
+    for dbuser in dbusers:
+        if dbuser['name'] == user:
+            user_exists = True
+
+    if user_exists:
+        print("User %s already exists, not adding." % user)
+    else:
+        print("Adding %s user." % user)
+        client.add_database_user(user, dbuser_password)
+        print("Making %s user a database admin." % user)
+        client.set_database_admin(user)
+
+if __name__ == '__main__':
+    main()
