@@ -12,6 +12,9 @@ class monasca::storm::config (
 ) {
 
   $storm_install_dir = "${install_dir}/current"
+  $cache_dir = '/var/cache/storm'
+  $config_link = '/etc/storm/storm.yaml'
+  $files = [ File[$storm_install_dir], File[$config_link], File[$log_dir] ]
 
   user { $storm_user:
     ensure => present,
@@ -37,17 +40,21 @@ class monasca::storm::config (
   $tarfile = "${storm_version}.tar.gz"
 
   wget::fetch { "${mirror}/${storm_version}/${tarfile}":
-    destination => "/tmp/${tarfile}",
+    destination => "/${cache_dir}/${tarfile}",
     timeout     => 120,
-    before      => Exec['untar-storm-package']
+    before      => Exec['untar-storm-package'],
+    cache_dir   => $cache_dir,
+    redownload  => false,
+    verbose     => true,
   }
 
-  exec { "tar -xvzf /tmp/${tarfile}":
-    path  => '/bin:/sbin:/usr/bin:/usr/sbin',
-    cwd   => $install_dir,
-    alias => 'untar-storm-package',
-    user  => $storm_user,
-    group => $storm_group,
+  exec { "tar -xvzf /${cache_dir}/${tarfile}":
+    path   => '/bin:/sbin:/usr/bin:/usr/sbin',
+    cwd    => $install_dir,
+    alias  => 'untar-storm-package',
+    user   => $storm_user,
+    group  => $storm_group,
+    before => $files,
   }
 
   file { $storm_install_dir:
@@ -55,7 +62,7 @@ class monasca::storm::config (
     target => "${install_dir}/${storm_version}"
   }
 
-  file { '/etc/storm/storm.yaml':
+  file { $config_link:
     ensure => link,
     target => "${install_dir}/${storm_version}/conf/storm.yaml"
   }
@@ -64,12 +71,15 @@ class monasca::storm::config (
     ensure => directory,
   }
 
+  File[$storm_install_dir] ->
   monasca::storm::startup_script {
     '/etc/init.d/storm-ui':
       storm_service     => 'ui',
       storm_install_dir => $storm_install_dir,
       storm_user        => $storm_user,
   }
+
+  File[$storm_install_dir] ->
   monasca::storm::startup_script {
     '/etc/init.d/storm-supervisor':
       storm_service     => 'supervisor',
@@ -77,7 +87,12 @@ class monasca::storm::config (
       storm_user        => $storm_user,
   }
 
+  #
+  # storm-nimbus can take seconds to start, may need a sleep
+  # or condition here to wait for it to be up
+  #
   if ($nimbus_server == 'localhost' or $nimbus_server == $::fqdn) {
+    File[$storm_install_dir] ->
     monasca::storm::startup_script {
       '/etc/init.d/storm-nimbus':
         storm_service     => 'nimbus',

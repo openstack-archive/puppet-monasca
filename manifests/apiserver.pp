@@ -10,8 +10,6 @@ class monasca::apiserver(
   $mon_pers_deb = undef,
   $mon_thresh_deb = undef,
 ){
-  ensure_resource('package', 'openjdk-7-jre', { ensure => 'present' })
-
   $api_fetch_url = "http://${blobmirror}/repos/monasca/monasca_api"
   $pers_fetch_url = "http://${blobmirror}/repos/monasca/monasca_persister"
   $thresh_fetch_url = "http://${blobmirror}/repos/monasca/monasca_thresh"
