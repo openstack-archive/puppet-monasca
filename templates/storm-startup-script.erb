@@ -20,16 +20,25 @@ start() {
   echo "Starting $desc (storm-$stormSvc): "
   su <%= storm_user %> -c "nohup $stormBin <%= storm_service %> >>$outFile 2>&1 &"
   RETVAL=$?
+  sleep 2
   return $RETVAL
 }
 
 stop() {
   echo "Shutting down $desc (storm-$stormSvc): "
   if [ $stormSvc == "ui" ]; then
-    pkill -f backtype.storm.ui.core
+    procname="backtype.storm.ui.core"
   else
-    pkill -f backtype.storm.daemon.$stormSvc
+    procname="backtype.storm.daemon.$stormSvc"
   fi
+
+  pkill -f $procname
+  RETVAL=$?
+  if [ $RETVAL -eq 1 ]; then
+    echo "(was not running)"
+    RETVAL=0
+  fi
+  return $RETVAL
 }
 
 restart() {
