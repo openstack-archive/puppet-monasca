@@ -18,16 +18,18 @@ class monasca::influxdb::bootstrap
   python::pip { 'influxdb':
     ensure  => present,
     require => Package['python-pip'],
+    before  => File["/tmp/${script}"],
   }
 
   file { "/tmp/${script}":
     ensure  => file,
     content => template("monasca/${script}.erb"),
     mode    => '0755',
-    owner   => 'influxdb',
-    group   => 'influxdb',
+    owner   => 'root',
+    group   => 'root',
   }
 
+  Package['influxdb'] ->
   exec { "/tmp/${script}":
     subscribe   => File["/tmp/${script}"],
     path        => '/bin:/sbin:/usr/bin:/usr/sbin:/tmp',
@@ -35,5 +37,6 @@ class monasca::influxdb::bootstrap
     user        => 'root',
     group       => 'root',
     refreshonly => true,
+    require     => Service['influxdb'],
   }
 }
