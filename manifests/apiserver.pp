@@ -1,7 +1,7 @@
 #
-# Class for the monasca api server
+# Class to install monasca api server
 #
-class monasca::apiserver(
+class monasca::apiserver (
   $blobmirror = undef,
   $mon_api_build_ver = undef,
   $mon_pers_build_ver = undef,
@@ -9,7 +9,17 @@ class monasca::apiserver(
   $mon_api_deb = undef,
   $mon_pers_deb = undef,
   $mon_thresh_deb = undef,
-){
+  $zookeeper_servers = undef,
+  $kafka_brokers = undef,
+  $sql_host = undef,
+  $sql_user = undef,
+  $sql_password = undef,
+  $keystone_endpoint = undef,
+  $keystone_admin_token = undef,
+  $region_name = undef,
+  $admin_password = undef,
+  $api_db_password = undef,
+) {
   $api_fetch_url = "http://${blobmirror}/repos/monasca/monasca_api"
   $pers_fetch_url = "http://${blobmirror}/repos/monasca/monasca_persister"
   $thresh_fetch_url = "http://${blobmirror}/repos/monasca/monasca_thresh"
@@ -59,6 +69,20 @@ class monasca::apiserver(
     provider => dpkg,
     source   => $latest_pers_deb,
     alias    => 'install-persister',
+    before   => Class['::monasca::apiserver::config'],
+  }
+
+  class { '::monasca::apiserver::config':
+    zookeeper_servers    => $zookeeper_servers,
+    kafka_brokers        => $kafka_brokers,
+    sql_host             => $sql_host,
+    sql_user             => $sql_user,
+    sql_password         => $sql_password,
+    keystone_endpoint    => $keystone_endpoint,
+    keystone_admin_token => $keystone_admin_token,
+    region_name          => $region_name,
+    admin_password       => $admin_password,
+    api_db_password      => $api_db_password,
   }
 
   package { 'monasca-thresh':

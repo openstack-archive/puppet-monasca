@@ -33,12 +33,6 @@ stop() {
   fi
 
   pkill -f $procname
-  RETVAL=$?
-  if [ $RETVAL -eq 1 ]; then
-    echo "(was not running)"
-    RETVAL=0
-  fi
-  return $RETVAL
 }
 
 restart() {
@@ -55,10 +49,11 @@ status() {
 
   if [ -z $pid ]; then
     echo "storm-$stormSvc is NOT running."
-  else
-    echo "storm-$stormSvc is running (pid is $pid)."
+    exit 1
   fi
 
+  echo "storm-$stormSvc running with pid $pid"
+  exit 0
 }
 
 case "$1" in

@@ -16,6 +16,19 @@ def main():
     db_exists = False
 
     client = InfluxDBClient(host, port, user, password, dbname)
+
+    #
+    # There's not currently a way to bootstrap influx with a non-default
+    # password, so if we need to -- change it the first time here.
+    #
+    try:
+        client.get_database_list()
+    except Exception as e:
+        if '401: Invalid username/password' in e.message:
+            client = InfluxDBClient(host, port, user, 'root', dbname)
+            client.update_cluster_admin_password(user, password)
+            client = InfluxDBClient(host, port, user, password, dbname)
+
     dbs = client.get_database_list()
     for db in dbs:
         if db['name'] == dbname:

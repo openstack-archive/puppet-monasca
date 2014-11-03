@@ -1,0 +1,111 @@
+region: <%= region_name %>
+
+accessedViaHttps: false
+
+metricsTopic: metrics
+
+eventsTopic: events
+
+kafka:
+  brokerUris:
+    - <%= kafka_brokers %>
+  zookeeperUris:
+    - <%= zookeeper_servers %>
+  healthCheckTopic: healthcheck
+
+mysql:
+  driverClass: com.mysql.jdbc.Driver
+  url: jdbc:mysql://<%= sql_host %>:3306/mon?connectTimeout=5000&autoReconnect=true
+  user: <%= sql_user %>
+  password: <%= sql_password %>
+  maxWaitForConnection: 1s
+  validationQuery: "/* MyService Health Check */ SELECT 1"
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: false
+  checkConnectionOnBorrow: true
+
+databaseConfiguration:
+  databaseType: influxdb
+
+influxDB:
+  name: mon
+  replicationFactor: 1
+  url: http://localhost:8086
+  user: <%= api_db_user %>
+  password: <%= api_db_password %>
+
+#
+# We're using influxdb -- but can't remove this or things get
+# wonky.
+#
+vertica:
+  driverClass: com.vertica.jdbc.Driver
+  url: jdbc:vertica://localhost/mon
+  user: dbadmin
+  password: password
+  maxWaitForConnection: 5s
+  validationQuery: "/* MyService Health Check */ SELECT 1"
+  minSize: 4
+  maxSize: 32
+  checkConnectionWhileIdle: false
+
+middleware:
+  enabled: true
+  serviceIds: 100
+  endpointIds: 160
+  serverVIP: <%= keystone_endpoint %>
+  serverPort: 5000
+  connTimeout: 500
+  connSSLClientAuth: true
+  connPoolMaxActive: 3
+  connPoolMaxIdle: 3
+  connPoolEvictPeriod: 600000
+  connPoolMinIdleTime: 600000
+  connRetryTimes: 2
+  connRetryInterval: 50
+  defaultAuthorizedRoles: [admin,user,_member_]
+  agentAuthorizedRoles: [monasca-agent]
+  adminAuthMethod: password
+  adminUser: <%= monasca_admin_user %>
+  adminPassword: <%= admin_password %>
+  adminToken: <%= keystone_admin_token %>
+  timeToCacheToken: 600
+  maxTokenCacheSize: 1048576
+
+server:
+  applicationConnectors:
+    - type: http
+      maxRequestHeaderSize: 16KiB
+
+
+logging:
+
+  level: INFO
+
+  loggers:
+
+    com.example.app: DEBUG
+
+  appenders:
+    - type: console
+      threshold: ALL
+      timeZone: UTC
+      target: stdout
+      logFormat:
+
+    - type: file
+      currentLogFilename: /var/log/monasca/monasca-api.log
+      threshold: ALL
+      archive: true
+      archivedLogFilenamePattern: /var/log/monasca/monasca-api-%d.log.gz
+      archivedFileCount: 5
+      timeZone: UTC
+      logFormat:
+
+    - type: syslog
+      host: localhost
+      port: 514
+      facility: local0
+      threshold: ALL
+      logFormat:

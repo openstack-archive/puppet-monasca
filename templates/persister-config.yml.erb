@@ -1,0 +1,78 @@
+name: monasca-persister
+
+alarmHistoryConfiguration:
+  batchSize: 10000
+  numThreads: 1
+  maxBatchTime: 30
+  topic:   alarm-state-transitions
+  groupId: 1_alarm-state-transitions
+  consumerId: 1
+  clientId : 1
+
+metricConfiguration:
+  batchSize: 10000
+  numThreads: 1
+  maxBatchTime: 30
+  topic:   metrics
+  groupId: 1_metrics
+  consumerId: 1
+  clientId : 1
+
+kafkaConfiguration:
+  zookeeperConnect: <%= zookeeper_servers %>
+  socketTimeoutMs: 30000
+  socketReceiveBufferBytes : 65536
+  fetchMessageMaxBytes: 1048576
+  queuedMaxMessageChunks: 10
+  rebalanceMaxRetries: 4
+  fetchMinBytes:  1
+  fetchWaitMaxMs:  100
+  rebalanceBackoffMs: 2000
+  refreshLeaderBackoffMs: 200
+  autoOffsetReset: largest
+  consumerTimeoutMs:  1000
+  zookeeperSessionTimeoutMs : 60000
+  zookeeperConnectionTimeoutMs : 60000
+  zookeeperSyncTimeMs: 2000
+
+verticaMetricRepositoryConfiguration:
+  maxCacheSize: 2000000
+
+databaseConfiguration:
+  databaseType: influxdb
+
+influxDbConfiguration:
+  name: mon
+  replicationFactor: 1
+  url: http://localhost:8086
+  user: <%= pers_db_user %>
+  password: <%= api_db_password %>
+
+metrics:
+  frequency: 1 second
+
+logging:
+
+  level: DEBUG
+
+  loggers:
+
+      com.example.app: DEBUG
+
+  appenders:
+
+    - type: file
+      threshold: INFO
+      archive: true
+      currentLogFilename: /var/log/mon/mon-persister.log
+      archivedLogFilenamePattern: /var/log/mon/mon-persister.log-%d.log.gz
+      archivedFileCount: 5
+      timeZone: UTC
+
+server:
+  applicationConnectors:
+    - type: http
+      port: 8090
+  adminConnectors:
+    - type: http
+      port: 8091
