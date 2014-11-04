@@ -2,6 +2,7 @@
 import argparse
 import subprocess
 import time
+import urllib2
 from influxdb import InfluxDBClient
 
 def main():
@@ -24,7 +25,7 @@ def main():
         print("Database %s already exists, not adding." % dbname)
     else:
         print("Adding %s database." % dbname)
-        client.create_database(dbname)
+        create_database(host, port, dbname, user, password)
 
     for monuser in monusers:
         add_user(client, monuser, dbuser_password)
@@ -67,6 +68,15 @@ def wait_for_influx():
 
     print("Influxdb didn't come up after waiting 60 seconds.")
     exit(1)
+
+def create_database(host, port, dbname, user, password):
+    urlparts = ['http://',host,':',str(port),'/cluster/database_configs/',dbname,'?u=',user,'&p=',password]
+    url = "".join(urlparts)
+    data = open('<%= influxdb_shard_config %>','rb').read()
+    result = urllib2.urlopen(url, data)
+    if result.msg != 'Created':
+        print("Database creation failed.")
+        exit(1)
 
 if __name__ == '__main__':
     wait_for_influx()

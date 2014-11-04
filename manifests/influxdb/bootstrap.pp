@@ -1,7 +1,9 @@
 #
 # Class for bootstrapping influxdb for monasca
 #
-class monasca::influxdb::bootstrap
+class monasca::influxdb::bootstrap(
+  $influxdb_shard_config_source = 'puppet:///modules/monasca/shard_config.json'
+)
 {
   #
   # TODO: pull these from hiera (encrypt pwds)
@@ -12,6 +14,7 @@ class monasca::influxdb::bootstrap
   $influxdb_user = 'root'
   $influxdb_password = 'root'
   $influxdb_dbuser_password = 'password'
+  $influxdb_shard_config = '/tmp/config.json'
 
   ensure_packages('python-pip')
 
@@ -29,6 +32,14 @@ class monasca::influxdb::bootstrap
     group   => 'root',
   }
 
+  file { "/tmp/${influxdb_shard_config}":
+    ensure => file,
+    source => $influxdb_shard_config_source,
+    mode   => '0755',
+    owner  => 'root',
+    group  => 'root',
+  }
+
   Package['influxdb'] ->
   exec { "/tmp/${script}":
     subscribe   => File["/tmp/${script}"],
@@ -37,6 +48,6 @@ class monasca::influxdb::bootstrap
     user        => 'root',
     group       => 'root',
     refreshonly => true,
-    require     => Service['influxdb'],
+    require     => [Service['influxdb'], File["/tmp/${influxdb_shard_config}"]],
   }
 }
