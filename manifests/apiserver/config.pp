@@ -74,5 +74,4 @@ class monasca::apiserver::config (
     ensure  => running,
     require => [User[$api_user], Group[$group], File[$api_cfg_file]],
   }
-
 }
