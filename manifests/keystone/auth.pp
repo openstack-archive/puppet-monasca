@@ -96,8 +96,8 @@ class monasca::keystone::auth (
   $auth_name            = 'monasca',
   $admin_auth_name      = undef,
   $agent_auth_name      = undef,
-  $configure_user      = true,
-  $configure_user_role = true,
+  $configure_user       = true,
+  $configure_user_role  = true,
   $service_name         = undef,
   $service_type         = 'monitoring',
   $public_address       = '127.0.0.1',
@@ -136,12 +136,16 @@ class monasca::keystone::auth (
     $internal_url_real = "${internal_protocol}://${internal_address}:${port}"
   }
 
-  unless $admin_auth_name {
-    $admin_auth_name = "${auth_name}-admin"
+  if $admin_auth_name {
+    $admin_auth_name_real = $admin_auth_name
+  } else {
+    $admin_auth_name_real = "${auth_name}-admin"
   }
 
-  unless $agent_auth_name {
-    $agent_auth_name = "${auth_name}-agent"
+  if $agent_auth_name {
+    $agent_auth_name_real = $agent_auth_name
+  } else {
+    $agent_auth_name_real = "${auth_name}-agent"
   }
 
   if $service_name {
@@ -151,13 +155,13 @@ class monasca::keystone::auth (
   }
 
   if $configure_user {
-    keystone_user { $admin_auth_name:
+    keystone_user { $admin_auth_name_real:
       ensure   => present,
       password => $admin_password,
       email    => $admin_email,
       tenant   => $tenant,
     }
-    keystone_user { $agent_auth_name:
+    keystone_user { $agent_auth_name_real:
       ensure   => present,
       password => $agent_password,
       email    => $agent_email,
@@ -166,9 +170,9 @@ class monasca::keystone::auth (
   }
 
   if $configure_user_role {
-    Keystone_user_role["${admin_auth_name}@${tenant}"] ~>
+    Keystone_user_role["${admin_auth_name_real}@${tenant}"] ~>
       Service <| name == 'monasca-api' |>
-    Keystone_user_role["${agent_auth_name}@${tenant}"] ~>
+    Keystone_user_role["${agent_auth_name_real}@${tenant}"] ~>
       Service <| name == 'monasca-api' |>
 
     if !defined(Keystone_role['monasca-agent']) {
@@ -181,7 +185,7 @@ class monasca::keystone::auth (
         ensure => present,
       }
     }
-    keystone_user_role { "${agent_auth_name}@${tenant}":
+    keystone_user_role { "${agent_auth_name_real}@${tenant}":
       ensure  => present,
       roles   => ['monasca-agent', 'monitoring-delegate'],
       require => [Keystone_role['monasca-agent'], Keystone_role['monitoring-delegate']],
@@ -202,4 +206,3 @@ class monasca::keystone::auth (
     }
   }
 }
-
