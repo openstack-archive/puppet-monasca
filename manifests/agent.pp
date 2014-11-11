@@ -14,7 +14,7 @@ class monasca::agent(
   $password,
   $keystone_url,
   $service,
-  $project_name           = 'monasca',
+  $project_name           = 'services',
   $hostname               = undef,
   $dimensions             = undef,
   $recent_point_threshold = '30',
@@ -44,17 +44,28 @@ class monasca::agent(
   Agent_config<||> ~> Service['monasca-agent']
 
   if $::monasca::params::agent_package {
+    ensure_packages('python-pip')
     Package['python-dev']    -> Package['monasca-agent']
     Package['monasca-agent'] -> Exec['monasca-setup']
     package { 'monasca-agent':
       ensure   => true,
       name     => $::monasca::params::agent_package,
+      require  => Package['python-pip'],
       provider => pip,
     }
     package { 'python-dev':
       ensure => true,
       name   => 'python-dev'
     }
+  }
+
+  # Work around for https://bugs.launchpad.net/monasca/+bug/1391961
+  # Remove this statement and files/main.py when this bug is resolved
+  file { '/usr/local/lib/python2.7/dist-packages/monsetup/main.py':
+    mode    => '0644',
+    source  => 'puppet:///modules/monasca/main.py',
+    before  => Exec['monasca-setup'],
+    require => Package['monasca-agent'],
   }
 
   exec { 'monasca-setup':
