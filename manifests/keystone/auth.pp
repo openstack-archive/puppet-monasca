@@ -160,12 +160,14 @@ class monasca::keystone::auth (
       password => $admin_password,
       email    => $admin_email,
       tenant   => $tenant,
+      before   => Service['monasca-agent'],
     }
     keystone_user { $agent_auth_name_real:
       ensure   => present,
       password => $agent_password,
       email    => $agent_email,
       tenant   => $tenant,
+      before   => Service['monasca-agent'],
     }
   }
 
@@ -189,6 +191,7 @@ class monasca::keystone::auth (
       ensure  => present,
       roles   => ['monasca-agent', 'monitoring-delegate'],
       require => [Keystone_role['monasca-agent'], Keystone_role['monitoring-delegate']],
+      before  => Service['monasca-agent'],
     }
   }
 
