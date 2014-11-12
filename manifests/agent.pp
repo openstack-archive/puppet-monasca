@@ -53,10 +53,7 @@ class monasca::agent(
       require  => Package['python-pip'],
       provider => pip,
     }
-    package { 'python-dev':
-      ensure => true,
-      name   => 'python-dev'
-    }
+    ensure_packages('python-dev')
   }
 
   # Work around for https://bugs.launchpad.net/monasca/+bug/1391961
