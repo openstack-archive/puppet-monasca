@@ -1,6 +1,4 @@
 [gerrit]
-host=bfd-gerrit.os.cloud.twc.net
+host=review.openstack.org
 port=29418
-project=puppet-monasca.git
-defaultbranch=master
-
+project=stackforge/puppet-monasca.git

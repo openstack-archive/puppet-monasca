@@ -35,6 +35,7 @@ class monasca::agent(
   $log_to_syslog          = 'yes',
   $syslog_host            = undef ,
   $syslog_port            = undef,
+  $virtual_env            = '/var/www/monasca-agent',
 ) {
 
   include monasca::params
@@ -44,30 +45,39 @@ class monasca::agent(
   Agent_config<||> ~> Service['monasca-agent']
 
   if $::monasca::params::agent_package {
-    ensure_packages('python-pip')
-    Package['python-dev']    -> Package['monasca-agent']
-    Package['monasca-agent'] -> Exec['monasca-setup']
-    package { 'monasca-agent':
-      ensure   => true,
-      name     => $::monasca::params::agent_package,
-      require  => Package['python-pip'],
-      provider => pip,
-    }
+    ensure_packages('python-virtualenv')
     ensure_packages('python-dev')
+    python::virtualenv { $virtual_env :
+      owner   => 'root',
+      group   => 'root',
+      require => [Package['python-virtualenv'],Package['python-dev']],
+      before  => python::pip['monasca-agent'],
+    }
+    python::pip { 'MySQL-python' :
+      virtualenv => $virtual_env,
+      owner      => 'root',
+      require    => python::virtualenv[$virtual_env],
+      before     => File["${virtual_env}/lib/python2.7/site-packages/monsetup/main.py"],
+    }
+    python::pip { 'monasca-agent' :
+      pkgname    => $::monasca::params::agent_package,
+      virtualenv => $virtual_env,
+      owner      => 'root',
+      before     => File["${virtual_env}/lib/python2.7/site-packages/monsetup/main.py"],
+    }
   }
 
   # Work around for https://bugs.launchpad.net/monasca/+bug/1391961
   # Remove this statement and files/main.py when this bug is resolved
-  file { '/usr/local/lib/python2.7/dist-packages/monsetup/main.py':
-    mode    => '0644',
-    source  => 'puppet:///modules/monasca/main.py',
-    before  => Exec['monasca-setup'],
-    require => Package['monasca-agent'],
+  file { "${virtual_env}/lib/python2.7/site-packages/monsetup/main.py":
+    mode   => '0644',
+    source => 'puppet:///modules/monasca/main.py',
+    before => Exec['monasca-setup'],
   }
 
   exec { 'monasca-setup':
     path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-    command => "monasca-setup --username ${username} --password ${password} --project_name ${project_name} --service ${service} --keystone_url ${keystone_url} --monasca_url ${url} --overwrite; rm ${agent_conf}; touch ${agent_conf}",
+    command => "bash -c 'source ${virtual_env}/bin/activate; monasca-setup --username ${username} --password ${password} --project_name ${project_name} --service ${service} --keystone_url ${keystone_url} --monasca_url ${url} --overwrite; rm ${agent_conf}; touch ${agent_conf}'",
     creates => $agent_conf,
   }
 
@@ -75,6 +85,24 @@ class monasca::agent(
     $ensure = 'running'
   } else {
     $ensure = 'stopped'
+  }
+
+  file { '/etc/init.d/monasca-agent':
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    content => template('monasca/monasca-agent.init.erb'),
+    before  => Service['monasca-agent'],
+    require => Exec['monasca-setup'],
+  }
+
+  file { "${virtual_env}/share/monasca/agent/supervisor.conf":
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('monasca/supervisor.conf.erb'),
+    before  => Service['monasca-agent'],
+    require => Exec['monasca-setup'],
   }
 
   service { 'monasca-agent':
