@@ -47,38 +47,54 @@ class monasca::agent(
   if $::monasca::params::agent_package {
     ensure_packages('python-virtualenv')
     ensure_packages('python-dev')
+    #
+    # libxslt-dev, libxml2-dev and zlib1g-dev are needed for lxml install
+    #
+    ensure_packages('libxslt-dev')
+    ensure_packages('libxml2-dev')
+    ensure_packages('zlib1g-dev')
     python::virtualenv { $virtual_env :
       owner   => 'root',
       group   => 'root',
       require => [Package['python-virtualenv'],Package['python-dev']],
       before  => python::pip['monasca-agent'],
     }
-    python::pip { 'MySQL-python' :
-      virtualenv => $virtual_env,
-      owner      => 'root',
-      require    => python::virtualenv[$virtual_env],
-      before     => File["${virtual_env}/lib/python2.7/site-packages/monsetup/main.py"],
-    }
     python::pip { 'monasca-agent' :
+      ensure     => '1.0.13',
       pkgname    => $::monasca::params::agent_package,
       virtualenv => $virtual_env,
       owner      => 'root',
       before     => File["${virtual_env}/lib/python2.7/site-packages/monsetup/main.py"],
     }
+    #
+    # lxml needed for libvirt plugin
+    #
+    python::pip { 'lxml' :
+      virtualenv => $virtual_env,
+      owner      => 'root',
+      require    => [Package['libxslt-dev'],Package['libxml2-dev'],Package['zlib1g-dev']],
+      before     => Exec['monasca-setup'],
+    }
   }
 
-  # Work around for https://bugs.launchpad.net/monasca/+bug/1391961
-  # Remove this statement and files/main.py when this bug is resolved
   file { "${virtual_env}/lib/python2.7/site-packages/monsetup/main.py":
-    mode   => '0644',
-    source => 'puppet:///modules/monasca/main.py',
-    before => Exec['monasca-setup'],
+    mode    => '0644',
+    content => template('monasca/main.py.erb'),
+    before  => Exec['monasca-setup'],
   }
 
   exec { 'monasca-setup':
     path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
     command => "bash -c 'source ${virtual_env}/bin/activate; monasca-setup --username ${username} --password ${password} --project_name ${project_name} --service ${service} --keystone_url ${keystone_url} --monasca_url ${url} --overwrite; rm ${agent_conf}; touch ${agent_conf}'",
     creates => $agent_conf,
+  }
+
+  file { $additional_checksd:
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0750',
+    require => Exec['monasca-setup'],
   }
 
   if $enabled {

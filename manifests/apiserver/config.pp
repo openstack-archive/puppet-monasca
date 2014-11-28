@@ -18,6 +18,7 @@ class monasca::apiserver::config (
   $keystone_admin_token = undef,
   $region_name = undef,
   $admin_password = undef,
+  $monasca_api_port = undef,
 ) {
 
   $pers_cfg_file = '/etc/monasca/persister-config.yml'

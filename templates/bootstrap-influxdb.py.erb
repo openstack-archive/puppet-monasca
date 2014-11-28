@@ -11,9 +11,12 @@ def main():
     user='<%= influxdb_user %>'
     password='<%= influxdb_password %>'
     dbuser_password='<%= influxdb_dbuser_password %>'
+    db_ro_user_password='<%= influxdb_dbuser_ro_password %>'
     dbname = 'mon'
     monusers = ['mon_api', 'mon_persister']
+    read_only_users = ['mon_ro']
     db_exists = False
+    ro = (".*","^$")
 
     client = InfluxDBClient(host, port, user, password, dbname)
 
@@ -43,7 +46,10 @@ def main():
     for monuser in monusers:
         add_user(client, monuser, dbuser_password)
 
-def add_user(client, user, dbuser_password):
+    for ro_user in read_only_users:
+        add_user(client, ro_user, dbuser_password, ro)
+
+def add_user(client, user, dbuser_password, perms=None):
     user_exists = False
     dbusers = client.get_database_users()
     for dbuser in dbusers:
@@ -54,7 +60,12 @@ def add_user(client, user, dbuser_password):
         print("User %s already exists, not adding." % user)
     else:
         print("Adding %s user." % user)
-        client.add_database_user(user, dbuser_password)
+        client.add_database_user(user, dbuser_password, perms)
+        #
+        # Give influxdb a chance to replicate the user before
+        # modifying it.
+        #
+        time.sleep(1)
         print("Making %s user a database admin." % user)
         client.set_database_admin(user)
 

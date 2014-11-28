@@ -50,7 +50,7 @@
 #    Internal address for endpoint. Optional. Defaults to '127.0.0.1'.
 #
 # [*port*]
-#    Default port for enpoints. Optional. Defaults to '8080'.
+#    Default port for enpoints. Optional. Defaults to '8082'.
 #
 # [*region*]
 #    Region for endpoint. Optional. Defaults to 'RegionOne'.
@@ -103,7 +103,7 @@ class monasca::keystone::auth (
   $public_address       = '127.0.0.1',
   $admin_address        = '127.0.0.1',
   $internal_address     = '127.0.0.1',
-  $port                 = '8080',
+  $port                 = '8082',
   $region               = 'RegionOne',
   $tenant               = 'services',
   $public_protocol      = 'http',

@@ -5,6 +5,7 @@ class monasca::influxdb::bootstrap(
   $influxdb_shard_config_source = 'puppet:///modules/monasca/shard_config.json',
   $influxdb_password = undef,
   $influxdb_dbuser_password = undef,
+  $influxdb_dbuser_ro_password = undef,
 )
 {
   $script = 'bootstrap-influxdb.py'

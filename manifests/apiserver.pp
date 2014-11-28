@@ -19,6 +19,7 @@ class monasca::apiserver (
   $region_name = undef,
   $admin_password = undef,
   $api_db_password = undef,
+  $monasca_api_port = undef,
 ) {
   $api_fetch_url = "http://${blobmirror}/repos/monasca/monasca_api"
   $pers_fetch_url = "http://${blobmirror}/repos/monasca/monasca_persister"
@@ -83,6 +84,7 @@ class monasca::apiserver (
     region_name          => $region_name,
     admin_password       => $admin_password,
     api_db_password      => $api_db_password,
+    monasca_api_port     => $monasca_api_port,
   }
 
   package { 'monasca-thresh':
