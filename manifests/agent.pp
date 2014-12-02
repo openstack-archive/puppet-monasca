@@ -53,6 +53,11 @@ class monasca::agent(
     ensure_packages('libxslt-dev')
     ensure_packages('libxml2-dev')
     ensure_packages('zlib1g-dev')
+    #
+    # libvirt-dev and pkg-config are needed libvirt-python
+    #
+    ensure_packages('libvirt-dev')
+    ensure_packages('pkg-config')
     python::virtualenv { $virtual_env :
       owner   => 'root',
       group   => 'root',
@@ -67,12 +72,18 @@ class monasca::agent(
       before     => File["${virtual_env}/lib/python2.7/site-packages/monsetup/main.py"],
     }
     #
-    # lxml needed for libvirt plugin
+    # lxml and libvirt-python needed for libvirt plugin
     #
     python::pip { 'lxml' :
       virtualenv => $virtual_env,
       owner      => 'root',
       require    => [Package['libxslt-dev'],Package['libxml2-dev'],Package['zlib1g-dev']],
+      before     => Exec['monasca-setup'],
+    }
+    python::pip { 'libvirt-python' :
+      virtualenv => $virtual_env,
+      owner      => 'root',
+      require    => [Package['libvirt-dev'],Package['pkg-config']],
       before     => Exec['monasca-setup'],
     }
   }
