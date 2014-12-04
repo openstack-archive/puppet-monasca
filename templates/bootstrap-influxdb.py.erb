@@ -47,7 +47,7 @@ def main():
         add_user(client, monuser, dbuser_password)
 
     for ro_user in read_only_users:
-        add_user(client, ro_user, dbuser_password, ro)
+        add_user(client, ro_user, db_ro_user_password, ro)
 
 def add_user(client, user, dbuser_password, perms=None):
     user_exists = False
