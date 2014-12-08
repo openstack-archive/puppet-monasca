@@ -65,7 +65,7 @@ class monasca::agent(
       before  => python::pip['monasca-agent'],
     }
     python::pip { 'monasca-agent' :
-      ensure     => '1.0.13',
+      ensure     => '1.0.14',
       pkgname    => $::monasca::params::agent_package,
       virtualenv => $virtual_env,
       owner      => 'root',
