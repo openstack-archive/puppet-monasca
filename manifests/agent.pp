@@ -75,8 +75,9 @@ class monasca::agent(
     require => Group['monasca-agent']
   }
 
-  file { $log_dir:
+  file { 'agent-log':
     ensure  => 'directory',
+    path    => $log_dir,
     owner   => 'root',
     group   => 'root',
     mode    => '0755',
@@ -88,7 +89,7 @@ class monasca::agent(
     owner   => 'monasca-agent',
     group   => 'monasca-agent',
     mode    => '0755',
-    require => File[$log_dir],
+    require => File['agent-log'],
     before  => Service['monasca-agent'],
   }
 
