@@ -50,7 +50,7 @@ class monasca::agent(
     #
     # libxslt-dev, libxml2-dev and zlib1g-dev are needed for lxml install
     #
-    ensure_packages('libxslt-dev')
+    ensure_packages('libxslt1-dev')
     ensure_packages('libxml2-dev')
     ensure_packages('zlib1g-dev')
     #
@@ -77,7 +77,7 @@ class monasca::agent(
     python::pip { 'lxml' :
       virtualenv => $virtual_env,
       owner      => 'root',
-      require    => [Package['libxslt-dev'],Package['libxml2-dev'],Package['zlib1g-dev']],
+      require    => [Package['libxslt1-dev'],Package['libxml2-dev'],Package['zlib1g-dev']],
       before     => Exec['monasca-setup'],
     }
     python::pip { 'libvirt-python' :
