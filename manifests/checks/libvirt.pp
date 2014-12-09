@@ -57,20 +57,20 @@ class monasca::checks::libvirt(
     virtualenv => $virtual_env,
     owner      => 'root',
     require    => [Package['libxslt1-dev'],Package['libxml2-dev'],Package['zlib1g-dev'],
-                    python::virtualenv[$virtual_env]],
+                    Python::Virtualenv[$virtual_env]],
     before     => Service['monasca-agent'],
   }
   python::pip { 'libvirt-python' :
     virtualenv => $virtual_env,
     owner      => 'root',
     require    => [Package['libvirt-dev'],Package['pkg-config'],
-                    python::virtualenv[$virtual_env]],
+                    Python::Virtualenv[$virtual_env]],
     before     => Service['monasca-agent'],
   }
   python::pip { 'python-novaclient' :
     virtualenv => $virtual_env,
     owner      => 'root',
-    require    => python::virtualenv[$virtual_env],
+    require    => Python::Virtualenv[$virtual_env],
     before     => Service['monasca-agent'],
   }
 

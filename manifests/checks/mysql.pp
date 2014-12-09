@@ -25,6 +25,7 @@ class monasca::checks::mysql(
   $instances = [],
 ){
   $conf_dir = $::monasca::agent::conf_dir
+  $virtual_env = $::monasca::agent::virtual_env
 
   File["${conf_dir}/mysql.yaml"] ~> Service['monasca-agent']
   
@@ -34,6 +35,13 @@ class monasca::checks::mysql(
     mode    => '0640',
     content => template('monasca/checks/generic.yaml.erb'),
     require => File[$conf_dir],
+  }
+
+  python::pip { 'MySQL-python' :
+    virtualenv => $::monasca::agent::virtual_env,
+    owner      => 'root',
+    require    => Python::Virtualenv[$virtual_env],
+    before     => Service['monasca-agent'],
   }
 
 }
