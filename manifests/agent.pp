@@ -20,7 +20,6 @@ class monasca::agent(
   $recent_point_threshold = '30',
   $use_mount              = 'no',
   $listen_port            = '17123',
-  $additional_checksd     = '/etc/monasca/agent/checks.d/',
   $non_local_traffic      = 'no',
   $monstatsd_port         = '8125',
   $monstatsd_interval     = '10',
@@ -37,67 +36,76 @@ class monasca::agent(
   $syslog_port            = undef,
   $virtual_env            = '/var/www/monasca-agent',
 ) {
-
   include monasca::params
-  $agent_conf = '/etc/monasca/agent/agent.conf'
+  $log_dir = '/var/log/monasca'
+  $monasca_dir = '/etc/monasca'
+  $agent_dir = "${monasca_dir}/agent"
+  $additional_checksd = "${agent_dir}/checks.d"
+  $conf_dir = "${agent_dir}/conf.d"
 
-  Exec['monasca-setup'] -> Agent_config<||>
+  File[$agent_dir] -> Agent_config<||>
   Agent_config<||> ~> Service['monasca-agent']
 
   if $::monasca::params::agent_package {
     ensure_packages('python-virtualenv')
     ensure_packages('python-dev')
-    #
-    # libxslt-dev, libxml2-dev and zlib1g-dev are needed for lxml install
-    #
-    ensure_packages('libxslt1-dev')
-    ensure_packages('libxml2-dev')
-    ensure_packages('zlib1g-dev')
-    #
-    # libvirt-dev and pkg-config are needed libvirt-python
-    #
-    ensure_packages('libvirt-dev')
-    ensure_packages('pkg-config')
+
     python::virtualenv { $virtual_env :
       owner   => 'root',
       group   => 'root',
       require => [Package['python-virtualenv'],Package['python-dev']],
-      before  => python::pip['monasca-agent'],
+      before  => Python::Pip['monasca-agent'],
     }
     python::pip { 'monasca-agent' :
       ensure     => '1.0.14',
       pkgname    => $::monasca::params::agent_package,
       virtualenv => $virtual_env,
       owner      => 'root',
-      before     => File["${virtual_env}/lib/python2.7/site-packages/monsetup/main.py"],
-    }
-    #
-    # lxml and libvirt-python needed for libvirt plugin
-    #
-    python::pip { 'lxml' :
-      virtualenv => $virtual_env,
-      owner      => 'root',
-      require    => [Package['libxslt1-dev'],Package['libxml2-dev'],Package['zlib1g-dev']],
-      before     => Exec['monasca-setup'],
-    }
-    python::pip { 'libvirt-python' :
-      virtualenv => $virtual_env,
-      owner      => 'root',
-      require    => [Package['libvirt-dev'],Package['pkg-config']],
-      before     => Exec['monasca-setup'],
     }
   }
 
-  file { "${virtual_env}/lib/python2.7/site-packages/monsetup/main.py":
-    mode    => '0644',
-    content => template('monasca/main.py.erb'),
-    before  => Exec['monasca-setup'],
+  group { 'monasca-agent':
+    ensure => present,
+    before => File[$agent_dir],
   }
 
-  exec { 'monasca-setup':
-    path    => '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
-    command => "bash -c 'source ${virtual_env}/bin/activate; monasca-setup --username ${username} --password ${password} --project_name ${project_name} --service ${service} --keystone_url ${keystone_url} --monasca_url ${url} --overwrite; rm ${agent_conf}; touch ${agent_conf}'",
-    creates => $agent_conf,
+  user { 'monasca-agent':
+    ensure  => present,
+    groups  => 'monasca-agent',
+    require => Group['monasca-agent']
+  }
+
+  file { $log_dir:
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    require => User['monasca-agent'],
+  }
+
+  file{ "${log_dir}/agent":
+    ensure  => 'directory',
+    owner   => 'monasca-agent',
+    group   => 'monasca-agent',
+    mode    => '0755',
+    require => File[$log_dir],
+    before  => Service['monasca-agent'],
+  }
+
+  file { $monasca_dir:
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    require => User['monasca-agent'],
+  }
+
+  file { $agent_dir:
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'monasca-agent',
+    mode    => '0755',
+    require => File[$monasca_dir],
   }
 
   file { $additional_checksd:
@@ -105,13 +113,17 @@ class monasca::agent(
     owner   => 'root',
     group   => 'root',
     mode    => '0755',
-    require => Exec['monasca-setup'],
+    require => File[$agent_dir],
+    before  => Service['monasca-agent'],
   }
 
-  if $enabled {
-    $ensure = 'running'
-  } else {
-    $ensure = 'stopped'
+  file { $conf_dir:
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'monasca-agent',
+    mode    => '0755',
+    require => File[$agent_dir],
+    before  => Service['monasca-agent'],
   }
 
   file { '/etc/init.d/monasca-agent':
@@ -119,8 +131,8 @@ class monasca::agent(
     group   => 'root',
     mode    => '0755',
     content => template('monasca/monasca-agent.init.erb'),
+    require => Python::Pip['monasca-agent'],
     before  => Service['monasca-agent'],
-    require => Exec['monasca-setup'],
   }
 
   file { "${virtual_env}/share/monasca/agent/supervisor.conf":
@@ -128,8 +140,14 @@ class monasca::agent(
     group   => 'root',
     mode    => '0644',
     content => template('monasca/supervisor.conf.erb'),
+    require => Python::Pip['monasca-agent'],
     before  => Service['monasca-agent'],
-    require => Exec['monasca-setup'],
+  }
+
+  if $enabled {
+    $ensure = 'running'
+  } else {
+    $ensure = 'stopped'
   }
 
   service { 'monasca-agent':

@@ -1,0 +1,12 @@
+---
+init_config: null
+instances:
+<% instances.each do |instance| -%>
+<% for index in 0 ... instance.size -%>
+<% if index == 0 -%>
+ - <%= instance.keys[index] %>: <%= instance.values[index] %>
+<% else -%>
+   <%= instance.keys[index] %>: <%= instance.values[index] %>
+<% end -%>
+<% end -%>
+<% end -%>
