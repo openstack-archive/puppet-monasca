@@ -2,17 +2,19 @@
 # Class to configure monasca's mysql database, which is used
 # for configuration of thresholds, alarms, etc.
 #
-class monasca::mysql::config (
-  $sql_password = undef,
-) {
+class monasca::db::mysql {
+  include monasca::params
 
-  $monsql = '/tmp/mon.sql'
-  $mysql_user_class = 'mysql_user'
-  $monasca_remote = 'monasca@%'
-  $notification_local = 'notification@localhost'
+  $sql_host            = $::monasca::params::sql_host
+  $sql_user            = $::monasca::params::sql_user
+  $sql_password        = $::monasca::params::sql_password
+  $monsql              = '/tmp/mon.sql'
+  $mysql_user_class    = 'mysql_user'
+  $monasca_remote      = 'monasca@%'
+  $notification_local  = 'notification@localhost'
   $notification_remote = 'notification@%'
-  $thresh_local = 'thresh@localhost'
-  $thresh_remote = 'thresh@%'
+  $thresh_local        = 'thresh@localhost'
+  $thresh_remote       = 'thresh@%'
 
   $prereqs = [
     Mysql_user[$monasca_remote],

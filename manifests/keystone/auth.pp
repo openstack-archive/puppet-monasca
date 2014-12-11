@@ -3,27 +3,26 @@
 # Configures Monasca user, service and endpoint in Keystone.
 #
 # === Parameters
+# [*auth_name*]
+#    Username for Monasca service. Optional. Defaults to 'monasca'.
+#
+# [*admin_name*]
+#    Username for Monasca admin service. Optional. Defaults to 'monasca-admin'.
+#
+# [*agent_name*]
+#    Username for Monasca agent service. Optional. Defaults to 'monasca-agent'.
 #
 # [*admin_password*]
-#   Password for Monasca admin user. Required.
+#    Password for Monasca admin user. Required.
 #
 # [*agent_password*]
-#   Password for Monasca agent user. Required.
+#    Password for Monasca agent user. Required.
 #
 # [*admin_email*]
 #   Email for Monasca admin user. Optional. Defaults to 'monasca@localhost'.
 #
 # [*agent_email*]
 #   Email for Monasca agent user. Optional. Defaults to 'monasca@localhost'.
-#
-# [*auth_name*]
-#   Username for Monasca service. Optional. Defaults to 'monasca'.
-#
-# [*admin_auth_name*]
-#   Username for Monasca admin service. Optional. Defaults to 'monasca'.
-#
-# [*agent_auth_name*]
-#   Username for Monasca agent service. Optional. Defaults to 'monasca'.
 #
 # [*configure_endpoint*]
 #   Should Monasca endpoint be configured? Optional. Defaults to 'true'.
@@ -89,34 +88,33 @@
 #    Setting this variable overrides other $internal_* parameters.
 #
 class monasca::keystone::auth (
-  $admin_password       = false,
-  $agent_password       = false,
-  $admin_email          = 'monasca@localhost',
-  $agent_email          = 'monasca@localhost',
-  $auth_name            = 'monasca',
-  $admin_auth_name      = undef,
-  $agent_auth_name      = undef,
-  $configure_user       = true,
-  $configure_user_role  = true,
-  $service_name         = undef,
-  $service_type         = 'monitoring',
-  $public_address       = '127.0.0.1',
-  $admin_address        = '127.0.0.1',
-  $internal_address     = '127.0.0.1',
-  $port                 = '8082',
-  $region               = 'RegionOne',
-  $tenant               = 'services',
-  $public_protocol      = 'http',
-  $admin_protocol       = 'http',
-  $internal_protocol    = 'http',
-  $configure_endpoint   = true,
-  $public_url           = undef,
-  $admin_url            = undef,
-  $internal_url         = undef,
+  $auth_name           = 'monasca',
+  $admin_email         = 'monasca@localhost',
+  $agent_email         = 'monasca@localhost',
+  $configure_user      = true,
+  $configure_user_role = true,
+  $service_name        = undef,
+  $service_type        = 'monitoring',
+  $public_address      = '127.0.0.1',
+  $admin_address       = '127.0.0.1',
+  $internal_address    = '127.0.0.1',
+  $tenant              = 'services',
+  $public_protocol     = 'http',
+  $admin_protocol      = 'http',
+  $internal_protocol   = 'http',
+  $configure_endpoint  = true,
+  $public_url          = undef,
+  $admin_url           = undef,
+  $internal_url        = undef,
 ) {
+  include monasca::params
 
-  validate_string($admin_password)
-  validate_string($agent_password)
+  $admin_name = $::monasca::params::admin_name
+  $agent_name = $::monasca::params::agent_name
+  $admin_password = $::monasca::params::admin_password
+  $agent_password = $::monasca::params::agent_password
+  $port = $::monasca::params::port
+  $region = $::monasca::params::region
 
   if $public_url {
     $public_url_real = $public_url
@@ -136,18 +134,6 @@ class monasca::keystone::auth (
     $internal_url_real = "${internal_protocol}://${internal_address}:${port}"
   }
 
-  if $admin_auth_name {
-    $admin_auth_name_real = $admin_auth_name
-  } else {
-    $admin_auth_name_real = "${auth_name}-admin"
-  }
-
-  if $agent_auth_name {
-    $agent_auth_name_real = $agent_auth_name
-  } else {
-    $agent_auth_name_real = "${auth_name}-agent"
-  }
-
   if $service_name {
     $real_service_name = $service_name
   } else {
@@ -155,14 +141,14 @@ class monasca::keystone::auth (
   }
 
   if $configure_user {
-    keystone_user { $admin_auth_name_real:
+    keystone_user { $admin_name:
       ensure   => present,
       password => $admin_password,
       email    => $admin_email,
       tenant   => $tenant,
       before   => python::pip['monasca-agent'],
     }
-    keystone_user { $agent_auth_name_real:
+    keystone_user { $agent_name:
       ensure   => present,
       password => $agent_password,
       email    => $agent_email,
@@ -172,9 +158,9 @@ class monasca::keystone::auth (
   }
 
   if $configure_user_role {
-    Keystone_user_role["${admin_auth_name_real}@${tenant}"] ~>
+    Keystone_user_role["${admin_name}@${tenant}"] ~>
       Service <| name == 'monasca-api' |>
-    Keystone_user_role["${agent_auth_name_real}@${tenant}"] ~>
+    Keystone_user_role["${agent_name}@${tenant}"] ~>
       Service <| name == 'monasca-api' |>
 
     if !defined(Keystone_role['monasca-agent']) {
@@ -187,7 +173,7 @@ class monasca::keystone::auth (
         ensure => present,
       }
     }
-    keystone_user_role { "${agent_auth_name_real}@${tenant}":
+    keystone_user_role { "${agent_name}@${tenant}":
       ensure  => present,
       roles   => ['monasca-agent', 'monitoring-delegate'],
       require => [Keystone_role['monasca-agent'], Keystone_role['monitoring-delegate']],

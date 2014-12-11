@@ -2,8 +2,8 @@
 # Class for configuring misc storm packages for use by monasca api server
 #
 class monasca::storm::config (
-  $storm_version = 'apache-storm-0.9.2-incubating',
-  $mirror = 'http://mirror.cogentco.com/pub/apache/incubator/storm',
+  $storm_version = 'apache-storm-0.9.3',
+  $mirror = 'http://apache.arvixe.com/storm',
   $install_dir = '/opt/storm',
   $storm_user = 'storm',
   $storm_group = 'storm',

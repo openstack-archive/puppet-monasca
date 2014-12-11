@@ -35,11 +35,12 @@ class monasca::agent(
   $syslog_host            = undef ,
   $syslog_port            = undef,
   $virtual_env            = '/var/www/monasca-agent',
+  $agent_user             = 'monasca-agent',
 ) {
+  include monasca
   include monasca::params
-  $log_dir = '/var/log/monasca'
-  $monasca_dir = '/etc/monasca'
-  $agent_dir = "${monasca_dir}/agent"
+
+  $agent_dir = "${::monasca::monasca_dir}/agent"
   $additional_checksd = "${agent_dir}/checks.d"
   $conf_dir = "${agent_dir}/conf.d"
 
@@ -64,49 +65,27 @@ class monasca::agent(
     }
   }
 
-  group { 'monasca-agent':
-    ensure => present,
-    before => File[$agent_dir],
-  }
-
-  user { 'monasca-agent':
+  user { $agent_user:
     ensure  => present,
-    groups  => 'monasca-agent',
-    require => Group['monasca-agent']
+    groups  => $::monasca::group,
+    require => Group[$::monasca::group]
   }
 
-  file { 'agent-log':
+  file{ "${::monasca::log_dir}/agent":
     ensure  => 'directory',
-    path    => $log_dir,
-    owner   => 'root',
-    group   => 'root',
+    owner   => $agent_user,
+    group   => $::monasca::group,
     mode    => '0755',
-    require => User['monasca-agent'],
-  }
-
-  file{ "${log_dir}/agent":
-    ensure  => 'directory',
-    owner   => 'monasca-agent',
-    group   => 'monasca-agent',
-    mode    => '0755',
-    require => File['agent-log'],
+    require => File[$::monasca::log_dir],
     before  => Service['monasca-agent'],
-  }
-
-  file { $monasca_dir:
-    ensure  => 'directory',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0755',
-    require => User['monasca-agent'],
   }
 
   file { $agent_dir:
     ensure  => 'directory',
     owner   => 'root',
-    group   => 'monasca-agent',
+    group   => $::monasca::group,
     mode    => '0755',
-    require => File[$monasca_dir],
+    require => File[$::monasca::monasca_dir],
   }
 
   file { $additional_checksd:
@@ -121,7 +100,7 @@ class monasca::agent(
   file { $conf_dir:
     ensure  => 'directory',
     owner   => 'root',
-    group   => 'monasca-agent',
+    group   => $::monasca::group,
     mode    => '0755',
     require => File[$agent_dir],
     before  => Service['monasca-agent'],
@@ -166,7 +145,7 @@ class monasca::agent(
       'Main/hostname' : ensure => absent;
     }
   }
-  
+
   # if $dimensions {
   #   agent_config {
   #     'Main/dimensions' : value => $dimensions;
