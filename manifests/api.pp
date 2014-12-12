@@ -8,7 +8,7 @@ class monasca::api (
   $kafka_brokers        = undef,
   $keystone_endpoint    = undef,
   $keystone_admin_token = undef,
-  $api_user             = 'monasca-api',
+  $api_user             = 'monasca_api',
   $zookeeper_servers    = undef,
 ) {
   include monasca

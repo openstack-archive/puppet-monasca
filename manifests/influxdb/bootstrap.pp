@@ -4,10 +4,12 @@
 class monasca::influxdb::bootstrap(
   $influxdb_shard_config_source = 'puppet:///modules/monasca/shard_config.json',
   $influxdb_password = undef,
-  $influxdb_dbuser_password = undef,
   $influxdb_dbuser_ro_password = undef,
 )
 {
+  include monasca::params
+
+  $influxdb_dbuser_password = $::monasca::params::api_db_password
   $script = 'bootstrap-influxdb.py'
   $influxdb_host = 'localhost'
   $influxdb_port = 8086

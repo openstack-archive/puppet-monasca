@@ -24,7 +24,7 @@ class monasca(
     ensure  => directory,
     owner   => 'root',
     group   => $group,
-    mode    => '0755',
+    mode    => '0775',
     require => Group[$group],
   }
 
