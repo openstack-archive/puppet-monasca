@@ -114,24 +114,25 @@ class monasca::keystone::auth (
   $admin_password = $::monasca::params::admin_password
   $agent_password = $::monasca::params::agent_password
   $port = $::monasca::params::port
+  $api_version = $::monasca::params::api_version
   $region = $::monasca::params::region
 
   if $public_url {
     $public_url_real = $public_url
   } else {
-    $public_url_real = "${public_protocol}://${public_address}:${port}"
+    $public_url_real = "${public_protocol}://${public_address}:${port}/${api_version}"
   }
 
   if $admin_url {
     $admin_url_real = $admin_url
   } else {
-    $admin_url_real = "${admin_protocol}://${admin_address}:${port}"
+    $admin_url_real = "${admin_protocol}://${admin_address}:${port}/${api_version}"
   }
 
   if $internal_url {
     $internal_url_real = $internal_url
   } else {
-    $internal_url_real = "${internal_protocol}://${internal_address}:${port}"
+    $internal_url_real = "${internal_protocol}://${internal_address}:${port}/${api_version}"
   }
 
   if $service_name {

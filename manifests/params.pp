@@ -8,6 +8,7 @@ class monasca::params(
     $api_db_user     = 'mon_api',
     $api_db_password = undef,
     $port            = '8082',
+    $api_version     = 'v2.0',
     $region          = 'RegionOne',
     $admin_name      = 'monasca-admin',
     $agent_name      = 'monasca-agent',
