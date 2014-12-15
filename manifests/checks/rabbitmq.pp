@@ -35,7 +35,7 @@ class monasca::checks::rabbitmq(
 
   file { "${conf_dir}/rabbitmq.yaml":
     owner   => 'root',
-    group   => 'monasca-agent',
+    group   => $::monasca::group,
     mode    => '0640',
     content => template('monasca/checks/generic.yaml.erb'),
     require => File[$conf_dir],

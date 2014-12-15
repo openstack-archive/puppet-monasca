@@ -22,7 +22,7 @@ class monasca::checks::apache(
   
   file { "${conf_dir}/apache.yaml":
     owner   => 'root',
-    group   => 'monasca-agent',
+    group   => $::monasca::group,
     mode    => '0640',
     content => template('monasca/checks/generic.yaml.erb'),
     require => File[$conf_dir],

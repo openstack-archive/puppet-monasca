@@ -34,7 +34,7 @@ class monasca::checks::nagios_wrapper(
   
   file { "${conf_dir}/nagios_wrapper.yaml":
     owner   => 'root',
-    group   => 'monasca-agent',
+    group   => $::monasca::group,
     mode    => '0640',
     content => template('monasca/checks/nagios_wrapper.yaml.erb'),
     require => File[$conf_dir],

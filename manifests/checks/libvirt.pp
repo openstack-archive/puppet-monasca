@@ -39,7 +39,7 @@ class monasca::checks::libvirt(
   
   file { "${conf_dir}/libvirt.yaml":
     owner   => 'root',
-    group   => 'monasca-agent',
+    group   => $::monasca::group,
     mode    => '0640',
     content => template('monasca/checks/libvirt.yaml.erb'),
     require => File[$conf_dir],

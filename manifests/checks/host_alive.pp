@@ -35,7 +35,7 @@ class monasca::checks::host_alive(
   
   file { "${conf_dir}/host_alive.yaml":
     owner   => 'root',
-    group   => 'monasca-agent',
+    group   => $::monasca::group,
     mode    => '0640',
     content => template('monasca/checks/host_alive.yaml.erb'),
     require => File[$conf_dir],

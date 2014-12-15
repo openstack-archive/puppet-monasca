@@ -35,7 +35,7 @@ class monasca::checks::http_check(
 
   file { "${conf_dir}/http_check.yaml":
     owner   => 'root',
-    group   => 'monasca-agent',
+    group   => $::monasca::group,
     mode    => '0640',
     content => template('monasca/checks/generic.yaml.erb'),
     require => File[$conf_dir],

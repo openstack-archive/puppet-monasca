@@ -29,10 +29,11 @@ class monasca(
   }
 
   file { $monasca_dir:
-    ensure => 'directory',
-    owner  => 'root',
-    group  => 'root',
-    mode   => '0755',
+    ensure  => 'directory',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    require => Group[$group],
   }
 
 }
