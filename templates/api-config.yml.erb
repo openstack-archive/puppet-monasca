@@ -52,12 +52,12 @@ vertica:
 
 middleware:
   enabled: true
-  serviceIds: 100
-  endpointIds: 160
   serverVIP: <%= keystone_endpoint %>
   serverPort: 5000
   connTimeout: 500
   connSSLClientAuth: true
+  keystore: None
+  keystorePassword: None
   connPoolMaxActive: 3
   connPoolMaxIdle: 3
   connPoolEvictPeriod: 600000
