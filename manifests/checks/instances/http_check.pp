@@ -1,3 +1,6 @@
+#
+# configure monasca plugin yaml file for http_check
+#
 define monasca::checks::instances::http_check (
   $url,
   $timeout                = undef,

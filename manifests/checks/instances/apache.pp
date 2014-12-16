@@ -1,3 +1,6 @@
+#
+# configure monasca plugin yaml file for apache
+#
 define monasca::checks::instances::apache (
   $apache_status_url,
   $dimensions = undef,

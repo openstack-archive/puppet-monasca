@@ -1,0 +1,70 @@
+#!<%= virtual_env %>/bin/python
+
+import json
+from keystoneclient.v3 import client as keystone_client
+from monascaclient import client as monasca_client
+import monascaclient.exc as exc
+import os
+
+
+def get_monasca_client():
+    kwargs = {
+        'username': os.environ['OS_USERNAME'],
+        'password': os.environ['OS_PASSWORD'],
+        'auth_url': os.environ['OS_AUTH_URL'],
+        'project_name': os.environ['OS_PROJECT_NAME'],
+    }
+
+    try:
+        _ksclient = keystone_client.Client(**kwargs)
+    except exc.HTTPException as he:
+        raise exc.CommandError('HTTPException code=%s message=%s' %
+                               (he.code, he.message))
+
+    kwargs = {
+        'token': _ksclient.auth_token,
+    }
+
+    return monasca_client.Client(
+        '2_0',
+        os.environ['MONASCA_API_URL'],
+        **kwargs)
+
+
+def get_current_names(client):
+    names = []
+    try:
+        current_definitions = client.alarm_definitions.list()
+        for definition in current_definitions:
+            names.append(definition['name'])
+    except exc.HTTPException as he:
+        raise exc.CommandError('HTTPException code=%s message=%s' %
+                               (he.code, he.message))
+
+    return names
+
+
+def create_alarm_definition(client, alarm_definition):
+    try:
+        client.alarm_definitions.create(**alarm_definition)
+    except exc.HTTPException as he:
+        raise exc.CommandError('HTTPException code=%s message=%s' %
+                               (he.code, he.message))
+
+
+def main():
+    client = get_monasca_client()
+    names = get_current_names(client)
+    alarm_definitions = json.load(open('<%= alarm_definition_config %>'))
+
+    for alarm_definition in alarm_definitions:
+        name = alarm_definition['name']
+        if name in names:
+            print("Skipping alarm definition '%s', already defined." % name)
+            continue
+        create_alarm_definition(client, alarm_definition)
+        print("Added alarm definition '%s'" % name)
+
+
+if __name__ == '__main__':
+    main()

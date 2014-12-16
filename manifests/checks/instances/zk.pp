@@ -1,3 +1,6 @@
+#
+# configure monasca plugin yaml file for zookeeper
+#
 define monasca::checks::instances::zk (
   $host       = undef,
   $port       = undef,

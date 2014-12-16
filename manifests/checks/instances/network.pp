@@ -1,3 +1,6 @@
+#
+# configure monasca plugin yaml file for network interfaces
+#
 define monasca::checks::instances::network (
   $collect_connection_state = undef,
   $excluded_interfaces      = undef,

@@ -36,7 +36,7 @@ class monasca::checks::libvirt(
   $virtual_env = $::monasca::agent::virtual_env
 
   File["${conf_dir}/libvirt.yaml"] ~> Service['monasca-agent']
-  
+
   file { "${conf_dir}/libvirt.yaml":
     owner   => 'root',
     group   => $::monasca::group,

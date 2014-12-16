@@ -1,0 +1,7 @@
+[
+   {
+      "name":"http_status",
+      "expression":"avg(http_status{}) > 0",
+      "severity":"LOW"
+   }
+]

@@ -1,3 +1,6 @@
+#
+# configure monasca plugin yaml file for process usage
+#
 define monasca::checks::instances::process (
   $search_string,
   $exact_match        = undef,

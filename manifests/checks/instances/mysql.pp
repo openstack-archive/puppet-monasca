@@ -1,3 +1,6 @@
+#
+# configure monasca plugin yaml file for mysql
+#
 define monasca::checks::instances::mysql (
   $server        = undef,
   $user          = undef,

@@ -1,3 +1,6 @@
+#
+# configure monasca plugin yaml file for rabbitmq
+#
 define monasca::checks::instances::rabbitmq (
   $rabbitmq_api_url,
   $rabbitmq_user          = undef,

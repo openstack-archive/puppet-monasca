@@ -10,11 +10,8 @@ class monasca::storm::config (
   $log_dir = '/var/log/storm',
   $nimbus_server = undef,
 ) {
-  $storm_install_dir = '/etc/storm'
   $cache_dir = '/var/cache/storm'
   $storm_local = '/storm-local'
-  $empty_conf_file = "${install_dir}/${storm_version}/conf/storm.yaml"
-  $files = [ File[$empty_conf_file], File[$storm_install_dir], File[$log_dir] ]
 
   user { $storm_user:
     ensure => present,
@@ -57,15 +54,11 @@ class monasca::storm::config (
     alias   => 'untar-storm-package',
     user    => $storm_user,
     group   => $storm_group,
-    before  => $files,
+    before  => File[$log_dir],
     creates => "${install_dir}/${storm_version}",
   }
 
-  file { $empty_conf_file:
-    ensure => absent,
-  }
-
-  file { $storm_install_dir:
+  file { "${install_dir}/current":
     ensure => link,
     target => "${install_dir}/${storm_version}",
   }
@@ -74,28 +67,28 @@ class monasca::storm::config (
     ensure => directory,
   }
 
-  File[$storm_install_dir] ->
+  File[$install_dir] ->
   monasca::storm::startup_script {
     '/etc/init.d/storm-ui':
       storm_service     => 'ui',
-      storm_install_dir => $storm_install_dir,
+      storm_install_dir => "${install_dir}/current",
       storm_user        => $storm_user,
   }
 
-  File[$storm_install_dir] -> File[$storm_local] ->
+  File[$install_dir] -> File[$storm_local] ->
   monasca::storm::startup_script {
     '/etc/init.d/storm-supervisor':
       storm_service     => 'supervisor',
-      storm_install_dir => $storm_install_dir,
+      storm_install_dir => "${install_dir}/current",
       storm_user        => $storm_user,
   }
 
   if ($nimbus_server == 'localhost' or $nimbus_server == $::fqdn) {
-    File[$storm_install_dir] -> File[$storm_local] ->
+    File[$install_dir] -> File[$storm_local] ->
     monasca::storm::startup_script {
       '/etc/init.d/storm-nimbus':
         storm_service     => 'nimbus',
-        storm_install_dir => $storm_install_dir,
+        storm_install_dir => "${install_dir}/current",
         storm_user        => $storm_user,
     }
   }

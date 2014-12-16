@@ -1,0 +1,8 @@
+fixtures:
+  repositories:
+    'keystone': 'git://github.com/stackforge/puppet-keystone.git'
+    'openstacklib': 'git://github.com/stackforge/puppet-openstacklib.git'
+    'stdlib': 'git://github.com/puppetlabs/puppetlabs-stdlib.git'
+    'python': 'git://github.com/stankevich/puppet-python.git'
+  symlinks:
+    'monasca': "#{source_dir}"

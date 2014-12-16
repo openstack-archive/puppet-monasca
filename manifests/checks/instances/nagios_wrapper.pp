@@ -1,3 +1,6 @@
+#
+# configure monasca plugin yaml file for nagios_wrapper
+#
 define monasca::checks::instances::nagios_wrapper (
   $check_command,
   $host_name      = undef,

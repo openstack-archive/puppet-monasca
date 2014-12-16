@@ -1,3 +1,6 @@
+#
+# configure monasca plugin yaml file for host_alive
+#
 define monasca::checks::instances::host_alive (
   $host_name,
   $alive_test,
