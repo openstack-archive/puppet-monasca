@@ -1,0 +1,14 @@
+ - name: <%= @title %>
+   search_string: <%= @search_string %>
+<%- if @host -%>
+   host: <%= @host %>
+<%- end -%>
+<%- if @port -%>
+   port: <%= @port %>
+<%- end -%>
+<%- if @timeout -%>
+   timeout: <%= @timeout %>
+<%- end -%>
+<%- if @dimensions -%>
+   dimensions: <%= @dimensions %>
+<%- end -%>

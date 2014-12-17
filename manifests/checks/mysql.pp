@@ -5,9 +5,10 @@
 # === Parameters
 #
 # [*instances*]
-#   An array of instances for the check.
+#   A hash of instances for the check.
 #   Each instance should be a hash of the check's parameters.
 #   Parameters for the mysql check are:
+#       name (the instance key): The name of the instance.
 #       server
 #       user
 #       port
@@ -17,31 +18,39 @@
 #       dimensions
 #       options
 #   e.g.
-#   $instances = [{defaults_file => '/root/.my.cnf',
-#                  server => 'localhost',
-#                  user => 'root'}]
+#   instances:
+#     local:
+#       defaults_file: '/root/.my.cnf'
+#       server: 'localhost'
+#       user: 'root'
 #
 class monasca::checks::mysql(
-  $instances = [],
+  $instances = undef,
 ){
   $conf_dir = $::monasca::agent::conf_dir
   $virtual_env = $::monasca::agent::virtual_env
 
-  File["${conf_dir}/mysql.yaml"] ~> Service['monasca-agent']
-  
-  file { "${conf_dir}/mysql.yaml":
-    owner   => 'root',
-    group   => $::monasca::group,
-    mode    => '0640',
-    content => template('monasca/checks/generic.yaml.erb'),
-    require => File[$conf_dir],
+  if($instances){
+    Concat["${conf_dir}/mysql.yaml"] ~> Service['monasca-agent']
+    concat { "${conf_dir}/mysql.yaml":
+      owner   => 'root',
+      group   => $::monasca::group,
+      mode    => '0640',
+      warn    => true,
+      require => File[$conf_dir],
+    }
+    concat::fragment { 'mysql_header':
+      target  => "${conf_dir}/mysql.yaml",
+      order   => '0',
+      content => "---\ninit_config: null\ninstances:\n",
+    }
+    create_resources('monasca::checks::instances::mysql', $instances)
   }
 
   python::pip { 'MySQL-python' :
-    virtualenv => $::monasca::agent::virtual_env,
+    virtualenv => $virtual_env,
     owner      => 'root',
     require    => Python::Virtualenv[$virtual_env],
     before     => Service['monasca-agent'],
   }
-
 }

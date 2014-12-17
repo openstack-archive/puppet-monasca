@@ -1,0 +1,25 @@
+ - name: <%= @title %>
+<%- if @server -%>
+   server: <%= @server %>
+<%- end -%>
+<%- if @user -%>
+   user: <%= @user %>
+<%- end -%>
+<%- if @port -%>
+   port: <%= @port %>
+<%- end -%>
+<%- if @pass -%>
+   pass: <%= @pass %>
+<%- end -%>
+<%- if @sock -%>
+   sock: <%= @sock %>
+<%- end -%>
+<%- if @defaults_file -%>
+   defaults_file: <%= @defaults_file %>
+<%- end -%>
+<%- if @dimensions -%>
+   dimensions: <%= @dimensions %>
+<%- end -%>
+<%- if @options -%>
+   options: <%= @options %>
+<%- end -%>

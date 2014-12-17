@@ -1,0 +1,13 @@
+ - name: <%= @title %>
+<%- if not @collect_connection_state.nil? -%>
+   collect_connection_state: <%= @collect_connection_state %>
+<%- end -%>
+<%- if @excluded_interfaces -%>
+   excluded_interfaces: <%= @excluded_interfaces %>
+<%- end -%>
+<%- if @excluded_interface_re -%>
+   excluded_interface_re: <%= @excluded_interface_re %>
+<%- end -%>
+<%- if @dimensions -%>
+   dimensions: <%= @dimensions %>
+<%- end -%>

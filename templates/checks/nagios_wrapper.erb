@@ -1,0 +1,11 @@
+ - service_name: <%= @title %>
+   check_command: <%= @check_command %>
+<%- if @host_name -%>
+   host_name: <%= @host_name %>
+<%- end -%>
+<%- if @check_interval -%>
+   check_interval: <%= @check_interval %>
+<%- end -%>
+<%- if @dimensions -%>
+   dimensions: <%= @dimensions %>
+<%- end -%>

@@ -5,31 +5,40 @@
 # === Parameters
 #
 # [*instances*]
-#   An array of instances for the check.
+#   A hash of instances for the check.
 #   Each instance should be a hash of the check's parameters.
 #   Parameters for the zk check are:
+#       name (the instance key): The name of the instance.
 #       host (default = localhost)
 #       port (default = 2181)
 #       timeout (default = 3.0)
 #       dimensions
 #   e.g.
-#   $instances = [{host => 'localhost',
-#                  port => '2181',
-#                  timeout => '3'}]
+#   instances:
+#     local:
+#       host: 'localhost'
+#       port: '2181'
+#       timeout: '3'
 #
 class monasca::checks::zk(
-  $instances = [],
+  $instances = undef,
 ){
   $conf_dir = $::monasca::agent::conf_dir
 
-  File["${conf_dir}/zk.yaml"] ~> Service['monasca-agent']
-
-  file { "${conf_dir}/zk.yaml":
-    owner   => 'root',
-    group   => $::monasca::group,
-    mode    => '0640',
-    content => template('monasca/checks/generic.yaml.erb'),
-    require => File[$conf_dir],
+  if($instances){
+    Concat["${conf_dir}/zk.yaml"] ~> Service['monasca-agent']
+    concat { "${conf_dir}/zk.yaml":
+      owner   => 'root',
+      group   => $::monasca::group,
+      mode    => '0640',
+      warn    => true,
+      require => File[$conf_dir],
+    }
+    concat::fragment { 'zk_header':
+      target  => "${conf_dir}/zk.yaml",
+      order   => '0',
+      content => "---\ninit_config: null\ninstances:\n",
+    }
+    create_resources('monasca::checks::instances::zk', $instances)
   }
-
 }

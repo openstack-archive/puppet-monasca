@@ -1,0 +1,29 @@
+ - name: <%= @title %>
+   url: <%= @url %>
+<%- if @timeout -%>
+   timeout: <%= @timeout %>
+<%- end -%>
+<%- if @username -%>
+   username: <%= @username %>
+<%- end -%>
+<%- if @password -%>
+   password: <%= @password %>
+<%- end -%>
+<%- if @match_pattern -%>
+   match_pattern: <%= @match_pattern %>
+<%- end -%>
+<%- if not @use_keystone.nil? -%>
+   use_keystone: <%= @use_keystone %>
+<%- end -%>
+<%- if not @collect_response_time.nil? -%>
+   collect_response_time: <%= @collect_response_time %>
+<%- end -%>
+<%- if @headers -%>
+   headers: <%= @headers %>
+<%- end -%>
+<%- if not @disable_ssl_validation.nil? -%>
+   disable_ssl_validation: <%= @disable_ssl_validation %>
+<%- end -%>
+<%- if @dimensions -%>
+   dimensions: <%= @dimensions %>
+<%- end -%>

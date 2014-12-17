@@ -1,0 +1,29 @@
+ - name: <%= @title %>
+   rabbitmq_api_url: <%= @rabbitmq_api_url %>
+<%- if @rabbitmq_user -%>
+   rabbitmq_user: <%= @rabbitmq_user %>
+<%- end -%>
+<%- if @rabbitmq_pass -%>
+   rabbitmq_pass: <%= @rabbitmq_pass %>
+<%- end -%>
+<%- if @queues -%>
+   queues: <%= @queues %>
+<%- end -%>
+<%- if @nodes -%>
+   nodes: <%= @nodes %>
+<%- end -%>
+<%- if @exchanges -%>
+   exchanges: <%= @exchanges %>
+<%- end -%>
+<%- if @max_detailed_queues -%>
+   max_detailed_queues: <%= @max_detailed_queues %>
+<%- end -%>
+<%- if @max_detailed_exchanges -%>
+   max_detailed_exchanges: <%= @max_detailed_exchanges %>
+<%- end -%>
+<%- if @max_detailed_nodes -%>
+   max_detailed_nodes: <%= @max_detailed_nodes %>
+<%- end -%>
+<%- if @dimensions -%>
+   dimensions: <%= @dimensions %>
+<%- end -%>

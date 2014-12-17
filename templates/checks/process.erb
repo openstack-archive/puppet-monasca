@@ -1,0 +1,11 @@
+ - name: <%= @title %>
+   search_string: <%= @search_string %>
+<%- if not @exact_match.nil? -%>
+   exact_match: <%= @exact_match %>
+<%- end -%>
+<%- if @cpu_check_interval -%>
+   cpu_check_interval: <%= @cpu_check_interval %>
+<%- end -%>
+<%- if @dimensions -%>
+   dimensions: <%= @dimensions %>
+<%- end -%>
