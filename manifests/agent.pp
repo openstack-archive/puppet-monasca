@@ -95,6 +95,10 @@ class monasca::agent(
     mode    => '0755',
     require => File[$agent_dir],
     before  => Service['monasca-agent'],
+    # ensure removal of all checks unmanaged by puppet
+    purge   => true,
+    force   => true,
+    recurse => true,
   }
 
   file { $conf_dir:
@@ -104,6 +108,10 @@ class monasca::agent(
     mode    => '0755',
     require => File[$agent_dir],
     before  => Service['monasca-agent'],
+    # ensure removal of all checks unmanaged by puppet
+    purge   => true,
+    force   => true,
+    recurse => true,
   }
 
   file { '/etc/init.d/monasca-agent':
