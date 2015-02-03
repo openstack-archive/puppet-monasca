@@ -1,0 +1,92 @@
+#!/bin/bash
+
+if [[ -z ${INFLUX_ADMIN_PASSWORD} ]]
+then
+    echo "INFLUX_ADMIN_PASSWORD must be set in env"
+    exit 1
+fi
+
+if [[ -z ${DB_USER_PASSWORD} ]]
+then
+    echo "DB_USER_PASSWORD must be set in env"
+    exit 1
+fi
+
+if [[ -z ${DB_READ_ONLY_USER_PASSWORD} ]]
+then
+    echo "DB_READ_ONLY_USER_PASSWORD must be set in env"
+    exit 1
+fi
+
+
+INFLUX_HOST="localhost:8086"
+INFLUX_ADMIN="root"
+MONASCA_DB="mon"
+MONASCA_USERS="mon_api mon_persister"
+MONASCA_READ_ONLY_USERS="mon_ro"
+DEFAULT_RETENTION_POLICY_NAME="raw"
+DEFAULT_RETENTION_POLICY_DURATION="390d"
+TMP_RETENTION_POLICY_NAME="tmp"
+TMP_RETENTION_POLICY_DURATION="5m"
+RETENTION_POLICY_REPLICATION_FACTOR="1"
+
+HTTP_CODE=`curl -s -w "%{http_code}" "http://$INFLUX_HOST/ping" -o /dev/null`
+PING_RC=$?
+ATTEMPTS=1
+
+until [ $PING_RC -eq "0" ] && [ $HTTP_CODE -eq "204" ]
+do
+    HTTP_CODE=`curl -s -w "%{http_code}" "http://$INFLUX_HOST/ping" -o /dev/null`
+    PING_RC=$?
+    ATTEMPTS=$((ATTEMPTS+1))
+    if [ $ATTEMPTS -eq 30 ]
+    then
+        echo "InfluxDB not up after 30 seconds!"
+        exit 1
+    fi
+    sleep 1
+done
+
+# create the admin user
+q="CREATE USER $INFLUX_ADMIN WITH PASSWORD '$INFLUX_ADMIN_PASSWORD' WITH ALL PRIVILEGES"
+curl -s -G -w "%{http_code} CREATE USER $INFLUX_ADMIN\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q" -o /dev/null
+
+# create the database
+q="CREATE DATABASE $MONASCA_DB"
+curl -s -G -w "%{http_code} $q\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q" --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" -o /dev/null
+
+# create the default retention policy
+q="CREATE RETENTION POLICY $DEFAULT_RETENTION_POLICY_NAME ON $MONASCA_DB DURATION $DEFAULT_RETENTION_POLICY_DURATION REPLICATION $RETENTION_POLICY_REPLICATION_FACTOR DEFAULT"
+curl -s -G -w "%{http_code} $q\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q" --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" -o /dev/null
+# create the tmp retention policy
+q="CREATE RETENTION POLICY $TMP_RETENTION_POLICY_NAME ON $MONASCA_DB DURATION $TMP_RETENTION_POLICY_DURATION REPLICATION $RETENTION_POLICY_REPLICATION_FACTOR DEFAULT"
+curl -s -G -w "%{http_code} $q\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q" --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" -o /dev/null
+
+# create the monasca users as admins
+for u in $MONASCA_USERS
+do
+  q="CREATE USER $u WITH PASSWORD '$DB_USER_PASSWORD' WITH ALL PRIVILEGES"
+  curl -s -G -w "%{http_code} CREATE USER $u\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q"  --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" -o /dev/null
+done
+
+# create the read only users
+for u in $MONASCA_READ_ONLY_USERS
+do
+  # create
+  q="CREATE USER $u WITH PASSWORD '$DB_READ_ONLY_USER_PASSWORD'"
+  curl -s -G -w "%{http_code} CREATE USER $u\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q"  --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" -o /dev/null
+
+  # grant read access to the monasca db
+  q="GRANT read ON $MONASCA_DB TO $u"
+  curl -s -G -w "%{http_code} $q\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q"  --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" -o /dev/null
+done
+
+echo "Done creating entities"
+
+echo "\nDatabases:"
+curl -s -G http://$INFLUX_HOST/query --data-urlencode "q=SHOW DATABASES"  --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" --data "pretty=true"
+echo "\n\nRetention policies:"
+curl -s -G http://$INFLUX_HOST/query --data-urlencode "q=SHOW RETENTION POLICIES $MONASCA_DB"  --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" --data "pretty=true"
+echo "\n\nUsers:"
+curl -s -G http://$INFLUX_HOST/query --data-urlencode "q=SHOW USERS"  --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" --data "pretty=true"
+echo ""
