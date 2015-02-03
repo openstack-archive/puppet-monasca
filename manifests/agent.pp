@@ -36,6 +36,7 @@ class monasca::agent(
   $syslog_port            = undef,
   $virtual_env            = '/var/www/monasca-agent',
   $agent_user             = 'monasca-agent',
+  $agent_version          = 'latest',
 ) {
   include monasca
   include monasca::params
@@ -58,7 +59,7 @@ class monasca::agent(
       before  => Python::Pip['monasca-agent'],
     }
     python::pip { 'monasca-agent' :
-      ensure     => '1.0.14',
+      ensure     => $agent_version,
       pkgname    => $::monasca::params::agent_package,
       virtualenv => $virtual_env,
       owner      => 'root',
