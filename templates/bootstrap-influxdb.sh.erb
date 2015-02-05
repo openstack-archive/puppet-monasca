@@ -19,16 +19,16 @@ then
 fi
 
 
-INFLUX_HOST="localhost:8086"
-INFLUX_ADMIN="root"
+INFLUX_HOST="<%= influxdb_host %>:<%= influxdb_port %>"
+INFLUX_ADMIN="<%= influxdb_user %>"
 MONASCA_DB="mon"
 MONASCA_USERS="mon_api mon_persister"
 MONASCA_READ_ONLY_USERS="mon_ro"
-DEFAULT_RETENTION_POLICY_NAME="raw"
-DEFAULT_RETENTION_POLICY_DURATION="390d"
-TMP_RETENTION_POLICY_NAME="tmp"
-TMP_RETENTION_POLICY_DURATION="5m"
-RETENTION_POLICY_REPLICATION_FACTOR="1"
+DEFAULT_RETENTION_POLICY_NAME="<%= influxdb_def_ret_pol_name %>"
+DEFAULT_RETENTION_POLICY_DURATION="<%= influxdb_def_ret_pol_duration %>"
+TMP_RETENTION_POLICY_NAME="<%= influxdb_tmp_ret_pol_name %>"
+TMP_RETENTION_POLICY_DURATION="<%= influxdb_tmp_ret_pol_duration %>"
+RETENTION_POLICY_REPLICATION_FACTOR="<%= influxdb_retention_replication %>"
 
 HTTP_CODE=`curl -s -w "%{http_code}" "http://$INFLUX_HOST/ping" -o /dev/null`
 PING_RC=$?
