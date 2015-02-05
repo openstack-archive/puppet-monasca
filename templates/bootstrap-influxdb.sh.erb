@@ -41,7 +41,9 @@ do
     ATTEMPTS=$((ATTEMPTS+1))
     if [ $ATTEMPTS -eq 30 ]
     then
-        echo "InfluxDB not up after 30 seconds!"
+        echo "InfluxDB not up after $ATTEMPTS seconds!"
+        echo "HTTP CODE: $HTTP_CODE"
+        echo "CURL RETURN CODE: $PING_RC"
         exit 1
     fi
     sleep 1
@@ -58,8 +60,15 @@ curl -s -G -w "%{http_code} $q\\n" http://$INFLUX_HOST/query --data-urlencode "q
 # create the default retention policy
 q="CREATE RETENTION POLICY $DEFAULT_RETENTION_POLICY_NAME ON $MONASCA_DB DURATION $DEFAULT_RETENTION_POLICY_DURATION REPLICATION $RETENTION_POLICY_REPLICATION_FACTOR DEFAULT"
 curl -s -G -w "%{http_code} $q\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q" --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" -o /dev/null
+# alter it in case we've change replication or duration
+q="ALTER RETENTION POLICY $DEFAULT_RETENTION_POLICY_NAME ON $MONASCA_DB DURATION $DEFAULT_RETENTION_POLICY_DURATION REPLICATION $RETENTION_POLICY_REPLICATION_FACTOR DEFAULT"
+curl -s -G -w "%{http_code} $q\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q" --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" -o /dev/null
+
 # create the tmp retention policy
-q="CREATE RETENTION POLICY $TMP_RETENTION_POLICY_NAME ON $MONASCA_DB DURATION $TMP_RETENTION_POLICY_DURATION REPLICATION $RETENTION_POLICY_REPLICATION_FACTOR DEFAULT"
+q="CREATE RETENTION POLICY $TMP_RETENTION_POLICY_NAME ON $MONASCA_DB DURATION $TMP_RETENTION_POLICY_DURATION REPLICATION $RETENTION_POLICY_REPLICATION_FACTOR"
+curl -s -G -w "%{http_code} $q\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q" --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" -o /dev/null
+# alter it in case we've change replication or duration
+q="ALTER RETENTION POLICY $TMP_RETENTION_POLICY_NAME ON $MONASCA_DB DURATION $TMP_RETENTION_POLICY_DURATION REPLICATION $RETENTION_POLICY_REPLICATION_FACTOR"
 curl -s -G -w "%{http_code} $q\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q" --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" -o /dev/null
 
 # create the monasca users as admins
