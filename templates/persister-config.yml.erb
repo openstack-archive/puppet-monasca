@@ -6,7 +6,7 @@ alarmHistoryConfiguration:
   maxBatchTime: 30
   topic:   alarm-state-transitions
   groupId: 1_alarm-state-transitions
-  consumerId: 1
+  consumerId: <%= consumer_id %>
   clientId : 1
 
 metricConfiguration:
@@ -15,7 +15,7 @@ metricConfiguration:
   maxBatchTime: 30
   topic:   metrics
   groupId: 1_metrics
-  consumerId: 1
+  consumerId: <%= consumer_id %>
   clientId : 1
 
 kafkaConfiguration:
@@ -39,11 +39,12 @@ verticaMetricRepositoryConfiguration:
   maxCacheSize: 2000000
 
 databaseConfiguration:
-  databaseType: influxdb
+  databaseType: <%= database_type %>
 
 influxDbConfiguration:
   name: mon
-  replicationFactor: 1
+  replicationFactor: <%= replication_factor %>
+  retentionPolicy: <%= retention_policy %>
   url: http://localhost:8086
   user: <%= pers_db_user %>
   password: <%= api_db_password %>

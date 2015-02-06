@@ -8,6 +8,10 @@ class monasca::persister (
   $pers_user          = 'persister',
   $pers_db_user       = 'mon_persister',
   $zookeeper_servers  = undef,
+  $database_type      = 'influxdb09',
+  $replication_factor = 1,
+  $consumer_id        = 1,
+  $retention_policy   = 'raw',
 ) {
   include monasca
   include monasca::params
@@ -48,7 +52,7 @@ class monasca::persister (
     owner   => $pers_user,
     group   => $::monasca::group,
     require => [User[$pers_user], Group[$::monasca::group], File[$::monasca::log_dir]],
-  }
+  } ~> Service['monasca-persister']
 
   service { 'monasca-persister':
     ensure  => running,

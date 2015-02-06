@@ -59,7 +59,7 @@ class monasca::api (
     owner   => $api_user,
     group   => $::monasca::group,
     require => [User[$api_user], Group[$::monasca::group], File[$::monasca::log_dir]],
-  }
+  } ~> Service['monasca-api']
 
   service { 'monasca-api':
     ensure  => running,
