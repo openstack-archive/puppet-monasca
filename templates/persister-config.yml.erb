@@ -18,7 +18,7 @@ metricConfiguration:
   consumerId: <%= consumer_id %>
   clientId : 1
 
-kafkaConfiguration:
+kafkaConfig:
   zookeeperConnect: <%= zookeeper_servers %>
   socketTimeoutMs: 30000
   socketReceiveBufferBytes : 65536
@@ -35,7 +35,7 @@ kafkaConfiguration:
   zookeeperConnectionTimeoutMs : 60000
   zookeeperSyncTimeMs: 2000
 
-verticaMetricRepositoryConfiguration:
+verticaMetricRepoConfig:
   maxCacheSize: 2000000
 
 databaseConfiguration:
@@ -43,6 +43,7 @@ databaseConfiguration:
 
 influxDbConfiguration:
   name: mon
+  version: V9
   replicationFactor: <%= replication_factor %>
   retentionPolicy: <%= retention_policy %>
   url: http://localhost:8086

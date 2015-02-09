@@ -18,7 +18,7 @@ then
     exit 1
 fi
 
-
+CONFIG_FILE="/etc/opt/influxdb/influxdb.conf"
 INFLUX_HOST="<%= influxdb_host %>:<%= influxdb_port %>"
 INFLUX_ADMIN="<%= influxdb_user %>"
 MONASCA_DB="mon"
@@ -30,28 +30,47 @@ TMP_RETENTION_POLICY_NAME="<%= influxdb_tmp_ret_pol_name %>"
 TMP_RETENTION_POLICY_DURATION="<%= influxdb_tmp_ret_pol_duration %>"
 RETENTION_POLICY_REPLICATION_FACTOR="<%= influxdb_retention_replication %>"
 
-HTTP_CODE=`curl -s -w "%{http_code}" "http://$INFLUX_HOST/ping" -o /dev/null`
-PING_RC=$?
-ATTEMPTS=1
-
-until [ $PING_RC -eq "0" ] && [ $HTTP_CODE -eq "204" ]
-do
+wait_for_influx()
+{
     HTTP_CODE=`curl -s -w "%{http_code}" "http://$INFLUX_HOST/ping" -o /dev/null`
     PING_RC=$?
-    ATTEMPTS=$((ATTEMPTS+1))
-    if [ $ATTEMPTS -eq 30 ]
-    then
-        echo "InfluxDB not up after $ATTEMPTS seconds!"
-        echo "HTTP CODE: $HTTP_CODE"
-        echo "CURL RETURN CODE: $PING_RC"
-        exit 1
-    fi
-    sleep 1
-done
+    ATTEMPTS=1
 
-# create the admin user
-q="CREATE USER $INFLUX_ADMIN WITH PASSWORD '$INFLUX_ADMIN_PASSWORD' WITH ALL PRIVILEGES"
-curl -s -G -w "%{http_code} CREATE USER $INFLUX_ADMIN\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q" -o /dev/null
+    until [ $PING_RC -eq "0" ] && [ $HTTP_CODE -eq "204" ]
+    do
+        HTTP_CODE=`curl -s -w "%{http_code}" "http://$INFLUX_HOST/ping" -o /dev/null`
+        PING_RC=$?
+        ATTEMPTS=$((ATTEMPTS+1))
+        if [ $ATTEMPTS -eq 30 ]
+        then
+            echo "InfluxDB not up after $ATTEMPTS seconds!"
+            echo "HTTP CODE: $HTTP_CODE"
+            echo "CURL RETURN CODE: $PING_RC"
+            exit 1
+        fi
+        sleep 1
+    done
+}
+
+wait_for_influx
+
+USERS=`curl -s -G http://$INFLUX_HOST/query --data-urlencode "q=SHOW USERS"  --data "u=$INFLUX_ADMIN" --data "p=$INFLUX_ADMIN_PASSWORD" --data "pretty=true"`
+# check to see if we've created the root user yet
+if ! grep -q root <<<$USERS
+then
+    # Nope, need to restart in insecure mode the first time
+    # to create the admin user.
+    echo "Restarting influxdb in insecure mode to create first user"
+    sed -i -e '/\[authentication\]/{n;s/.*/enabled = false/}' $CONFIG_FILE
+    service influxdb restart
+    wait_for_influx
+    q="CREATE USER $INFLUX_ADMIN WITH PASSWORD '$INFLUX_ADMIN_PASSWORD' WITH ALL PRIVILEGES"
+    curl -s -G -w "%{http_code} CREATE USER $INFLUX_ADMIN\\n" http://$INFLUX_HOST/query --data-urlencode "q=$q" -o /dev/null
+    echo "Restarting influxdb in secure mode"
+    sed -i -e '/\[authentication\]/{n;s/.*/enabled = true/}' $CONFIG_FILE
+    service influxdb restart
+    wait_for_influx
+fi
 
 # create the database
 q="CREATE DATABASE $MONASCA_DB"

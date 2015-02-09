@@ -8,7 +8,7 @@ class monasca::persister (
   $pers_user          = 'persister',
   $pers_db_user       = 'mon_persister',
   $zookeeper_servers  = undef,
-  $database_type      = 'influxdb09',
+  $database_type      = 'influxdb',
   $replication_factor = 1,
   $consumer_id        = 1,
   $retention_policy   = 'raw',
