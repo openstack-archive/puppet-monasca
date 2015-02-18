@@ -17,6 +17,8 @@ class monasca::api (
   $api_fetch_url = "http://${blobmirror}/repos/monasca/monasca_api"
   $latest_api_deb = "/tmp/${mon_api_deb}"
   $api_cfg_file = '/etc/monasca/api-config.yml'
+  $stack_script_src = 'puppet:///modules/monasca/monasca_stack.sh'
+  $stack_script = '/usr/bin/monasca_stack.sh'
 
   wget::fetch { "${api_fetch_url}/${mon_api_build_ver}/${mon_api_deb}":
     destination => $latest_api_deb,
@@ -70,5 +72,13 @@ class monasca::api (
   tidy { '/tmp':
     matches => 'monasca*.deb',
     recurse => true,
+  }
+
+  file { $stack_script:
+    ensure => file,
+    source => $stack_script_src,
+    mode   => '0755',
+    owner  => 'root',
+    group  => 'root',
   }
 }
