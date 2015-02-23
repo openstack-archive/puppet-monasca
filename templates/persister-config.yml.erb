@@ -1,11 +1,11 @@
-name: monasca-persister
+name: <%= persister_service_name %>
 
 alarmHistoryConfiguration:
   batchSize: 10000
   numThreads: 1
   maxBatchTime: 30
   topic:   alarm-state-transitions
-  groupId: 1_alarm-state-transitions
+  groupId: <%= persister_config['consumer_group_id'] %>_alarm-state-transitions
   consumerId: <%= consumer_id %>
   clientId : 1
 
@@ -14,7 +14,7 @@ metricConfiguration:
   numThreads: 1
   maxBatchTime: 30
   topic:   metrics
-  groupId: 1_metrics
+  groupId: <%= persister_config['consumer_group_id'] %>_metrics
   consumerId: <%= consumer_id %>
   clientId : 1
 
@@ -47,7 +47,7 @@ influxDbConfiguration:
   maxHttpConnections: 100
   replicationFactor: <%= replication_factor %>
   retentionPolicy: <%= retention_policy %>
-  url: http://localhost:8086
+  url: <%= persister_config['database_url'] %>
   user: <%= pers_db_user %>
   password: <%= api_db_password %>
 
@@ -67,15 +67,15 @@ logging:
     - type: file
       threshold: INFO
       archive: true
-      currentLogFilename: /var/log/monasca/monasca-persister.log
-      archivedLogFilenamePattern: /var/log/monasca/monasca-persister.log-%d.log.gz
+      currentLogFilename: /var/log/monasca/<%= persister_service_name %>.log
+      archivedLogFilenamePattern: /var/log/monasca/<%= persister_service_name %>.log-%d.log.gz
       archivedFileCount: 5
       timeZone: UTC
 
 server:
   applicationConnectors:
     - type: http
-      port: 8090
+      port: <%= persister_config['application_port'] %>
   adminConnectors:
     - type: http
-      port: 8091
+      port: <%= persister_config['admin_port'] %>

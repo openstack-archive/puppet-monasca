@@ -20,6 +20,12 @@ class monasca::params(
     $sql_host        = undef,
     $sql_user        = undef,
     $sql_password    = undef,
+    $persister_config_defaults = {
+      'admin_port'         => 8091,
+      'application_port'   => 8090,
+      'consumer_group_id'  => 1,
+      'database_url'       => 'http://localhost:8086',
+    }
 ) {
   validate_string($admin_password)
   validate_string($agent_password)

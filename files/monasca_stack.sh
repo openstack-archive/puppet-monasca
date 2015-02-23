@@ -1,6 +1,6 @@
 #!/bin/sh
 
-MIRROR_FILE="/opt/kafka/config/mirror.properties"
+MIRROR_FILE="/etc/monasca/monasca-persister-mirror.yml"
 STORM_FILE="/opt/storm/current/conf/storm.yaml"
 
 #
@@ -8,18 +8,16 @@ STORM_FILE="/opt/storm/current/conf/storm.yaml"
 # started in.
 #
 get_up_list() {
-    echo "influxdb zookeeper kafka"
-
-    if [ -e $MIRROR_FILE ]
-    then
-        echo "kafka-mirror"
-    fi
-
-    echo "storm-supervisor"
+    echo "influxdb zookeeper kafka storm-supervisor"
 
     if grep nimbus.host $STORM_FILE | grep $(hostname) > /dev/null
     then
         echo "storm-nimbus storm-ui monasca-thresh"
+    fi
+
+    if [ -e $MIRROR_FILE ]
+    then
+        echo "monasca-persister-mirror"
     fi
 
     echo "monasca-persister monasca-api"
@@ -33,19 +31,17 @@ get_down_list() {
 
     echo "monasca-api monasca-persister"
 
+    if [ -e $MIRROR_FILE ]
+    then
+        echo "monasca-persister-mirror"
+    fi
+
     if grep nimbus.host $STORM_FILE | grep $(hostname) > /dev/null
     then
         echo "monasca-thresh storm-ui storm-nimbus"
     fi
 
-    echo "storm-supervisor"
-
-    if [ -e $MIRROR_FILE ]
-    then
-        echo "kafka-mirror"
-    fi
-
-    echo "kafka zookeeper influxdb"
+    echo "storm-supervisor kafka zookeeper influxdb"
 }
 
 status() {
@@ -83,6 +79,16 @@ tail_metrics() {
     /usr/bin/tail -f /tmp/kafka-logs/metr*/*log | /usr/bin/strings
 }
 
+lag() {
+    #
+    # Print the consumer lag -- ignore java log warnings
+    #
+    /opt/kafka/bin/kafka-run-class.sh  kafka.tools.ConsumerOffsetChecker \
+                                       --zkconnect localhost:2181 \
+                                       --topic metrics --group $1 2>&1 \
+                                       | grep -v SLF4J
+}
+
 case "$1" in
   status)
     status
@@ -104,7 +110,13 @@ case "$1" in
   tail-metrics)
     tail_metrics
         ;;
+  local-lag)
+    lag '1_metrics'
+        ;;
+  mirror-lag)
+    lag '2_metrics'
+        ;;
   *)
-        echo "Usage: "$1" {status|start|stop|restart|tail-logs|tail-metrics}"
+        echo "Usage: "$1" {status|start|stop|restart|tail-logs|tail-metrics|local-lag|mirror-lag}"
         exit 1
 esac

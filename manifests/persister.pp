@@ -3,22 +3,18 @@
 #
 class monasca::persister (
   $blobmirror         = undef,
+  $consumer_id        = 1,
+  $config             = $monasca::params::persister_config_defaults,
   $mon_pers_build_ver = undef,
   $mon_pers_deb       = undef,
   $pers_user          = 'persister',
-  $pers_db_user       = 'mon_persister',
   $zookeeper_servers  = undef,
-  $database_type      = 'influxdb',
-  $replication_factor = 1,
-  $consumer_id        = 1,
-  $retention_policy   = 'raw',
 ) {
   include monasca
   include monasca::params
 
   $pers_fetch_url = "http://${blobmirror}/repos/monasca/monasca_persister"
   $latest_pers_deb = "/tmp/${mon_pers_deb}"
-  $pers_cfg_file = '/etc/monasca/persister-config.yml'
 
   wget::fetch { "${pers_fetch_url}/${mon_pers_build_ver}/${mon_pers_deb}":
     destination => $latest_pers_deb,
@@ -43,20 +39,5 @@ class monasca::persister (
     require => Group[$::monasca::group],
   }
 
-  $api_db_password = $::monasca::params::api_db_password
-
-  file { $pers_cfg_file:
-    ensure  => file,
-    content => template('monasca/persister-config.yml.erb'),
-    mode    => '0644',
-    owner   => $pers_user,
-    group   => $::monasca::group,
-    require => [User[$pers_user], Group[$::monasca::group], File[$::monasca::log_dir]],
-  } ~> Service['monasca-persister']
-
-  service { 'monasca-persister':
-    ensure  => running,
-    require => [File[$pers_cfg_file],File[$latest_pers_deb],Package['install-persister']],
-  }
-
+  create_resources('monasca::persister::config', $config)
 }
