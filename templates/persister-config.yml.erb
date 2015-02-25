@@ -44,6 +44,7 @@ databaseConfiguration:
 influxDbConfiguration:
   name: mon
   version: V9
+  maxHttpConnections: 100
   replicationFactor: <%= replication_factor %>
   retentionPolicy: <%= retention_policy %>
   url: http://localhost:8086

@@ -71,6 +71,18 @@ stop() {
     done
 }
 
+tail_logs() {
+    /usr/bin/tail -f /opt/storm/current/logs/*log \
+                     /var/log/monasca/*log \
+                     /var/log/influxdb/*log \
+                     /var/log/kafka/*log \
+                     /opt/kafka/logs/*log
+}
+
+tail_metrics() {
+    /usr/bin/tail -f /tmp/kafka-logs/metr*/*log | /usr/bin/strings
+}
+
 case "$1" in
   status)
     status
@@ -86,7 +98,13 @@ case "$1" in
     sleep 2
     start
         ;;
+  tail-logs)
+    tail_logs
+        ;;
+  tail-metrics)
+    tail_metrics
+        ;;
   *)
-        echo "Usage: "$1" {status|start|stop|restart}"
+        echo "Usage: "$1" {status|start|stop|restart|tail-logs|tail-metrics}"
         exit 1
 esac
