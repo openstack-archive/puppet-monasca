@@ -59,13 +59,6 @@ class monasca::agent(
     ensure_packages('python-virtualenv')
     ensure_packages('python-dev')
 
-    file { $virtual_env :
-      ensure  => directory,
-      owner   => 'root',
-      group   => 'root',
-      recurse => true,
-      before  => Python::Virtualenv[$virtual_env],
-    }
     python::virtualenv { $virtual_env :
       owner   => 'root',
       group   => 'root',
