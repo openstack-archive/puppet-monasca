@@ -68,7 +68,7 @@ middleware:
   connRetryInterval: 50
   defaultAuthorizedRoles: [admin,user,_member_]
   agentAuthorizedRoles: [monasca-agent]
-  adminAuthMethod: password
+  adminAuthMethod: <%= auth_method %>
   adminUser: <%= admin_name %>
   adminPassword: <%= admin_password %>
   adminToken: <%= keystone_admin_token %>

@@ -12,6 +12,7 @@ class monasca::params(
     $region          = 'RegionOne',
     $admin_name      = 'monasca-admin',
     $agent_name      = 'monasca-agent',
+    $auth_method     = 'token',
     $admin_password  = undef,
     $agent_password  = undef,
     $sql_host        = undef,
