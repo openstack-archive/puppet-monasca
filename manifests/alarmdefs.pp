@@ -9,6 +9,8 @@ class monasca::alarmdefs(
   $auth_url = undef,
   $project_name = undef,
   $virtual_env = '/var/www/monasca-alarmdefs',
+  $install_python_deps     = true,
+  $python_dep_ensure       = 'present',
 )
 {
   include monasca::params
@@ -17,7 +19,12 @@ class monasca::alarmdefs(
   $script_name = 'bootstrap-alarm-definitions.py'
   $script = "${virtual_env}/bin/${script_name}"
 
-  ensure_packages(['python-virtualenv','python-dev'])
+  if $install_python_deps {
+    package { ['python-virtualenv', 'python-dev']:
+      ensure => $python_dep_ensure,
+      before => Python::Virtualenv[$virtual_env],
+    }
+  }
 
   python::virtualenv { $virtual_env :
     owner   => 'root',
