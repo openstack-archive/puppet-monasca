@@ -44,6 +44,8 @@ class monasca::agent(
   $virtual_env             = '/var/www/monasca-agent',
   $agent_user              = 'monasca-agent',
   $agent_version           = 'latest',
+  $install_python_deps     = true,
+  $python_dep_ensure       = 'present',
 ) {
   include monasca
   include monasca::params
@@ -56,8 +58,12 @@ class monasca::agent(
   Agent_config<||> ~> Service['monasca-agent']
 
   if $::monasca::params::agent_package {
-    ensure_packages('python-virtualenv')
-    ensure_packages('python-dev')
+    if $install_python_deps {
+      package { ['python-virtualenv', 'python-dev']:
+        ensure => $python_dep_ensure,
+        before => Python::Virtualenv[$virtual_env],
+      }
+    }
 
     python::virtualenv { $virtual_env :
       owner   => 'root',
