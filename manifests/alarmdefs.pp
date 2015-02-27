@@ -19,18 +19,11 @@ class monasca::alarmdefs(
 
   ensure_packages(['python-virtualenv','python-dev'])
 
-  file { '/var/www':
-    ensure  => 'directory',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0755',
-  }
-
   python::virtualenv { $virtual_env :
     owner   => 'root',
     group   => 'root',
     before  => [Exec[$script], File[$script]],
-    require => [Package['python-virtualenv'],Package['python-dev'],File['/var/www']],
+    require => [Package['python-virtualenv'],Package['python-dev']],
   }
 
   python::pip { 'python-keystoneclient' :
