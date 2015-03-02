@@ -3,6 +3,7 @@
 #
 define monasca::checks::instances::nagios_wrapper (
   $check_command,
+  $check_name     = undef,
   $host_name      = undef,
   $check_interval = undef,
   $dimensions     = undef,
