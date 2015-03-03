@@ -180,6 +180,12 @@ class monasca::keystone::auth (
       require => [Keystone_role['monasca-agent'], Keystone_role['monitoring-delegate']],
       before  => Python::Pip['monasca-agent'],
     }
+    keystone_user_role { "${admin_name}@${tenant}":
+      ensure  => present,
+      roles   => ['admin'],
+      require => [Keystone_role['monasca-agent'], Keystone_role['monitoring-delegate']],
+      before  => Python::Pip['monasca-agent'],
+    }
   }
 
   keystone_service { $real_service_name:
