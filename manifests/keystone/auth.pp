@@ -8,12 +8,19 @@
 #
 # [*admin_name*]
 #    Username for Monasca admin service. Optional. Defaults to 'monasca-admin'.
+
+# [*user_name*]
+#    Username for vanilla Monasca user. Optional. Defaults to 'monasca-user'.
+#    This user can read and write data for their tenant.
 #
 # [*agent_name*]
 #    Username for Monasca agent service. Optional. Defaults to 'monasca-agent'.
 #
 # [*admin_password*]
 #    Password for Monasca admin user. Required.
+#
+# [*user_password*]
+#    Password for Monasca default user. Required.
 #
 # [*agent_password*]
 #    Password for Monasca agent user. Required.
@@ -23,6 +30,9 @@
 #
 # [*agent_email*]
 #   Email for Monasca agent user. Optional. Defaults to 'monasca@localhost'.
+#
+# [*user_email*]
+#   Email for Monasca default. Optional. Defaults to 'monasca@localhost'.
 #
 # [*configure_endpoint*]
 #   Should Monasca endpoint be configured? Optional. Defaults to 'true'.
@@ -91,6 +101,7 @@ class monasca::keystone::auth (
   $auth_name           = 'monasca',
   $admin_email         = 'monasca@localhost',
   $agent_email         = 'monasca@localhost',
+  $user_email          = 'monasca@localhost',
   $configure_user      = true,
   $configure_user_role = true,
   $service_name        = undef,
@@ -111,11 +122,16 @@ class monasca::keystone::auth (
 
   $admin_name = $::monasca::params::admin_name
   $agent_name = $::monasca::params::agent_name
+  $user_name = $::monasca::params::user_name
   $admin_password = $::monasca::params::admin_password
   $agent_password = $::monasca::params::agent_password
+  $user_password = $::monasca::params::user_password
   $port = $::monasca::params::port
   $api_version = $::monasca::params::api_version
   $region = $::monasca::params::region
+  $default_roles = [Keystone_role['monasca-agent'],
+                    Keystone_role['monitoring-delegate'],
+                    Keystone_role['monasca-user']]
 
   if $public_url {
     $public_url_real = $public_url
@@ -156,12 +172,21 @@ class monasca::keystone::auth (
       tenant   => $tenant,
       before   => Python::Pip['monasca-agent'],
     }
+    keystone_user { $user_name:
+      ensure   => present,
+      password => $user_password,
+      email    => $user_email,
+      tenant   => $tenant,
+      before   => Python::Pip['monasca-agent'],
+    }
   }
 
   if $configure_user_role {
     Keystone_user_role["${admin_name}@${tenant}"] ~>
       Service <| name == 'monasca-api' |>
     Keystone_user_role["${agent_name}@${tenant}"] ~>
+      Service <| name == 'monasca-api' |>
+    Keystone_user_role["${user_name}@${tenant}"] ~>
       Service <| name == 'monasca-api' |>
 
     if !defined(Keystone_role['monasca-agent']) {
@@ -174,16 +199,28 @@ class monasca::keystone::auth (
         ensure => present,
       }
     }
+    if !defined(Keystone_role['monasca-user']) {
+      keystone_role { 'monasca-user':
+        ensure => present,
+      }
+    }
     keystone_user_role { "${agent_name}@${tenant}":
       ensure  => present,
       roles   => ['monasca-agent', 'monitoring-delegate'],
-      require => [Keystone_role['monasca-agent'], Keystone_role['monitoring-delegate']],
+      require => $default_roles,
       before  => Python::Pip['monasca-agent'],
     }
     keystone_user_role { "${admin_name}@${tenant}":
       ensure  => present,
       roles   => ['admin'],
-      require => [Keystone_role['monasca-agent'], Keystone_role['monitoring-delegate']],
+      require => $default_roles,
+      before  => Python::Pip['monasca-agent'],
+    }
+
+    keystone_user_role { "${user_name}@${tenant}":
+      ensure  => present,
+      roles   => ['monasca-user'],
+      require => $default_roles,
       before  => Python::Pip['monasca-agent'],
     }
   }
