@@ -4,6 +4,9 @@
 class monasca::persister (
   $blobmirror         = undef,
   $consumer_id        = 1,
+  $batch_size         = 10000,
+  $num_threads        = 1,
+  $batch_seconds      = 30,
   $config             = $monasca::params::persister_config_defaults,
   $mon_pers_build_ver = undef,
   $mon_pers_deb       = undef,

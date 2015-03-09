@@ -9,6 +9,9 @@ define monasca::persister::config (
   $database_type      = 'influxdb',
   $replication_factor = 1,
   $consumer_id        = $monasca::persister::consumer_id,
+  $batch_size         = $monasca::persister::batch_size,
+  $num_threads        = $monasca::persister::num_threads,
+  $batch_seconds      = $monasca::persister::batch_seconds,
   $retention_policy   = 'raw',
 ) {
   include monasca::params
