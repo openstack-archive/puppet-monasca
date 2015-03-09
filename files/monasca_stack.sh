@@ -10,7 +10,7 @@ STORM_FILE="/opt/storm/current/conf/storm.yaml"
 get_up_list() {
     echo "influxdb zookeeper kafka storm-supervisor"
 
-    if grep nimbus.host $STORM_FILE | grep $(hostname) > /dev/null
+    if grep nimbus.host $STORM_FILE | grep -e $(hostname) -e localhost > /dev/null
     then
         echo "storm-nimbus storm-ui monasca-thresh"
     fi
@@ -36,7 +36,7 @@ get_down_list() {
         echo "monasca-persister-mirror"
     fi
 
-    if grep nimbus.host $STORM_FILE | grep $(hostname) > /dev/null
+    if grep nimbus.host $STORM_FILE | grep -e $(hostname) -e localhost > /dev/null
     then
         echo "monasca-thresh storm-ui storm-nimbus"
     fi
