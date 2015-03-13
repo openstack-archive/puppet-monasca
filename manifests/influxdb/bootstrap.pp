@@ -7,7 +7,7 @@ class monasca::influxdb::bootstrap(
   $influxdb_def_ret_pol_name = 'raw',
   $influxdb_def_ret_pol_duration = '390d',
   $influxdb_tmp_ret_pol_name = 'tmp',
-  $influxdb_tmp_ret_pol_duration = '5m',
+  $influxdb_tmp_ret_pol_duration = '1h',
   $influxdb_retention_replication = 1,
 )
 {
