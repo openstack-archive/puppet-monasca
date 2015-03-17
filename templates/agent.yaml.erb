@@ -1,0 +1,52 @@
+Api:
+  url: <%= @url %>
+  username: <%= @username %>
+  password: <%= @password %>
+  keystone_url: <%= @keystone_url %>
+  project_name: <%= @project_name %>
+  project_domain_id: <%= @project_domain_id %>
+  project_domain_name: <%= @project_domain_name %>
+  project_id: <%= @project_id %>
+<%- if @ca_file -%>
+  insecure: false
+  ca_file: <%= @ca_file %>
+<%- else -%>
+  insecure: true
+<%- end -%>
+  max_buffer_size: <%= @max_buffer_size %>
+  backlog_send_rate: <%= @backlog_send_rate %>
+  amplifier: <%= @amplifier %>
+
+Main:
+<%- if @hostname -%>
+  hostname: <%= @hostname %>
+<%- end -%>
+  dimensions:
+    service: <%= @service %>
+<%- @dimensions.each_pair do |key, value| -%>
+    <%= key %>: <%= value %>
+<%- end -%>
+  recent_point_threshold: <%= @recent_point_threshold %>
+  check_freq: <%= @check_freq %>
+  listen_port: <%= @listen_port %>
+  additional_checksd: <%= @additional_checksd %>
+  non_local_traffic: <%= @non_local_traffic %>
+
+Statsd:
+  monasca_statsd_port:  <%= @statsd_port %>
+  monasca_statsd_interval : <%= @statsd_interval %>
+<%- if @statsd_forward_host -%>
+  monasca_statsd_forward_host: <%= @statsd_forward_host %>
+  monasca_statsd_statsd_forward_port: <%= @statsd_forward_port %>
+<%- end -%>
+
+Logging:
+  log_level: <%= @log_level %>
+  collector_log_file: <%= @collector_log_file %>
+  forwarder_log_file: <%= @forwarder_log_file %>
+  statsd_log_file: <%= @monstatsd_log_file %>
+  log_to_syslog: <%= @log_to_syslog %>
+<%- if @syslog_host and @syslog_port -%>
+  syslog_host: <%= @syslog_host %>
+  syslog_port: <%= @syslog_port %>
+<%- end -%>

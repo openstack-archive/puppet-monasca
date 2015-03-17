@@ -12,18 +12,18 @@
 
 . <%= @virtual_env %>/bin/activate
 . /lib/lsb/init-functions
-PATH=$PATH:<%= @virtual_env %>/bin # supervisord might live here
 PATH=$PATH:/sbin # add the location of start-stop-daemon on Debian
+export PYTHONPATH=$PYTHONPATH:/usr/monasca/agent/
 
 AGENTPATH="<%= @virtual_env %>/bin/monasca-collector"
-AGENTCONF="/etc/monasca/agent/agent.conf"
-MONSTATSDPATH="<%= @virtual_env %>/bin/monasca-statsd"
+AGENTCONF="/etc/monasca/agent/agent.yaml"
+MONASCASTATSDPATH="<%= @virtual_env %>/bin/monasca-statsd"
 AGENTUSER="monasca-agent"
 FORWARDERPATH="<%= @virtual_env %>/bin/monasca-forwarder"
 NAME="monasca-agent"
 DESC="Monasca Monitoring Agent"
-AGENT_PID_PATH="/var/tmp/monasca-agent.pid"
-SUPERVISOR_PIDFILE="/var/tmp/monasca-agent-supervisord.pid"
+AGENT_PID_PATH="/var/run/monasca-agent.pid"
+SUPERVISOR_PIDFILE="/var/run/monasca-agent-supervisord.pid"
 SUPERVISOR_FILE="<%= @virtual_env %>/share/monasca/agent/supervisor.conf"
 SUPERVISOR_SOCK="/var/tmp/monasca-agent-supervisor.sock"
 SUPERVISORD=$(which supervisord)
@@ -88,7 +88,7 @@ case "$1" in
 
 
         log_daemon_msg "Starting $DESC (using supervisord)" "$NAME"
-        start-stop-daemon --start --quiet --oknodo --exec $SUPERVISORD -- -c $SUPERVISOR_FILE -u $AGENTUSER --pidfile $SUPERVISOR_PIDFILE
+        start-stop-daemon --start --quiet --oknodo --exec $SUPERVISORD -- -c $SUPERVISOR_FILE --pidfile $SUPERVISOR_PIDFILE
         if [ $? -ne 0 ]; then
             log_end_msg 1
         fi
@@ -115,7 +115,7 @@ case "$1" in
 
         log_daemon_msg "Stopping $DESC (stopping supervisord)" "$NAME"
         start-stop-daemon --stop --retry 30 --quiet --oknodo --pidfile $SUPERVISOR_PIDFILE
-
+   
         log_end_msg $?
 
         ;;
@@ -126,11 +126,11 @@ case "$1" in
               # (right now only monasca-agent supports additional flags)
         su $AGENTUSER -c "$AGENTPATH info $@"
         COLLECTOR_RETURN=$?
-        su $AGENTUSER -c "$MONSTATSDPATH info"
-        MONSTATSD_RETURN=$?
+        su $AGENTUSER -c "$MONASCASTATSDPATH info"
+        MONASCASTATSD_RETURN=$?
         su $AGENTUSER -c "$FORWARDERPATH info"
         FORWARDER_RETURN=$?
-        exit $(($COLLECTOR_RETURN+$MONSTATSD_RETURN+$FORWARDER_RETURN))
+        exit $(($COLLECTOR_RETURN+$MONASCASTATSD_RETURN+$FORWARDER_RETURN))
         ;;
 
     status)

@@ -14,26 +14,24 @@ class monasca::agent(
   $password,
   $keystone_url,
   $service,
-  $project_name            = 'services',
-  $hostname                = undef,
-  $dimensions              = 'None',
+  $project_name            = 'null',
+  $project_domain_id       = 'null',
+  $project_domain_name     = 'null',
+  $project_id              = 'null',
   $ca_file                 = undef,
   $max_buffer_size         = '1000',
   $backlog_send_rate       = '1000',
   $amplifier               = '0',
+  $hostname                = undef,
+  $dimensions              = {},
   $recent_point_threshold  = '30',
-  $use_mount               = 'no',
+  $check_freq              = '15',
   $listen_port             = '17123',
   $non_local_traffic       = 'no',
-  $system_metrics          = 'cpu,disk,io,load,memory',
-  $device_blacklist_re     = '.*\/dev\/mapper\/lxc-box.*',
-  $ignore_filesystem_types = 'tmpfs,devtmpfs',
   $statsd_port             = '8125',
   $statsd_interval         = '10',
-  $statsd_normalize        = 'yes',
   $statsd_forward_host     = undef,
   $statsd_forward_port     = '8125',
-
   $log_level               = 'INFO',
   $collector_log_file      = '/var/log/monasca/agent/collector.log',
   $forwarder_log_file      = '/var/log/monasca/agent/forwarder.log',
@@ -53,9 +51,6 @@ class monasca::agent(
   $agent_dir = "${::monasca::monasca_dir}/agent"
   $additional_checksd = "${agent_dir}/checks.d"
   $conf_dir = "${agent_dir}/conf.d"
-
-  File[$agent_dir] -> Agent_config<||>
-  Agent_config<||> ~> Service['monasca-agent']
 
   if $::monasca::params::agent_package {
     if $install_python_deps {
@@ -100,6 +95,15 @@ class monasca::agent(
     group   => $::monasca::group,
     mode    => '0755',
     require => File[$::monasca::monasca_dir],
+  }
+
+  file { "${agent_dir}/agent.yaml":
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    content => template('monasca/agent.yaml.erb'),
+    require => File[$agent_dir],
+    before  => Service['monasca-agent'],
   }
 
   file { $additional_checksd:
@@ -155,83 +159,5 @@ class monasca::agent(
   service { 'monasca-agent':
     ensure => $ensure,
     name   => $::monasca::params::agent_service,
-  }
-
-  if $hostname {
-    agent_config {
-      'Main/hostname' : value => $hostname;
-    }
-  }
-  else {
-    agent_config {
-      'Main/hostname' : ensure => absent;
-    }
-  }
-
-  if $ca_file {
-    agent_config {
-      'Api/insecure' : value => false;
-      'Api/ca_file'  : value => $ca_file;
-    }
-  }
-  else {
-    agent_config {
-      'Api/insecure' : value  => true;
-      'Api/ca_file'  : ensure => absent;
-    }
-  }
-
-  if $statsd_forward_host {
-    agent_config {
-      'Statsd/monasca_statsd_forward_host'        : value => $statsd_forward_host;
-      'Statsd/monasca_statsd_statsd_forward_port' : value => $statsd_forward_port;
-    }
-  }
-  else {
-    agent_config {
-      'Statsd/monasca_statsd_forward_host'        : ensure => absent;
-      'Statsd/monasca_statsd_statsd_forward_port' : ensure => absent;
-    }
-  }
-
-  if $syslog_host and $syslog_port {
-    agent_config {
-      'Logging/syslog_host' : value => $syslog_host;
-      'Logging/syslog_port' : value => $syslog_port;
-    }
-  }
-  else {
-    agent_config {
-      'Logging/syslog_host' : ensure => absent;
-      'Logging/syslog_port' : ensure => absent;
-    }
-  }
-
-  agent_config {
-    'Api/url':                         value => $url;
-    'Api/username':                    value => $username;
-    'Api/password':                    value => $password;
-    'Api/keystone_url':                value => $keystone_url;
-    'Api/project_name':                value => $project_name;
-    'Api/max_buffer_size':             value => $max_buffer_size;
-    'Api/backlog_send_rate':           value => $backlog_send_rate;
-    'Api/amplifier':                   value => $amplifier;
-    'Main/dimensions' :                value => $dimensions;
-    'Main/recent_point_threshold':     value => $recent_point_threshold;
-    'Main/use_mount':                  value => $use_mount;
-    'Main/listen_port':                value => $listen_port;
-    'Main/additional_checksd':         value => $additional_checksd;
-    'Main/non_local_traffic':          value => $non_local_traffic;
-    'Main/system_metrics':             value => $system_metrics;
-    'Main/device_blacklist_re':        value => $device_blacklist_re;
-    'Main/ignore_filesystem_types':    value => $ignore_filesystem_types;
-    'Statsd/monasca_statsd_port':      value => $statsd_port;
-    'Statsd/monasca_statsd_interval':  value => $statsd_interval;
-    'Statsd/monasca_statsd_normalize': value => $statsd_normalize;
-    'Logging/log_level':               value => $log_level;
-    'Logging/collector_log_file':      value => $collector_log_file;
-    'Logging/forwarder_log_file':      value => $forwarder_log_file;
-    'Logging/monstatsd_log_file':      value => $monstatsd_log_file;
-    'Logging/log_to_syslog':           value => $log_to_syslog;
   }
 }
