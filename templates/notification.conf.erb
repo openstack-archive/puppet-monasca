@@ -1,0 +1,14 @@
+# Startup script for the monasca_notification
+
+description "Monasca Notification daemon"
+start on runlevel [2345]
+
+console log
+respawn
+
+kill timeout 240
+respawn limit 25 5
+
+setgid monasca
+setuid monasca-notification
+exec <%= @virtual_env %>/bin/monasca-notification
