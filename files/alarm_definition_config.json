@@ -2,6 +2,7 @@
    {
       "name":"http_status",
       "expression":"avg(http_status{}) > 0",
-      "severity":"LOW"
+      "severity":"LOW",
+      "match_by":"service,url,tenant_id,region,hostname,id"
    }
 ]
