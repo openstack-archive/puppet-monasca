@@ -3,18 +3,8 @@
 #
 class monasca::kafka::config (
   $kafka_zookeeper_connections = undef,
-  $kafka_replication_factor = undef,
+  $kafka_replication_factor    = undef,
+  $topic_config                = {},
 ) {
-
-  $topics = [
-    'metrics',
-    'events',
-    'alarm-notification',
-    'alarm-state-transitions',
-    'healthcheck']
-
-  monasca::kafka::topics { $topics:
-    kafka_zookeeper_connections => $kafka_zookeeper_connections,
-    kafka_replication_factor    => $kafka_replication_factor,
-  }
+  create_resources('monasca::kafka::topics', $topic_config)
 }

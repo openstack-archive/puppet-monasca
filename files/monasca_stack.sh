@@ -20,7 +20,7 @@ get_up_list() {
         echo "monasca-persister-mirror"
     fi
 
-    echo "monasca-persister monasca-api"
+    echo "monasca-persister monasca-notification monasca-api"
 }
 
 #
@@ -29,7 +29,7 @@ get_up_list() {
 #
 get_down_list() {
 
-    echo "monasca-api monasca-persister"
+    echo "monasca-api monasca-notification monasca-persister"
 
     if [ -e $MIRROR_FILE ]
     then
