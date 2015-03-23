@@ -1,13 +1,13 @@
 Puppet::Parser::Functions.newfunction(:generate_nagios_instances, :type => :rvalue) do |args|
   checks_dict = args[0]
-  nodes_dict = args[1]
-  dimensions_dict = args[2]
-  flags_dict = args[3]
-  existing_instances = args[4]
+  types_dict = args[1]
+  nodes_dict = args[2]
+  dimensions_dict = args[3]
+  flags_dict = args[4]
+  existing_instances = args[5]
 
   existing_instances = {} if existing_instances= ""
   dimensions_dict = {} if dimensions_dict= ""
-  flags_dict = {} if flags_dict= ""
   new_instances = Hash.new
   nodes_dict.each do |groupname, nodes|
     group_dimensions = {}
