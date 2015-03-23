@@ -42,9 +42,21 @@
 #   A hash of node defenitions.
 #   For use with checks and types
 #   Parameters are:
-#       node_name (the instance key): The hostname of the node
-#       type (required): The type of given node.
-#       dimensions
+#       group_name (the instance key): An identifier for a group of nodes.  Used with flags.
+#       This is followed with a list of hostnames
+# [*dimensions*]
+#   A hash of node dimensions to be submitted with the metrics.  All dimensions also act as flags.
+#   For use with checks, types, nodes and flags
+#   Parameters are:
+#       group_name (the instance key): The group of nodes to which the dimensions apply
+#       Any other key value pairs can be provided here.
+# [*flags*]
+#   A hash of node flags for use in the command.
+#   For use with checks, types, nodes and dimensions
+#   Parameters are:
+#       group_name (the instance key): The group of nodes to which the flags apply
+#       type (required): The type of given group of nodes.
+#       Any other key value pairs can be provided here.
 #
 class monasca::checks::nagios_wrapper(
   $check_path     = '/usr/lib/nagios/plugins:/usr/local/bin/nagios',
@@ -53,11 +65,13 @@ class monasca::checks::nagios_wrapper(
   $checks         = undef,
   $types          = undef,
   $nodes          = undef,
+  $dimensions     = undef,
+  $flags          = undef,
 ){
   $conf_dir = $::monasca::agent::conf_dir
 
-  if $checks and $types and $nodes {
-    $real_instances = generate_nagios_instances($checks, $types, $nodes, $instances)
+  if $checks and $types and $nodes and $flags{
+    $real_instances = generate_nagios_instances($checks, $types, $nodes, $dimensions, $flags, $instances)
   }
   else {
     $real_instances = $instances
