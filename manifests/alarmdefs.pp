@@ -75,5 +75,6 @@ class monasca::alarmdefs(
                     "OS_PROJECT_NAME=${project_name}",
                     "MONASCA_API_URL=${api_server_url}"],
     refreshonly => true,
+    require     => Service['monasca-api'],
   }
 }
