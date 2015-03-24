@@ -1,8 +1,4 @@
-<%- if @check_name -%>
- - name: <%= @check_name %>
-<%- else -%>
  - name: <%= @title %>
-<%- end -%>
    check_command: <%= @check_command %>
 <%- if @host_name -%>
    host_name: <%= @host_name %>

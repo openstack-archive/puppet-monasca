@@ -21,7 +21,7 @@ Puppet::Parser::Functions.newfunction(:generate_nagios_instances, :type => :rval
       check_list.each do |check_name|
         check = checks_dict[check_name]
         new_check = Hash.new
-        new_check["name"] = check_name
+        new_check["check_name"] = check_name
         new_command = check["check_command"]
         group_dimensions.each do |key, value|
           to_sub = '<'
