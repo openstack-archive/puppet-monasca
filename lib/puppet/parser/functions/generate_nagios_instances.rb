@@ -6,8 +6,8 @@ Puppet::Parser::Functions.newfunction(:generate_nagios_instances, :type => :rval
   flags_dict = args[4]
   existing_instances = args[5]
 
-  existing_instances = {} if existing_instances= ""
-  dimensions_dict = {} if dimensions_dict= ""
+  existing_instances = {} if existing_instances == ""
+  dimensions_dict = {} if dimensions_dict == ""
   new_instances = Hash.new
   nodes_dict.each do |groupname, nodes|
     group_dimensions = {}
