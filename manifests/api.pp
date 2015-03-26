@@ -19,12 +19,14 @@ class monasca::api (
   $api_cfg_file = '/etc/monasca/api-config.yml'
   $stack_script_src = 'puppet:///modules/monasca/monasca_stack.sh'
   $stack_script = '/usr/bin/monasca_stack.sh'
+  $startup_script = '/etc/init/monasca-api.conf'
+  $startup_script_src = 'puppet:///modules/monasca/monasca-api.conf'
 
   wget::fetch { "${api_fetch_url}/${mon_api_build_ver}/${mon_api_deb}":
     destination => $latest_api_deb,
     timeout     => 300,
     before      => [Package['install-api'],File[$latest_api_deb]],
-  }
+  } ~> Service['monasca-api']
 
   user { $api_user:
     ensure  => present,
@@ -66,7 +68,10 @@ class monasca::api (
 
   service { 'monasca-api':
     ensure  => running,
-    require => [File[$api_cfg_file],File[$latest_api_deb],Package['install-api']],
+    require => [File[$api_cfg_file],
+                File[$latest_api_deb],
+                File[$startup_script],
+                Package['install-api']],
   }
 
   # Remove any old debs (puppet won't delete current resources)
@@ -78,6 +83,14 @@ class monasca::api (
   file { $stack_script:
     ensure => file,
     source => $stack_script_src,
+    mode   => '0755',
+    owner  => 'root',
+    group  => 'root',
+  }
+
+  file { $startup_script:
+    ensure => file,
+    source => $startup_script_src,
     mode   => '0755',
     owner  => 'root',
     group  => 'root',

@@ -19,12 +19,14 @@ class monasca::thresh (
   $thresh_fetch_url = "http://${blobmirror}/repos/monasca/monasca_thresh"
   $latest_thresh_deb = "/tmp/${mon_thresh_deb}"
   $thresh_cfg_file = '/etc/monasca/thresh-config.yml'
+  $startup_script = '/etc/init.d/monasca-thresh'
+  $startup_script_src = 'puppet:///modules/monasca/monasca-thresh'
 
   wget::fetch { "${thresh_fetch_url}/${mon_thresh_build_ver}/${mon_thresh_deb}":
     destination => $latest_thresh_deb,
     timeout     => 300,
     before      => [Package['install-thresh'], File[$latest_thresh_deb]],
-  }
+  } ~> Service['monasca-thresh']
 
   file { $latest_thresh_deb:
     ensure => present,
@@ -48,6 +50,17 @@ class monasca::thresh (
 
   service { 'monasca-thresh':
     ensure  => running,
-    require => [File[$thresh_cfg_file],File[$latest_thresh_deb],Package['install-thresh']],
+    require => [File[$thresh_cfg_file],
+                File[$latest_thresh_deb],
+                File[$startup_script],
+                Package['install-thresh']],
+  }
+
+  file { $startup_script:
+    ensure => file,
+    source => $startup_script_src,
+    mode   => '0755',
+    owner  => 'root',
+    group  => 'root',
   }
 }
