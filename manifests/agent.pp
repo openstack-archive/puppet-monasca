@@ -104,7 +104,7 @@ class monasca::agent(
     content => template('monasca/agent.yaml.erb'),
     require => File[$agent_dir],
     before  => Service['monasca-agent'],
-  }
+  } ~> Service['monasca-agent']
 
   file { $additional_checksd:
     ensure  => 'directory',
