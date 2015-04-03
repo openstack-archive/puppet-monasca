@@ -1,5 +1,8 @@
  - name: <%= @title %>
    check_command: <%= @check_command %>
+<%- if @check_name -%>
+   metric_name: <%= @check_name %>
+<%- end -%>
 <%- if @host_name -%>
    host_name: <%= @host_name %>
 <%- end -%>
