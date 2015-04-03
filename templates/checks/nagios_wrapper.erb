@@ -10,5 +10,8 @@
    check_interval: <%= @check_interval %>
 <%- end -%>
 <%- if @dimensions -%>
-   dimensions: <%= @dimensions %>
+   dimensions: 
+<%- @dimensions.each do |key, value| -%>
+      <%= key %>: <%= value %>
+<%- end -%>
 <%- end -%>
