@@ -2,13 +2,14 @@
 # Class to setup monasca api
 #
 class monasca::api (
+  $api_user             = 'monasca_api',
   $blobmirror           = undef,
-  $mon_api_build_ver    = undef,
-  $mon_api_deb          = undef,
   $kafka_brokers        = undef,
   $keystone_endpoint    = undef,
   $keystone_admin_token = undef,
-  $api_user             = 'monasca_api',
+  $mon_api_build_ver    = undef,
+  $mon_api_deb          = undef,
+  $region_name          = 'NA',
   $zookeeper_servers    = undef,
 ) {
   include monasca
@@ -52,7 +53,6 @@ class monasca::api (
   $sql_host = $::monasca::params::sql_host
   $sql_user = $::monasca::params::sql_user
   $sql_password = $::monasca::params::sql_password
-  $region_name = $::monasca::params::region
   $monasca_api_port = $::monasca::params::port
   $api_db_user = $::monasca::params::api_db_user
   $api_db_password = $::monasca::params::api_db_password
