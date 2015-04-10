@@ -4,6 +4,7 @@
 class monasca::api (
   $api_user             = 'monasca_api',
   $blobmirror           = undef,
+  $gzip_setting         = true,
   $kafka_brokers        = undef,
   $keystone_endpoint    = undef,
   $keystone_admin_token = undef,

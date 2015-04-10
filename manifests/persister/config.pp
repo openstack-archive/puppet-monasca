@@ -2,17 +2,18 @@
 # Defined type to setup monasca persister
 #
 define monasca::persister::config (
-  $config             = {},
-  $pers_user          = $monasca::persister::pers_user,
-  $pers_db_user       = 'mon_persister',
-  $zookeeper_servers  = $monasca::persister::zookeeper_servers,
-  $database_type      = 'influxdb',
-  $replication_factor = 1,
-  $consumer_id        = $monasca::persister::consumer_id,
-  $batch_size         = $monasca::persister::batch_size,
-  $num_threads        = $monasca::persister::num_threads,
   $batch_seconds      = $monasca::persister::batch_seconds,
+  $batch_size         = $monasca::persister::batch_size,
+  $config             = {},
+  $consumer_id        = $monasca::persister::consumer_id,
+  $database_type      = 'influxdb',
+  $gzip_setting       = true,
+  $num_threads        = $monasca::persister::num_threads,
+  $pers_db_user       = 'mon_persister',
+  $pers_user          = $monasca::persister::pers_user,
+  $replication_factor = 1,
   $retention_policy   = 'raw',
+  $zookeeper_servers  = $monasca::persister::zookeeper_servers,
 ) {
   include monasca::params
   $persister_config = deep_merge($monasca::params::persister_config_defaults, $config)

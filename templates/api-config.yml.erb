@@ -34,6 +34,7 @@ influxDB:
   name: mon
   version: V9
   maxHttpConnections: 100
+  gzip: <%= gzip_setting %>
   replicationFactor: 1
   url: http://localhost:8086
   user: <%= api_db_user %>
