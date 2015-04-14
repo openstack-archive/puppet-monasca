@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 MIRROR_FILE="/etc/monasca/monasca-persister-mirror.yml"
 STORM_FILE="/opt/storm/current/conf/storm.yaml"
@@ -54,11 +54,11 @@ status() {
 start() {
     for x in $(get_up_list)
     do
-        service $x status > /dev/null 2>&1
+        STATUS=$(service $x status 2>&1)
         #
         # Only start a service if it isn't currently running
         #
-        if [ $? != 0 ]
+        if [ $? != 0 ] || [[ "$STATUS" == *"stop/waiting"* ]]
         then
             service $x start
             sleep 2
