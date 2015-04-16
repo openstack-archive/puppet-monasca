@@ -28,6 +28,7 @@ class monasca::checks::libvirt(
   $admin_password,
   $admin_tenant_name,
   $identity_uri,
+  $region_name       = undef,
   $cache_dir         = '/dev/shm',
   $vm_probation      = '300',
   $nova_refresh      = '14400'

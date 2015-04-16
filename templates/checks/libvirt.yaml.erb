@@ -3,8 +3,11 @@ init_config:
   admin_password: <%= admin_password %>
   admin_tenant_name: <%= admin_tenant_name %>
   admin_user: <%= admin_user %>
-  cache_dir: <%= cache_dir %>
   identity_uri: <%= identity_uri %>
+<%- if @region_name -%>
+  region_name: <%= @region_name %>
+<%- end -%>
+  cache_dir: <%= cache_dir %>
   nova_refresh: <%= nova_refresh %>
   vm_probation: <%= vm_probation %>
 
