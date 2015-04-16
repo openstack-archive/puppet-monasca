@@ -55,24 +55,27 @@ class monasca::checks::libvirt(
   ensure_packages('pkg-config')
 
   python::pip { 'lxml' :
-    virtualenv => $virtual_env,
-    owner      => 'root',
-    require    => [Package['libxslt1-dev'],Package['libxml2-dev'],Package['zlib1g-dev'],
-                    Python::Virtualenv[$virtual_env]],
-    before     => Service['monasca-agent'],
+    virtualenv   => $virtual_env,
+    owner        => 'root',
+    require      => [Package['libxslt1-dev'],Package['libxml2-dev'],Package['zlib1g-dev'],
+                      Python::Virtualenv[$virtual_env]],
+    before       => Service['monasca-agent'],
+    install_args => $::monasca::agent::pip_install_args,
   }
   python::pip { 'libvirt-python' :
-    virtualenv => $virtual_env,
-    owner      => 'root',
-    require    => [Package['libvirt-dev'],Package['pkg-config'],
-                    Python::Virtualenv[$virtual_env]],
-    before     => Service['monasca-agent'],
+    virtualenv   => $virtual_env,
+    owner        => 'root',
+    require      => [Package['libvirt-dev'],Package['pkg-config'],
+                      Python::Virtualenv[$virtual_env]],
+    before       => Service['monasca-agent'],
+    install_args => $::monasca::agent::pip_install_args,
   }
   python::pip { 'python-novaclient' :
-    virtualenv => $virtual_env,
-    owner      => 'root',
-    require    => Python::Virtualenv[$virtual_env],
-    before     => Service['monasca-agent'],
+    virtualenv   => $virtual_env,
+    owner        => 'root',
+    require      => Python::Virtualenv[$virtual_env],
+    before       => Service['monasca-agent'],
+    install_args => $::monasca::agent::pip_install_args,
   }
 
 }

@@ -48,9 +48,10 @@ class monasca::checks::mysql(
   }
 
   python::pip { 'MySQL-python' :
-    virtualenv => $virtual_env,
-    owner      => 'root',
-    require    => Python::Virtualenv[$virtual_env],
-    before     => Service['monasca-agent'],
+    virtualenv   => $virtual_env,
+    owner        => 'root',
+    require      => Python::Virtualenv[$virtual_env],
+    before       => Service['monasca-agent'],
+    install_args => $::monasca::agent::pip_install_args,
   }
 }
