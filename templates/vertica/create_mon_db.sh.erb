@@ -7,6 +7,12 @@ if [ $USER != 'dbadmin' ]; then
   exit
 fi
 
+if [ $# -ge 1 ] && [ $1 -eq "USE_SSL" ]; then
+  USE_SSL=true
+else
+  USE_SSL=false
+fi
+
 # Make sure the locale settings are set correctly
 . /etc/profile.d/vertica_node.sh
 
@@ -24,6 +30,9 @@ fi
 /opt/vertica/bin/admintools -t set_restart_policy -d mon -p always
 
 # For ssl support link the cert/key and restart the db
-ln /var/vertica/server* /var/vertica/catalog/mon/v*/
-/opt/vertica/bin/admintools -t stop_db -F -p <%= db_admin_password %> -d mon
-/opt/vertica/bin/admintools -t start_db -p <%= db_admin_password %> -d mon
+if [ $USE_SSL ]
+then
+  ln /var/vertica/server* /var/vertica/catalog/mon/v*/
+  /opt/vertica/bin/admintools -t stop_db -F -p <%= db_admin_password %> -d mon
+  /opt/vertica/bin/admintools -t start_db -p <%= db_admin_password %> -d mon
+fi
