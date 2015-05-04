@@ -69,8 +69,9 @@ middleware:
   connPoolMinIdleTime: 600000
   connRetryTimes: 2
   connRetryInterval: 50
-  defaultAuthorizedRoles: [admin,monasca-user,_member_]
-  agentAuthorizedRoles: [monasca-agent]
+  defaultAuthorizedRoles: <%= roles_default %>
+  agentAuthorizedRoles: <%= roles_agent %>
+  delegateAuthorizedRole: <%= role_delegate %>
   adminAuthMethod: <%= auth_method %>
   adminUser: <%= admin_name %>
   adminPassword: <%= admin_password %>
