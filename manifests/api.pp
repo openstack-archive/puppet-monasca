@@ -11,6 +11,9 @@ class monasca::api (
   $mon_api_build_ver    = undef,
   $mon_api_deb          = undef,
   $region_name          = 'NA',
+  $role_delegate        = 'monitoring-delegate',
+  $roles_default        = ['admin','monasca-user','_member_'],
+  $roles_agent          = ['monasca-agent'],
   $zookeeper_servers    = undef,
 ) {
   include monasca

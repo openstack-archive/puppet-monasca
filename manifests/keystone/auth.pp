@@ -117,6 +117,9 @@ class monasca::keystone::auth (
   $public_url          = undef,
   $admin_url           = undef,
   $internal_url        = undef,
+  $role_agent          = 'monasca-agent',
+  $role_delegate       = 'monitoring-delegate',
+  $role_user           = 'monasca-user',
 ) {
   include monasca::params
 
@@ -129,9 +132,6 @@ class monasca::keystone::auth (
   $port = $::monasca::params::port
   $api_version = $::monasca::params::api_version
   $region = $::monasca::params::region
-  $default_roles = [Keystone_role['monasca-agent'],
-                    Keystone_role['monitoring-delegate'],
-                    Keystone_role['monasca-user']]
 
   if $public_url {
     $public_url_real = $public_url
@@ -189,38 +189,37 @@ class monasca::keystone::auth (
     Keystone_user_role["${user_name}@${tenant}"] ~>
       Service <| name == 'monasca-api' |>
 
-    if !defined(Keystone_role['monasca-agent']) {
-      keystone_role { 'monasca-agent':
+    if !defined(Keystone_role[$role_agent]) {
+      keystone_role { $role_agent:
         ensure => present,
       }
     }
-    if !defined(Keystone_role['monitoring-delegate']) {
-      keystone_role { 'monitoring-delegate':
+    if !defined(Keystone_role[$role_delegate]) {
+      keystone_role { $role_delegate:
         ensure => present,
       }
     }
-    if !defined(Keystone_role['monasca-user']) {
-      keystone_role { 'monasca-user':
+    if !defined(Keystone_role[$role_user]) {
+      keystone_role { $role_user:
         ensure => present,
       }
     }
     keystone_user_role { "${agent_name}@${tenant}":
       ensure  => present,
-      roles   => ['monasca-agent', 'monitoring-delegate'],
-      require => $default_roles,
+      roles   => [$role_agent, $role_delegate],
+      require => [Keystone_role[$role_agent], Keystone_role[$role_delegate]],
       before  => Python::Pip['monasca-agent'],
     }
     keystone_user_role { "${admin_name}@${tenant}":
-      ensure  => present,
-      roles   => ['admin'],
-      require => $default_roles,
-      before  => Python::Pip['monasca-agent'],
+      ensure => present,
+      roles  => ['admin'],
+      before => Python::Pip['monasca-agent'],
     }
 
     keystone_user_role { "${user_name}@${tenant}":
       ensure  => present,
-      roles   => ['monasca-user'],
-      require => $default_roles,
+      roles   => [$role_user],
+      require => Keystone_role[$role_user],
       before  => Python::Pip['monasca-agent'],
     }
   }
