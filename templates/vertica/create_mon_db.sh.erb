@@ -19,6 +19,9 @@ fi
 # create the db
 /opt/vertica/bin/admintools -t create_db -s 127.0.0.1 -d mon -p <%= db_admin_password %>
 
+# start the db
+/opt/vertica/bin/admintools -t start_db -p <%= db_admin_password %> -d mon
+
 # Add in the schemas
 /opt/vertica/bin/vsql -w <%= db_admin_password %> < /var/vertica/mon_schema.sql
 /opt/vertica/bin/vsql -w <%= db_admin_password %> < /var/vertica/mon_metrics_schema.sql
@@ -30,7 +33,7 @@ fi
 /opt/vertica/bin/admintools -t set_restart_policy -d mon -p always
 
 # For ssl support link the cert/key and restart the db
-if [ $USE_SSL ]
+if [ $USE_SSL == "true" ]
 then
   ln /var/vertica/server* /var/vertica/catalog/mon/v*/
   /opt/vertica/bin/admintools -t stop_db -F -p <%= db_admin_password %> -d mon

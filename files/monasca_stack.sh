@@ -2,13 +2,22 @@
 
 MIRROR_FILE="/etc/monasca/monasca-persister-mirror.yml"
 STORM_FILE="/opt/storm/current/conf/storm.yaml"
+VERTICA_FILE="/opt/vertica/config/admintools.conf"
 
 #
 # Get the list of monasca services in the order they should be
 # started in.
 #
 get_up_list() {
-    echo "influxdb zookeeper kafka storm-supervisor"
+
+    if [ -e $VERTICA_FILE ]
+    then
+        echo "verticad"
+    else
+        echo "influxdb"
+    fi
+
+    echo "zookeeper kafka storm-supervisor"
 
     if grep nimbus.host $STORM_FILE | grep -e $(hostname) -e localhost > /dev/null
     then
@@ -41,7 +50,14 @@ get_down_list() {
         echo "monasca-thresh storm-ui storm-nimbus"
     fi
 
-    echo "storm-supervisor kafka zookeeper influxdb"
+    echo "storm-supervisor kafka zookeeper"
+
+    if [ -e $VERTICA_FILE ]
+    then
+        echo "verticad"
+    else
+        echo "influxdb"
+    fi
 }
 
 status() {
@@ -78,6 +94,7 @@ tail_logs() {
     /usr/bin/tail -f /opt/storm/current/logs/*log \
                      /var/log/monasca/*log \
                      /var/log/influxdb/*log \
+                     /opt/vertica/log/*log \
                      /var/log/kafka/*log \
                      /opt/kafka/logs/*log
 }

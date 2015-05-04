@@ -7,6 +7,7 @@ CREATE TABLE MonMetrics.Measurements (
     definition_dimensions_id BINARY(20) NOT NULL,
     time_stamp TIMESTAMP NOT NULL,
     value FLOAT NOT NULL,
+    value_meta VARCHAR(2048),
     PRIMARY KEY(id)
 ) PARTITION BY EXTRACT('year' FROM time_stamp)*10000 + EXTRACT('month' FROM time_stamp)*100 + EXTRACT('day' FROM time_stamp);
 
@@ -41,13 +42,15 @@ CREATE PROJECTION Measurements_DBD_1_rep_MonMetrics /*+createtype(D)*/
  id ENCODING AUTO,
  definition_dimensions_id ENCODING RLE,
  time_stamp ENCODING DELTAVAL,
- value ENCODING AUTO
+ value ENCODING AUTO,
+ value_meta ENCODING AUTO
 )
 AS
  SELECT id,
         definition_dimensions_id,
         time_stamp,
-        value
+        value,
+        value_meta
  FROM MonMetrics.Measurements
  ORDER BY definition_dimensions_id,
           time_stamp,

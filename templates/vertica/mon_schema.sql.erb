@@ -6,7 +6,8 @@ SELECT set_config_parameter('WarnOnIncompleteStartupPacket', 0);
 -- Enable SSL ** Requires a db restart, also the restart will fail of the ssl cert is not in place on the server
 -- The certs are placed in the root catalog dir by vertica and should be linked to the correct dir after db creation
 -- ln /var/vertica/catalog/server* /var/vertica/catalog/mon/v*/'
-SELECT SET_CONFIG_PARAMETER('EnableSSL', '1');
+-- TODO ADD DYNAMIC SSL SUPPORT TO MODULE
+-- SELECT SET_CONFIG_PARAMETER('EnableSSL', '1');
 
 -- Enable SNMP alerts
 SELECT SET_CONFIG_PARAMETER('SnmpTrapsEnabled', 1 );

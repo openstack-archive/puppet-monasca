@@ -22,6 +22,9 @@ nodes=`grep install_opts /opt/vertica/config/admintools.conf | cut -d\  -f 4 |cu
 # create the db
 /opt/vertica/bin/admintools -t create_db -s $nodes -d mon -p <%= db_admin_password %>
 
+# start the db
+/opt/vertica/bin/admintools -t start_db -p <%= db_admin_password %> -d mon
+
 # Add in the schemas
 /opt/vertica/bin/vsql -w <%= db_admin_password %> < /var/vertica/mon_schema.sql
 /opt/vertica/bin/vsql -w <%= db_admin_password %> < /var/vertica/mon_metrics_schema.sql
@@ -32,7 +35,7 @@ nodes=`grep install_opts /opt/vertica/config/admintools.conf | cut -d\  -f 4 |cu
 # Set restart policy to ksafe
 /opt/vertica/bin/admintools -t set_restart_policy -d mon -p ksafe
 
-if [ $USE_SSL ]
+if [ $USE_SSL == "true" ]
 then
   # For ssl support link the cert/key on each server and restart the db
   IFS=','
