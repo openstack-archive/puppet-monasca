@@ -8,7 +8,6 @@ class monasca::persister (
   $num_threads        = 1,
   $batch_seconds      = 30,
   $config             = $monasca::params::persister_config_defaults,
-  $database_type      = 'influxdb',
   $db_admin_password  = undef,
   $mon_pers_build_ver = undef,
   $mon_pers_deb       = undef,

@@ -25,6 +25,7 @@ class monasca::params(
       'application_port'   => 8090,
       'consumer_group_id'  => 1,
       'database_url'       => 'http://localhost:8086',
+      'database_type'      => 'influxdb',
     }
 ) {
   validate_string($admin_password)

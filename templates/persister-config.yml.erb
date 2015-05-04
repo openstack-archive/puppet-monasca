@@ -39,7 +39,7 @@ verticaMetricRepoConfig:
   maxCacheSize: 2000000
 
 databaseConfiguration:
-  databaseType: <%= database_type %>
+  databaseType: <%= persister_config['database_type'] %>
 
 influxDbConfiguration:
   name: mon
@@ -54,7 +54,7 @@ influxDbConfiguration:
 
 dataSourceFactory:
   driverClass: com.vertica.jdbc.Driver
-  url: jdbc:vertica://localhost:5433/mon
+  url: <%= persister_config['database_url'] %>
   user: dbadmin
   password: <%= db_admin_password %>
   properties:
