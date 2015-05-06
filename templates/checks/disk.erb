@@ -1,0 +1,19 @@
+ - name: <%= @title %>
+<%- if not @use_mount.nil? -%>
+   use_mount: <%= @use_mount %>
+<%- end -%>
+<%- if not @send_io_stats.nil? -%>
+   send_io_stats: <%= @send_io_stats %>
+<%- end -%>
+<%- if not @send_rollup_stats.nil? -%>
+   send_rollup_stats: <%= @send_rollup_stats %>
+<%- end -%>
+<%- if not @device_blacklist_re.nil? -%>
+   device_blacklist_re: <%= @device_blacklist_re %>
+<%- end -%>
+<%- if not @ignore_filesystem_types.nil? -%>
+   ignore_filesystem_types: <%= @ignore_filesystem_types %>
+<%- end -%>
+<%- if @dimensions -%>
+   dimensions: <%= @dimensions %>
+<%- end -%>

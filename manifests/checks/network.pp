@@ -15,7 +15,7 @@
 #       dimensions
 #   e.g.
 #   instances:
-#     net:
+#     network_stats:
 #       collect_connection_state: 'False'
 #       excluded_interfaces: '[lo, lo0]'
 #
