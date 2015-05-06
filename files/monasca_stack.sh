@@ -2,18 +2,18 @@
 
 MIRROR_FILE="/etc/monasca/monasca-persister-mirror.yml"
 STORM_FILE="/opt/storm/current/conf/storm.yaml"
-VERTICA_FILE="/opt/vertica/config/admintools.conf"
+INFLUXDB_FILE="/etc/opt/influxdb/influxdb.conf"
 
 #
 # Get the list of monasca services in the order they should be
-# started in.
+# started in.  Note that we intentionally don't stop/start
+# verticad -- vertica doesn't like that.  Use adminTools
+# for the entire cluster instead.
 #
 get_up_list() {
 
-    if [ -e $VERTICA_FILE ]
+    if [ -e $INFLUXDB_FILE ]
     then
-        echo "verticad"
-    else
         echo "influxdb"
     fi
 
@@ -52,10 +52,8 @@ get_down_list() {
 
     echo "storm-supervisor kafka zookeeper"
 
-    if [ -e $VERTICA_FILE ]
+    if [ -e $INFLUXDB_FILE ]
     then
-        echo "verticad"
-    else
         echo "influxdb"
     fi
 }

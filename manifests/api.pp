@@ -4,6 +4,8 @@
 class monasca::api (
   $api_user             = 'monasca_api',
   $blobmirror           = undef,
+  $database_type        = 'influxdb',
+  $db_admin_password    = undef,
   $gzip_setting         = true,
   $kafka_brokers        = undef,
   $keystone_endpoint    = undef,

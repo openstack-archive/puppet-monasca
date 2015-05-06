@@ -59,7 +59,7 @@ dataSourceFactory:
   password: <%= db_admin_password %>
   properties:
       ssl: false
-  maxWaitForConnection: 1s
+  maxWaitForConnection: 5s
   validationQuery: "/* MyService Health Check */ SELECT 1"
   minSize: 8
   maxSize: 41
