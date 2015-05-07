@@ -3,7 +3,7 @@ DROP SCHEMA MonMetrics CASCADE;
 CREATE SCHEMA MonMetrics;
 
 CREATE TABLE MonMetrics.Measurements (
-    id IDENTITY(1, 1, 1),
+    id IDENTITY(1, 1, 250000),
     definition_dimensions_id BINARY(20) NOT NULL,
     time_stamp TIMESTAMP NOT NULL,
     value FLOAT NOT NULL,
