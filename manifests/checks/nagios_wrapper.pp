@@ -23,74 +23,50 @@
 #     disk:
 #       check_command: 'check_disk -w 15\% -c 5\% -A -i /srv/node'
 #       check_interval: '300'
-# [*checks*]
-#   A hash of check defenitions.
-#   For use with types and nodes.  When all three are defined they will combined to create a list
-#        of checks in the format that the nagios plugin requires, and merged with the instances list
-#   Parameters are:
-#       check_name (the instance key): The name of the check.
-#       check_command (required): Use 'host' where the name of the host should be filled in.
-#       check_interval
-#       dimensions
-# [*types*]
-#   A hash of node type defenitions.
-#   For use with checks and nodes
-#   Parameters are:
-#       type_name (the instance key): The type of node (e.g control, compute).
-#       This is followed with a list of checks to run on that node type.
-# [*nodes*]
-#   A hash of node defenitions.
-#   For use with checks and types
-#   Parameters are:
-#       group_name (the instance key): An identifier for a group of nodes.  Used with flags.
-#       This is followed with a list of hostnames
 # [*dimensions*]
-#   A hash of node dimensions to be submitted with the metrics.  All dimensions also act as flags.
-#   For use with checks, types, nodes and flags
-#   Parameters are:
-#       group_name (the instance key): The group of nodes to which the dimensions apply
-#       Any other key value pairs can be provided here.
-# [*flags*]
-#   A hash of node flags for use in the command.
-#   For use with checks, types, nodes and dimensions
-#   Parameters are:
-#       group_name (the instance key): The group of nodes to which the flags apply
-#       type (required): The type of given group of nodes.
-#       Any other key value pairs can be provided here.
+#   A hash of node dimensions to be submitted with the metrics.
+#   If the collector is used these are the dimensions submitted with the metrics.
+# [*host_name*]
+#   Use with the collector to determine which checks run on which host
+# [*central_mon*]
+#   Set to true when using the collector if a single host will be running
+#   all non-nrpe checks
 #
 class monasca::checks::nagios_wrapper(
   $check_path     = '/usr/lib/nagios/plugins:/usr/local/bin/nagios',
   $temp_file_path = '/dev/shm/',
   $instances      = undef,
-  $checks         = undef,
-  $types          = undef,
-  $nodes          = undef,
   $dimensions     = undef,
-  $flags          = undef,
+  $host_name      = undef,
+  $central_mon    = false,
 ){
   $conf_dir = $::monasca::agent::conf_dir
 
-  if $checks and $types and $nodes and $flags{
-    $real_instances = generate_nagios_instances($checks, $types, $nodes, $dimensions, $flags, $instances)
+  if ($central_mon) {
+    Monasca::Checks::Instances::Nagios_wrapper <<| nrpe == false |>> {
+      dimensions => $dimensions,
+    }
   }
   else {
-    $real_instances = $instances
+    Monasca::Checks::Instances::Nagios_wrapper <<| host_name == $host_name and nrpe != false |>> {
+      dimensions => $dimensions,
+    }
   }
 
-  if($real_instances){
-    Concat["${conf_dir}/nagios_wrapper.yaml"] ~> Service['monasca-agent']
-    concat { "${conf_dir}/nagios_wrapper.yaml":
-      owner   => 'root',
-      group   => $::monasca::group,
-      mode    => '0640',
-      warn    => true,
-      require => File[$conf_dir],
-    }
-    concat::fragment { 'nagios_wrapper_header':
-      target  => "${conf_dir}/nagios_wrapper.yaml",
-      order   => '0',
-      content => template('monasca/checks/nagios_wrapper.yaml.erb'),
-    }
-    create_resources('monasca::checks::instances::nagios_wrapper', $real_instances)
+  Concat["${conf_dir}/nagios_wrapper.yaml"] ~> Service['monasca-agent']
+  concat { "${conf_dir}/nagios_wrapper.yaml":
+    owner   => 'root',
+    group   => $::monasca::group,
+    mode    => '0640',
+    warn    => true,
+    require => File[$conf_dir],
+  }
+  concat::fragment { 'nagios_wrapper_header':
+    target  => "${conf_dir}/nagios_wrapper.yaml",
+    order   => '0',
+    content => template('monasca/checks/nagios_wrapper.yaml.erb'),
+  }
+  if($instances){
+    create_resources('monasca::checks::instances::nagios_wrapper', $instances)
   }
 }
