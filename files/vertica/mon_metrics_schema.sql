@@ -3,12 +3,11 @@ DROP SCHEMA MonMetrics CASCADE;
 CREATE SCHEMA MonMetrics;
 
 CREATE TABLE MonMetrics.Measurements (
-    id IDENTITY(1, 1, 250000),
     definition_dimensions_id BINARY(20) NOT NULL,
     time_stamp TIMESTAMP NOT NULL,
     value FLOAT NOT NULL,
     value_meta VARCHAR(2048),
-    PRIMARY KEY(id)
+    PRIMARY KEY(definition_dimensions_id)
 ) PARTITION BY EXTRACT('year' FROM time_stamp)*10000 + EXTRACT('month' FROM time_stamp)*100 + EXTRACT('day' FROM time_stamp);
 
 CREATE TABLE MonMetrics.Definitions(
@@ -39,22 +38,19 @@ CREATE TABLE MonMetrics.DefinitionDimensions (
 
 CREATE PROJECTION Measurements_DBD_1_rep_MonMetrics /*+createtype(D)*/
 (
- id ENCODING AUTO,
  definition_dimensions_id ENCODING RLE,
  time_stamp ENCODING DELTAVAL,
  value ENCODING AUTO,
  value_meta ENCODING AUTO
 )
 AS
- SELECT id,
-        definition_dimensions_id,
+ SELECT definition_dimensions_id,
         time_stamp,
         value,
         value_meta
  FROM MonMetrics.Measurements
  ORDER BY definition_dimensions_id,
-          time_stamp,
-          id
+          time_stamp
 UNSEGMENTED ALL NODES;
 
 CREATE PROJECTION Definitions_DBD_2_rep_MonMetrics /*+createtype(D)*/
