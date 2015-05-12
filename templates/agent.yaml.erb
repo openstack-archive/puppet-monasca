@@ -22,7 +22,6 @@ Main:
   hostname: <%= @hostname %>
 <%- end -%>
   dimensions:
-    service: <%= @service %>
 <%- @dimensions.each_pair do |key, value| -%>
     <%= key %>: <%= value %>
 <%- end -%>
