@@ -23,9 +23,6 @@
 #     disk:
 #       check_command: 'check_disk -w 15\% -c 5\% -A -i /srv/node'
 #       check_interval: '300'
-# [*dimensions*]
-#   A hash of node dimensions to be submitted with the metrics.
-#   If the collector is used these are the dimensions submitted with the metrics.
 # [*host_name*]
 #   Use with the collector to determine which checks run on which host
 # [*central_mon*]
@@ -36,21 +33,16 @@ class monasca::checks::nagios_wrapper(
   $check_path     = '/usr/lib/nagios/plugins:/usr/local/bin/nagios',
   $temp_file_path = '/dev/shm/',
   $instances      = undef,
-  $dimensions     = undef,
   $host_name      = undef,
   $central_mon    = false,
 ){
   $conf_dir = $::monasca::agent::conf_dir
 
   if ($central_mon) {
-    Monasca::Checks::Instances::Nagios_wrapper <<| nrpe == false |>> {
-      dimensions => $dimensions,
-    }
+    Monasca::Checks::Instances::Nagios_wrapper <<| nrpe == false |>>
   }
   else {
-    Monasca::Checks::Instances::Nagios_wrapper <<| host_name == $host_name and nrpe != false |>> {
-      dimensions => $dimensions,
-    }
+    Monasca::Checks::Instances::Nagios_wrapper <<| host_name == $host_name and nrpe != false |>>
   }
 
   Concat["${conf_dir}/nagios_wrapper.yaml"] ~> Service['monasca-agent']

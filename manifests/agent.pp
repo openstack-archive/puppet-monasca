@@ -13,7 +13,6 @@ class monasca::agent(
   $username,
   $password,
   $keystone_url,
-  $service                 = undef,
   $project_name            = 'null',
   $project_domain_id       = 'null',
   $project_domain_name     = 'null',
