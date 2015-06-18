@@ -18,10 +18,10 @@
 #     DEFAULT/bar:
 #       value: barValue
 #
-# [**monasca_config**]
+# [*monasca_config*]
 #   (optional) Allow configuration of monasca.conf configurations.
 #
-# [**monasca_ini**]
+# [*monasca_ini*]
 #   (optional) Allow configuration of monasca.ini configurations.
 #
 #   NOTE: The configuration MUST NOT be already handled by this module

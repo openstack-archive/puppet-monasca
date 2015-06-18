@@ -1,5 +1,47 @@
+# == Class: monasca::notifications
 #
 # Class for configuring monasca notifications
+#
+# === Parameters:
+#
+# [*notification_user*]
+#   name of the monasca notification user
+#
+# [*from_email_address*]
+#   email address to send notifications from
+#
+# [*install_python_deps*]
+#   flag for whether or not to install python dependencies
+#
+# [*kafka_brokers*]
+#   list of kafka broker servers and ports
+#
+# [*pagerduty_url*]
+#   url of pager duty if used as a notification method
+#
+# [*python_dep_ensure*]
+#   flag for whether or not to ensure/update python dependencies
+#
+# [*smtp_password*]
+#   password for the smtp server
+#
+# [*smtp_port*]
+#   port on the smtp server to send mail to
+#
+# [*smtp_server*]
+#   host of the smtp server
+#
+# [*smtp_user*]
+#   name to use when authenticating agains the smtp server
+#
+# [*virtual_env*]
+#   directory of python virtual environment
+#
+# [*webhook_url*]
+#   url for webhook notifications
+#
+# [*zookeeper_servers*]
+#   list of zookeeper servers and ports
 #
 class monasca::notification(
   $notification_user   = 'monasca-notification',
@@ -17,7 +59,7 @@ class monasca::notification(
   $zookeeper_servers   = 'localhost:2181',
 )
 {
-  include monasca::params
+  include ::monasca::params
 
   # variables for the template
   $sql_host = $::monasca::params::sql_host

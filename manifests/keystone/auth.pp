@@ -97,6 +97,15 @@
 #    no trailing '/'
 #    Setting this variable overrides other $internal_* parameters.
 #
+# [*role_agent*]
+#   keystone role to use for monasca agent
+#
+# [*role_delegate*]
+#   keystone role to use for monasca delegate
+#
+# [*role_user*]
+#   keystone role to use for monasca general user
+#
 class monasca::keystone::auth (
   $auth_name           = 'monasca',
   $admin_email         = 'monasca@localhost',
@@ -121,7 +130,7 @@ class monasca::keystone::auth (
   $role_delegate       = 'monitoring-delegate',
   $role_user           = 'monasca-user',
 ) {
-  include monasca::params
+  include ::monasca::params
 
   $admin_name = $::monasca::params::admin_name
   $agent_name = $::monasca::params::agent_name

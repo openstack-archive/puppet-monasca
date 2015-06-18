@@ -1,10 +1,34 @@
 #
 # Class for vertica specific files
 #
+# === Parameters
+#
+# [*db_user*]
+#   name of the database user
+#
+# [*db_group*]
+#   name of the database group
+#
+# [*db_admin_password*]
+#   database admin password
+#
+# [*metrics_schema*]
+#   location of the metrics schema/projections file
+#
+# [*mon_api_password*]
+#   database api user password
+#
+# [*mon_persister_password*]
+#   database persister user password
+#
+# [*monitor_password*]
+#   database monitor user password
+#
 class monasca::vertica::config (
   $db_user                = 'dbadmin',
   $db_group               = 'verticadba',
   $db_admin_password      = unset,
+  $metrics_schema         = 'puppet:///modules/monasca/vertica/mon_metrics_schema.sql',
   $mon_api_password       = unset,
   $mon_persister_password = unset,
   $monitor_password       = unset,
@@ -15,7 +39,6 @@ class monasca::vertica::config (
   $install_dir = '/var/vertica'
   $alarms_schema = 'mon_alarms_schema.sql'
   $grants_schema = 'mon_grants.sql'
-  $metrics_schema = 'mon_metrics_schema.sql'
   $config_schema = 'mon_schema.sql'
   $users_schema = 'mon_users.sql'
   $cluster_script = 'create_mon_db_cluster.sh'
@@ -46,9 +69,9 @@ class monasca::vertica::config (
     require => File[$install_dir],
   }
 
-  file { "${install_dir}/${metrics_schema}":
+  file { "${install_dir}/mon_metrics_schema.sql":
     ensure  => file,
-    source  => "${files}/${metrics_schema}",
+    source  => $metrics_schema,
     mode    => '0644',
     owner   => $db_user,
     group   => $db_group,

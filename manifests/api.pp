@@ -1,5 +1,53 @@
+# == Class: monasca::api
 #
 # Class to setup monasca api
+#
+# === Parameters:
+#
+# [*api_user*]
+#   name of the monasca api user
+#
+# [*blobmirror*]
+#   url of server to install debians from
+#
+# [*database_type*]
+#   type of database backend, influxdb or vertica
+#
+# [*db_admin_password*]
+#   database admin password
+#
+# [*gzip_setting*]
+#   flag for whether to use gzip for monasca api and persister
+#
+# [*kafka_brokers*]
+#   list of kafka brokers and ports
+#
+# [*keystone_endpoint*]
+#   url of keystone server
+#
+# [*keystone_admin_token*]
+#   token for keystone admin
+#
+# [*mon_api_build_ver*]
+#   build version of the monasca api debian package
+#
+# [*mon_api_deb*]
+#   name of the monasca api debian package
+#
+# [*region_name*]
+#   openstack region name for this install
+#
+# [*role_delegate*]
+#   name of the monasca delegate role
+#
+# [*roles_default*]
+#   name of the monasca default role
+#
+# [*roles_agent*]
+#   name of the monasca agent role
+#
+# [*zookeeper_servers*]
+#   list of zookeeper servers and ports
 #
 class monasca::api (
   $api_user             = 'monasca_api',
@@ -18,8 +66,8 @@ class monasca::api (
   $roles_agent          = ['monasca-agent'],
   $zookeeper_servers    = undef,
 ) {
-  include monasca
-  include monasca::params
+  include ::monasca
+  include ::monasca::params
 
   $api_fetch_url = "http://${blobmirror}/repos/monasca/monasca_api"
   $latest_api_deb = "/tmp/${mon_api_deb}"

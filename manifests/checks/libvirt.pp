@@ -5,12 +5,19 @@
 # === Parameters
 #
 # [*admin_user*]
+#   name of the monasca admin
 #
 # [*admin_password*]
+#   password for the monasca admin
 #
 # [*admin_tenant_name*]
+#   name of the monasca admin tenant/project
 #
 # [*identity_uri*]
+#   uri of the keystone instance
+#
+# [*region_name*]
+#   openstack keystone region for this install
 #
 # [*cache_dir*]
 #   Cache directory to persist data.

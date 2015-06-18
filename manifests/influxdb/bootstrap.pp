@@ -1,5 +1,29 @@
+# == Class: monasca::influxdb::bootstrap
 #
 # Class for bootstrapping influxdb for monasca
+#
+# === Parameters:
+#
+# [*influxdb_password*]
+#   password for the influxdb admin
+#
+# [*influxdb_dbuser_ro_password*]
+#   password for the influxdb read-only user
+#
+# [*influxdb_def_ret_pol_name*]
+#   default retention policy name
+#
+# [*influxdb_def_ret_pol_duration*]
+#   default influxdb retention policy duration
+#
+# [*influxdb_tmp_ret_pol_name*]
+#   temporary retention policy
+#
+# [*influxdb_tmp_ret_pol_duration*]
+#   temporary influxdb retention policy duration
+#
+# [*influxdb_retention_replication*]
+#   influxdb retention policy replication factor
 #
 class monasca::influxdb::bootstrap(
   $influxdb_password = undef,
@@ -11,7 +35,7 @@ class monasca::influxdb::bootstrap(
   $influxdb_retention_replication = 1,
 )
 {
-  include monasca::params
+  include ::monasca::params
 
   $influxdb_dbuser_password = $::monasca::params::api_db_password
   $script = 'bootstrap-influxdb.sh'

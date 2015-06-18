@@ -4,6 +4,55 @@
 # across all monasca services.
 #
 # === Parameters:
+#
+# [*api_db_user*]
+#   name of the monasca api user for the database
+#
+# [*api_db_password*]
+#   password for the monasca api database user
+#
+# [*port*]
+#   port to run monasca api server on
+#
+# [*api_version*]
+#   version of the monasca api to configure
+#
+# [*region*]
+#   default openstack region for this monasca api instance
+#
+# [*admin_name*]
+#   name of the monasca admin user
+#
+# [*agent_name*]
+#   name of the monasca agent user
+#
+# [*user_name*]
+#   name of the default monasca user
+#
+# [*auth_method*]
+#   keystone auth method, token or password
+#
+# [*admin_password*]
+#   password for the monasca admin user
+#
+# [*agent_password*]
+#   password for the monasca agent user
+#
+# [*user_password*]
+#   password for the monasca default user
+#
+# [*sql_host*]
+#   host of the mysql instance
+#
+# [*sql_user*]
+#   name of the mysql user
+#
+# [*sql_password*]
+#   password for the mysql user
+#
+# [*persister_config_defaults*]
+#   defaults for monasca persister settings
+#
 class monasca::params(
     $api_db_user     = 'mon_api',
     $api_db_password = undef,

@@ -1,5 +1,35 @@
+# == Class: monasca::alarmdefs
 #
 # Class for bootstrapping monasca alarm definitions
+#
+# === Parameters:
+#
+# [*alarm_definition_config_source*]
+#   location of alarm definitions to bootstrap in mysql database
+#
+# [*admin_username*]
+#   name of the monasca admin user
+#
+# [*admin_password*]
+#   password of the monasca admin user
+#
+# [*api_server_url*]
+#   monasca api server endpoint
+#
+# [*auth_url*]
+#   keystone endpoint
+#
+# [*project_name*]
+#   keystone project name to bootstrap alarm definitions for
+#
+# [*virtual_env*]
+#   location of python virtual environment to install to
+#
+# [*install_python_deps*]
+#   flag for whether or not to install python dependencies
+#
+# [*python_dep_ensure*]
+#   flag for whether or not to ensure/update python dependencies
 #
 class monasca::alarmdefs(
   $alarm_definition_config_source = 'puppet:///modules/monasca/alarm_definition_config.json',
@@ -13,7 +43,7 @@ class monasca::alarmdefs(
   $python_dep_ensure       = 'present',
 )
 {
-  include monasca::params
+  include ::monasca::params
 
   $alarm_definition_config = '/tmp/alarm_definition_config.json'
   $script_name = 'bootstrap-alarm-definitions.py'

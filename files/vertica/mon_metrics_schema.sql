@@ -39,9 +39,9 @@ CREATE TABLE MonMetrics.DefinitionDimensions (
 CREATE PROJECTION Measurements_DBD_1_rep_MonMetrics /*+createtype(D)*/
 (
  definition_dimensions_id ENCODING RLE,
- time_stamp ENCODING DELTAVAL,
+ time_stamp ENCODING COMMONDELTA_COMP,
  value ENCODING AUTO,
- value_meta ENCODING AUTO
+ value_meta ENCODING RLE
 )
 AS
  SELECT definition_dimensions_id,
@@ -50,12 +50,12 @@ AS
         value_meta
  FROM MonMetrics.Measurements
  ORDER BY definition_dimensions_id,
-          time_stamp
-UNSEGMENTED ALL NODES;
+          value_meta
+SEGMENTED BY MODULARHASH (definition_dimensions_id) ALL NODES OFFSET 0;
 
 CREATE PROJECTION Definitions_DBD_2_rep_MonMetrics /*+createtype(D)*/
 (
- id ENCODING RLE,
+ id ENCODING AUTO,
  name ENCODING AUTO,
  tenant_id ENCODING RLE,
  region ENCODING RLE
@@ -66,16 +66,15 @@ AS
         tenant_id,
         region
  FROM MonMetrics.Definitions
- ORDER BY id,
+ ORDER BY region,
           tenant_id,
-          region,
           name
 UNSEGMENTED ALL NODES;
 
 CREATE PROJECTION Dimensions_DBD_3_rep_MonMetrics /*+createtype(D)*/
 (
- id ENCODING RLE,
- name ENCODING AUTO,
+ dimension_set_id ENCODING AUTO,
+ name ENCODING RLE,
  value ENCODING AUTO
 )
 AS
@@ -83,15 +82,16 @@ AS
         name,
         value
  FROM MonMetrics.Dimensions
- ORDER BY dimension_set_id,
-          name
+ ORDER BY name,
+          dimension_set_id,
+          value
 UNSEGMENTED ALL NODES;
 
 CREATE PROJECTION DefinitionDimensions_DBD_4_rep_MonMetrics /*+createtype(D)*/
 (
- id ENCODING RLE,
- definition_id,
- dimension_set_id
+ id ENCODING AUTO,
+ definition_id ENCODING RLE,
+ dimension_set_id ENCODING AUTO
 )
 AS
  SELECT id,
@@ -99,8 +99,7 @@ AS
         dimension_set_id
  FROM MonMetrics.DefinitionDimensions
  ORDER BY definition_id,
-          dimension_set_id,
-          id
+          dimension_set_id
 UNSEGMENTED ALL NODES;
 
 select refresh('MonMetrics.Measurements, MonMetrics.Definitions, MonMetrics.Dimensions, MonMetrics.DefinitionDimensions');

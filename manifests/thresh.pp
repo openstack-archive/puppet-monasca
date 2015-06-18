@@ -1,6 +1,21 @@
 #
 # Class to install monasca api server
 #
+# [*blobmirror*]
+#   location of the server to pull debians from
+#
+# [*kafka_brokers*]
+#   list of kafka brokers
+#
+# [*mon_thresh_build_ver*]
+#   version of the thresh debian package
+#
+# [*mon_thresh_deb*]
+#   name of the thresh debian package
+#
+# [*zookeeper_servers*]
+#   list of zookeeper servers
+#
 class monasca::thresh (
   $blobmirror           = undef,
   $kafka_brokers        = undef,
@@ -8,8 +23,8 @@ class monasca::thresh (
   $mon_thresh_deb       = undef,
   $zookeeper_servers    = undef,
 ) {
-  include monasca
-  include monasca::params
+  include ::monasca
+  include ::monasca::params
 
   # variables for the template
   $sql_host = $::monasca::params::sql_host

@@ -5,7 +5,113 @@
 # === Parameters
 #
 # [*enabled*]
-#   TODO:add comments here.
+#   flag to enable/disable the monasca agent
+#
+# [*url*]
+#   url of the monasca api server to POST metrics to
+#
+# [*username*]
+#   monasca agent name
+#
+# [*password*]
+#   monasca agent password
+#
+# [*keystone_url*]
+#   keystone endpoint for authentication
+#
+# [*project_name*]
+#   name of keystone project to POST metrics for
+#
+# [*project_domain_id*]
+#   domain id of the keystone project to POST metrics for
+#
+# [*project_domain_name*]
+#   domain name of the keystone project to POST metrics for
+#
+# [*project_id*]
+#   id of keystone project to POST metrics for
+#
+# [*ca_file*]
+#   certificate file to use in keystone authentication
+#
+# [*max_buffer_size*]
+#   buffer size for metrics POSTing
+#
+# [*backlog_send_rate*]
+#   how name metrics to POST from backlog at a time
+#
+# [*amplifier*]
+#   multiplier for testing, allows POSTing the same metric multiple times
+#
+# [*hostname*]
+#   hostname for this monasca agent
+#
+# [*dimensions*]
+#   list of dimensions for this monasca agent
+#
+# [*recent_point_threshold*]
+#   number of seconds to consider a metric 'recent'
+#
+# [*check_freq*]
+#   how frequently (in seconds) to run the agent
+#
+# [*listen_port*]
+#   port for the monasca agent to listen on
+#
+# [*non_local_traffic*]
+#   flag for whether or not to support non-local traffic
+#   (see monasca documentation for more details)
+#
+# [*statsd_port*]
+#   port for the statsd server
+#
+# [*statsd_interval*]
+#   frequency to poll statsd
+#
+# [*statsd_forward_host*]
+#   host for statsd server
+#
+# [*statsd_forward_port*]
+#   port for statsd server
+#
+# [*log_level*]
+#   logging level -- INFO, DEBUG, ALL...
+#
+# [*collector_log_file*]
+#   logfile for monasca collector
+#
+# [*forwarder_log_file*]
+#   logfile for monasca forwarder
+#
+# [*monstatsd_log_file*]
+#   logfile for monasca statsd collector
+#
+# [*log_to_syslog*]
+#   flag for whether or not to log to syslog
+#
+# [*syslog_host*]
+#   host of the syslog server
+#
+# [*syslog_port*]
+#   port of the syslog server
+#
+# [*virtual_env*]
+#   directory of python virtual environment
+#
+# [*agent_user*]
+#   name of the monasca agent user
+#
+# [*agent_ensure*]
+#   install ensure option (present, latest..)
+#
+# [*install_python_deps*]
+#   flag for whether or not to install python dependencies
+#
+# [*python_dep_ensure*]
+#   flag for whether or not to ensure/update python dependencies
+#
+# [*pip_install_args*]
+#   arguments to pass to the pip install command
 #
 class monasca::agent(
   $enabled                 = true,
@@ -45,8 +151,8 @@ class monasca::agent(
   $python_dep_ensure       = 'present',
   $pip_install_args        = '',
 ) {
-  include monasca
-  include monasca::params
+  include ::monasca
+  include ::monasca::params
 
   $agent_dir = "${::monasca::monasca_dir}/agent"
   $additional_checksd = "${agent_dir}/checks.d"

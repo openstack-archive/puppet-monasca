@@ -1,6 +1,27 @@
 #
 # Class for configuring misc storm packages for use by monasca api server
 #
+# [*storm_version*]
+#   version of apache-storm to use
+#
+# [*mirror*]
+#   location of apache-storm mirror
+#
+# [*install_dir*]
+#   location to install storm
+#
+# [*storm_user*]
+#   name of the storm user
+#
+# [*storm_group*]
+#   name of the storm group
+#
+# [*log_dir*]
+#   directory for storm logs
+#
+# [*nimbus_server*]
+#   name of the nimbus server
+#
 class monasca::storm::config (
   $storm_version = 'apache-storm-0.9.3',
   $mirror = 'http://apache.arvixe.com/storm',

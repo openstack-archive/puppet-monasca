@@ -5,11 +5,10 @@ group :development, :test do
   gem 'rspec-puppet', '~> 2.1.0', :require => false
 
   gem 'metadata-json-lint'
-# Needs fix for LP: #1467625
-# gem 'puppet-lint-param-docs'
-# gem 'puppet-lint-absolute_classname-check'
-# gem 'puppet-lint-absolute_template_path'
-# gem 'puppet-lint-trailing_newline-check'
+  gem 'puppet-lint-param-docs'
+  gem 'puppet-lint-absolute_classname-check'
+  gem 'puppet-lint-absolute_template_path'
+  gem 'puppet-lint-trailing_newline-check'
 
   # Puppet 4.x related lint checks
   gem 'puppet-lint-unquoted_string-check'

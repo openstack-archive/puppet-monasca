@@ -1,5 +1,41 @@
+# == Class: monasca::persister
 #
 # Class to setup monasca persister
+#
+# === Parameters:
+#
+# [*blobmirror*]
+#   location of server to pull debian package from
+#
+# [*consumer_id*]
+#   id of the kafka consumer for this persister
+#
+# [*batch_size*]
+#   batch size of metrics/alarm to persist at the same time
+#
+# [*num_threads*]
+#   number of persister threads
+#
+# [*batch_seconds*]
+#   frequency for this perisiter to write to db
+#
+# [*config*]
+#   persister specific configuration -- allows running multiple persisters.
+#
+# [*db_admin_password*]
+#   admin password for database
+#
+# [*mon_pers_build_ver*]
+#   version of the persister to install
+#
+# [*mon_pers_deb*]
+#   name of the debian package for the persister
+#
+# [*pers_user*]
+#   name of the monasca perisister user
+#
+# [*zookeeper_servers*]
+#   list of zookeeper servers
 #
 class monasca::persister (
   $blobmirror         = undef,
@@ -14,8 +50,8 @@ class monasca::persister (
   $pers_user          = 'persister',
   $zookeeper_servers  = undef,
 ) {
-  include monasca
-  include monasca::params
+  include ::monasca
+  include ::monasca::params
 
   $pers_fetch_url = "http://${blobmirror}/repos/monasca/monasca_persister"
   $latest_pers_deb = "/tmp/${mon_pers_deb}"
