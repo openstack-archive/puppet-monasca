@@ -1,5 +1,11 @@
+# == Defined Type: monasca::checks::instances::load
 #
 # configure monasca plugin yaml file for load interfaces
+#
+# === Parameters:
+#
+# [*dimensions*]
+#   any additional dimensions for the check
 #
 define monasca::checks::instances::load (
   $dimensions = undef,

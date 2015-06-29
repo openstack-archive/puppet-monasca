@@ -1,5 +1,20 @@
+# == Defined Type: monasca::kafka::topics
 #
 # Defined type to create kafka topics for monasca
+#
+# === Parameters:
+#
+# [*partitions*]
+#   number of kafka partitions for this topic
+#
+# [*kafka_zookeeper_connections*]
+#   list of zookeeper connections for kafka topic
+#
+# [*kafka_replication_factor*]
+#   replication factor for kakfa topic
+#
+# [*install_dir*]
+#   directory of kafka install
 #
 define monasca::kafka::topics (
   $partitions                  = 2,

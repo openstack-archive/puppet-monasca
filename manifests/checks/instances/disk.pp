@@ -1,5 +1,26 @@
+# == Defined Type: monasca::checks::instances::disk
 #
 # configure monasca plugin yaml file for disk interfaces
+#
+# === Parameters:
+#
+# [*use_mount*]
+#   flag for mount setting for the check
+#
+# [*send_io_stats*]
+#   flag for whether or not to send io statistics
+#
+# [*send_rollup_stats*]
+#   flag for whether or not to send rollup statistics
+#
+# [*device_blacklist_re*]
+#   regular expression for devices to ignore
+#
+# [*ignore_filesystem_types*]
+#   types of file systems to ignore
+#
+# [*dimensions*]
+#   any additional dimensions for the check
 #
 define monasca::checks::instances::disk (
   $use_mount               = undef,

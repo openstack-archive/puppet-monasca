@@ -1,5 +1,14 @@
+# == Defined Type: monasca::checks::instances::host_alive
 #
 # configure monasca plugin yaml file for host_alive
+#
+# === Parameters:
+#
+# [*host_name*]
+#   host name to check for aliveness
+#
+# [*alive_test*]
+#   executable to run to test for aliveness
 #
 define monasca::checks::instances::host_alive (
   $host_name,

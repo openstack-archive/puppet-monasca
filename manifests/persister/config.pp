@@ -1,5 +1,47 @@
+# == Defined Type: monasca::persister::config
 #
 # Defined type to setup monasca persister
+#
+# === Parameters:
+#
+# [*batch_seconds*]
+#   frequency for this perisiter to write to db
+#
+# [*batch_size*]
+#   batch size of metrics/alarm to persist at the same time
+#
+# [*config*]
+#   persister specific configuration -- allows running multiple persisters.
+#
+# [*consumer_id*]
+#   id of the kafka consumer for this persister
+#
+# [*database_type*]
+#   influxdb or vertica
+#
+# [*db_admin_password*]
+#   admin password for database
+#
+# [*gzip_setting*]
+#   true for gzipping http data
+#
+# [*num_threads*]
+#   number of persister threads to run
+#
+# [*pers_db_user*]
+#   name of the monasca perisister database user
+#
+# [*pers_user*]
+#   name of the monasca perisister default user
+#
+# [*replication_factor*]
+#   replication factor for this persister
+#
+# [*retention_policy*]
+#   retention policy for this persister
+#
+# [*zookeeper_servers*]
+#   list of zookeeper servers
 #
 define monasca::persister::config (
   $batch_seconds      = $monasca::persister::batch_seconds,
