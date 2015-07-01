@@ -49,6 +49,10 @@
 # [*service_type*]
 #    Type of service. Optional. Defaults to 'monitoring'.
 #
+# [*service_description*]
+#    Description for monasca/monitoring service in the keystone service catalog.
+#    Optional. Defaults to 'Openstack Monitoring Service'.
+#
 # [*public_address*]
 #    Public address for endpoint. Optional. Defaults to '127.0.0.1'.
 #
@@ -115,6 +119,7 @@ class monasca::keystone::auth (
   $configure_user_role = true,
   $service_name        = undef,
   $service_type        = 'monitoring',
+  $service_description = 'Openstack Monitoring Service',
   $public_address      = '127.0.0.1',
   $admin_address       = '127.0.0.1',
   $internal_address    = '127.0.0.1',
@@ -236,7 +241,7 @@ class monasca::keystone::auth (
   keystone_service { $real_service_name:
     ensure      => present,
     type        => $service_type,
-    description => 'Openstack Monitoring Service',
+    description => $service_description,
   }
   if $configure_endpoint {
     keystone_endpoint { "${region}/${real_service_name}":
