@@ -67,15 +67,15 @@ class monasca::thresh (
     ensure  => running,
     require => [File[$thresh_cfg_file],
                 File[$latest_thresh_deb],
-                File[$startup_script],
-                Package['install-thresh']],
+                File[$startup_script]],
   }
 
   file { $startup_script:
-    ensure => file,
-    source => $startup_script_src,
-    mode   => '0755',
-    owner  => 'root',
-    group  => 'root',
+    ensure  => file,
+    source  => $startup_script_src,
+    mode    => '0755',
+    owner   => 'root',
+    group   => 'root',
+    require => Package['install-thresh'],
   }
 }
