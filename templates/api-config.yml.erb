@@ -36,13 +36,13 @@ influxDB:
   maxHttpConnections: 100
   gzip: <%= gzip_setting %>
   replicationFactor: 1
-  url: http://localhost:8086
+  url: http://<%= database_host %>:8086
   user: <%= api_db_user %>
   password: <%= api_db_password %>
 
 vertica:
   driverClass: com.vertica.jdbc.Driver
-  url: jdbc:vertica://localhost:5433/mon
+  url: jdbc:vertica://<%= database_host %>:5433/mon
   user: dbadmin
   password: <%= db_admin_password %>
   maxWaitForConnection: 5s

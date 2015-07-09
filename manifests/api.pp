@@ -13,6 +13,9 @@
 # [*database_type*]
 #   type of database backend, influxdb or vertica
 #
+# [*database_host*]
+#   host of database backend, defaults to localhost
+#
 # [*db_admin_password*]
 #   database admin password
 #
@@ -53,6 +56,7 @@ class monasca::api (
   $api_user             = 'monasca_api',
   $blobmirror           = undef,
   $database_type        = 'influxdb',
+  $database_host        = 'localhost',
   $db_admin_password    = undef,
   $gzip_setting         = true,
   $kafka_brokers        = undef,

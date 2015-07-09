@@ -1,5 +1,5 @@
 #
-# Class to install monasca api server
+# Class to install monasca thresholding engine
 #
 # [*blobmirror*]
 #   location of the server to pull debians from
@@ -67,7 +67,14 @@ class monasca::thresh (
     ensure  => running,
     require => [File[$thresh_cfg_file],
                 File[$latest_thresh_deb],
-                File[$startup_script]],
+                File[$startup_script],
+                User['thresh']],
+  }
+
+  user { 'thresh':
+    ensure  => present,
+    groups  => $::monasca::group,
+    require => Group[$::monasca::group],
   }
 
   file { $startup_script:
