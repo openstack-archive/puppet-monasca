@@ -14,7 +14,7 @@ puppet-monasca
 Overview
 --------
 
-The monasca module is a part of [Stackforge](https://github.com/stackforge), and is meant to assist with the installation and configuration of monasca itself, and its dependent services (mentioned below).
+The monasca module is a part of [OpenStack](https://github.com/openstack), and is meant to assist with the installation and configuration of monasca itself, and its dependent services (mentioned below).
 
 Module Description
 ------------------
@@ -50,4 +50,4 @@ Developer documentation for the entire puppet-openstack project.
 Contributors
 ------------
 
-* https://github.com/stackforge/puppet-monasca/graphs/contributors
+* https://github.com/openstack/puppet-monasca/graphs/contributors
