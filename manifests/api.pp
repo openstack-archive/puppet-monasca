@@ -102,6 +102,7 @@ class monasca::api (
     provider => dpkg,
     source   => $latest_api_deb,
     alias    => 'install-api',
+    tag      => ['openstack', 'monasca-package'],
   }
 
   #Variables for the template
@@ -130,6 +131,7 @@ class monasca::api (
                 File[$latest_api_deb],
                 File[$startup_script],
                 Package['install-api']],
+    tag     => 'monasca-service',
   }
 
   # Remove any old debs (puppet won't delete current resources)

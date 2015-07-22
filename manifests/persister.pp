@@ -71,6 +71,7 @@ class monasca::persister (
     provider => dpkg,
     source   => $latest_pers_deb,
     alias    => 'install-persister',
+    tag      => ['openstack', 'monasca-package'],
   }
 
   user { $pers_user:

@@ -61,6 +61,7 @@ class monasca::thresh (
     provider => dpkg,
     source   => $latest_thresh_deb,
     alias    => 'install-thresh',
+    tag      => ['openstack', 'monasca-package'],
   }
 
   service { 'monasca-thresh':
@@ -69,6 +70,7 @@ class monasca::thresh (
                 File[$latest_thresh_deb],
                 File[$startup_script],
                 User['thresh']],
+    tag     => 'monasca-service',
   }
 
   user { 'thresh':

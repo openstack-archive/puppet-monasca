@@ -78,6 +78,7 @@ define monasca::persister::config (
     ensure  => running,
     require => [File[$pers_cfg_file], Package['install-persister'],
                 Monasca::Persister::Startup_script[$persister_service_name]],
+    tag     => 'monasca-service',
   }
 
   monasca::persister::startup_script { $persister_service_name:
