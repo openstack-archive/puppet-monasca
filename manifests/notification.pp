@@ -106,6 +106,7 @@ class monasca::notification(
   service { 'monasca-notification':
     ensure  => running,
     require => [File[$cfg_file], File[$startup_script]],
+    tag     => 'monasca-service',
   }
 
   file { $startup_script:
