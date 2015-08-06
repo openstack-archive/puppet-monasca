@@ -36,6 +36,64 @@ Implementation
 
 monasca is a combination of Puppet manifest that configures the monasca client and server configuration, as well as monasca's dependent services.
 
+### Types
+
+#### monasca_config
+
+The `monasca_config` provider is a children of the ini_setting provider. It allows one to write an entry in the `/etc/monasca/monasca.conf` file.
+
+```puppet
+monasca_config { 'DEFAULT/verbose' :
+  value => true,
+}
+```
+
+This will write `verbose=true` in the `[DEFAULT]` section.
+
+##### name
+
+Section/setting name to manage from `monasca.conf`
+
+##### value
+
+The value of the setting to be defined.
+
+##### secret
+
+Whether to hide the value from Puppet logs. Defaults to `false`.
+
+##### ensure_absent_val
+
+If value is equal to ensure_absent_val then the resource will behave as if `ensure => absent` was specified. Defaults to `<SERVICE DEFAULT>`
+
+#### agent_config
+
+The `agent_config` provider is a children of the ini_setting provider. It allows one to write an entry in the `/etc/monasca/agent/agent.conf` file.
+
+```puppet
+agent_config { 'DEFAULT/verbose' :
+  value => true,
+}
+```
+
+This will write `verbose=true` in the `[DEFAULT]` section.
+
+##### name
+
+Section/setting name to manage from `agent.conf`
+
+##### value
+
+The value of the setting to be defined.
+
+##### secret
+
+Whether to hide the value from Puppet logs. Defaults to `false`.
+
+##### ensure_absent_val
+
+If value is equal to ensure_absent_val then the resource will behave as if `ensure => absent` was specified. Defaults to `<SERVICE DEFAULT>`
+
 Limitations
 -----------
 This module currently only supports debian based installs.
