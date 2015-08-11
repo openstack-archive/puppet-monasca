@@ -24,7 +24,7 @@ mysql:
   validationQuery: "/* MyService Health Check */ SELECT 1"
   minSize: 8
   maxSize: 32
-  checkConnectionWhileIdle: false
+  checkConnectionWhileIdle: <%= check_conn_while_idle %>
   checkConnectionOnBorrow: true
 
 databaseConfiguration:
@@ -49,7 +49,7 @@ vertica:
   validationQuery: "/* MyService Health Check */ SELECT 1"
   minSize: 4
   maxSize: 32
-  checkConnectionWhileIdle: false
+  checkConnectionWhileIdle: <%= check_conn_while_idle %>
 
 middleware:
   enabled: true

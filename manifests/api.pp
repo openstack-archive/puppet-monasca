@@ -10,6 +10,9 @@
 # [*blobmirror*]
 #   url of server to install debians from
 #
+# [*check_conn_while_idle*]
+#   flag for whether db connection should stay alive while idle
+#
 # [*database_type*]
 #   type of database backend, influxdb or vertica
 #
@@ -53,22 +56,23 @@
 #   list of zookeeper servers and ports
 #
 class monasca::api (
-  $api_user             = 'monasca_api',
-  $blobmirror           = undef,
-  $database_type        = 'influxdb',
-  $database_host        = 'localhost',
-  $db_admin_password    = undef,
-  $gzip_setting         = true,
-  $kafka_brokers        = undef,
-  $keystone_endpoint    = undef,
-  $keystone_admin_token = undef,
-  $mon_api_build_ver    = undef,
-  $mon_api_deb          = undef,
-  $region_name          = 'NA',
-  $role_delegate        = 'monitoring-delegate',
-  $roles_default        = ['admin','monasca-user','_member_'],
-  $roles_agent          = ['monasca-agent'],
-  $zookeeper_servers    = undef,
+  $api_user              = 'monasca_api',
+  $blobmirror            = undef,
+  $check_conn_while_idle = true,
+  $database_type         = 'influxdb',
+  $database_host         = 'localhost',
+  $db_admin_password     = undef,
+  $gzip_setting          = true,
+  $kafka_brokers         = undef,
+  $keystone_endpoint     = undef,
+  $keystone_admin_token  = undef,
+  $mon_api_build_ver     = undef,
+  $mon_api_deb           = undef,
+  $region_name           = 'NA',
+  $role_delegate         = 'monitoring-delegate',
+  $roles_default         = ['admin','monasca-user','_member_'],
+  $roles_agent           = ['monasca-agent'],
+  $zookeeper_servers     = undef,
 ) {
   include ::monasca
   include ::monasca::params
