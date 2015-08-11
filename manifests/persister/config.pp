@@ -10,6 +10,9 @@
 # [*batch_size*]
 #   batch size of metrics/alarm to persist at the same time
 #
+# [*check_conn_while_idle*]
+#   flag for whether db connection should stay alive while idle
+#
 # [*config*]
 #   persister specific configuration -- allows running multiple persisters.
 #
@@ -44,19 +47,20 @@
 #   list of zookeeper servers
 #
 define monasca::persister::config (
-  $batch_seconds      = $monasca::persister::batch_seconds,
-  $batch_size         = $monasca::persister::batch_size,
-  $config             = {},
-  $consumer_id        = $monasca::persister::consumer_id,
-  $database_type      = $monasca::persister::database_type,
-  $db_admin_password  = $monasca::persister::db_admin_password,
-  $gzip_setting       = true,
-  $num_threads        = $monasca::persister::num_threads,
-  $pers_db_user       = 'mon_persister',
-  $pers_user          = $monasca::persister::pers_user,
-  $replication_factor = 1,
-  $retention_policy   = 'raw',
-  $zookeeper_servers  = $monasca::persister::zookeeper_servers,
+  $batch_seconds         = $monasca::persister::batch_seconds,
+  $batch_size            = $monasca::persister::batch_size,
+  $check_conn_while_idle = true,
+  $config                = {},
+  $consumer_id           = $monasca::persister::consumer_id,
+  $database_type         = $monasca::persister::database_type,
+  $db_admin_password     = $monasca::persister::db_admin_password,
+  $gzip_setting          = true,
+  $num_threads           = $monasca::persister::num_threads,
+  $pers_db_user          = 'mon_persister',
+  $pers_user             = $monasca::persister::pers_user,
+  $replication_factor    = 1,
+  $retention_policy      = 'raw',
+  $zookeeper_servers     = $monasca::persister::zookeeper_servers,
 ) {
   include ::monasca::params
   $persister_config = deep_merge($monasca::params::persister_config_defaults, $config)

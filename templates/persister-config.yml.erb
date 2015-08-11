@@ -63,7 +63,7 @@ dataSourceFactory:
   validationQuery: "/* MyService Health Check */ SELECT 1"
   minSize: 8
   maxSize: 41
-  checkConnectionWhileIdle: false
+  checkConnectionWhileIdle: <%= @check_conn_while_idle %>
   maxConnectionAge: 1 minute
 
 metrics:
