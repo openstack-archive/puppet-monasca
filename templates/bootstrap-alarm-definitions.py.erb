@@ -1,4 +1,4 @@
-#!<%= virtual_env %>/bin/python
+#!<%= @virtual_env %>/bin/python
 
 import json
 from keystoneclient.v3 import client as keystone_client
@@ -55,7 +55,7 @@ def create_alarm_definition(client, alarm_definition):
 def main():
     client = get_monasca_client()
     names = get_current_names(client)
-    alarm_definitions = json.load(open('<%= alarm_definition_config %>'))
+    alarm_definitions = json.load(open('<%= @alarm_definition_config %>'))
 
     for alarm_definition in alarm_definitions:
         name = alarm_definition['name']

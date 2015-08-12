@@ -1,5 +1,5 @@
 kafka:
-    url: <%= kafka_brokers %>
+    url: <%= @kafka_brokers %>
     group: monasca-notification
     alarm_topic: alarm-state-transitions
     notification_topic: alarm-notifications
@@ -7,27 +7,27 @@ kafka:
     max_offset_lag: 600
 
 mysql:
-    host: <%= sql_host %>
-    user: <%= sql_user %>
-    passwd: <%= sql_password %>
+    host: <%= @sql_host %>
+    user: <%= @sql_user %>
+    passwd: <%= @sql_password %>
     db: mon
 
 notification_types:
     email:
-        server: <%= smtp_server %>
-        port: <%= smtp_port %>
-        user: <%= smtp_user %>
-        password: <%= smtp_password %>
+        server: <%= @smtp_server %>
+        port: <%= @smtp_port %>
+        user: <%= @smtp_user %>
+        password: <%= @smtp_password %>
         timeout: 60
-        from_addr: <%= from_email_address %>
+        from_addr: <%= @from_email_address %>
 
     webhook:
         timeout: 5
-        url: <%= webhook_url %>
+        url: <%= @webhook_url %>
 
     pagerduty:
         timeout: 5
-        url: <%= pagerduty_url %>
+        url: <%= @pagerduty_url %>
 
 processors:
     alarm:
@@ -47,7 +47,7 @@ queues:
     sent_notifications_size: 50
 
 zookeeper:
-    url: <%= zookeeper_servers %>
+    url: <%= @zookeeper_servers %>
     notification_path: /notification/alarms
     notification_retry_path: /notification/retry
 

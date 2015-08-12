@@ -1,6 +1,6 @@
-# Startup script for the <%= persister_service_name %>
+# Startup script for the <%= @persister_service_name %>
 
-description "<%= persister_service_name %> java app"
+description "<%= @persister_service_name %> java app"
 start on runlevel [2345]
 
 console log
@@ -8,4 +8,4 @@ respawn
 
 setgid monasca
 setuid persister
-exec /usr/bin/java -Dfile.encoding=UTF-8 -Xmx8g -cp /opt/monasca/monasca-persister.jar:/opt/vertica/java/lib/vertica_jdbc.jar monasca.persister.PersisterApplication server /etc/monasca/<%= persister_service_name %>.yml
+exec /usr/bin/java -Dfile.encoding=UTF-8 -Xmx8g -cp /opt/monasca/monasca-persister.jar:/opt/vertica/java/lib/vertica_jdbc.jar monasca.persister.PersisterApplication server /etc/monasca/<%= @persister_service_name %>.yml
