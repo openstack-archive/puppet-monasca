@@ -1,4 +1,4 @@
-region: <%= region_name %>
+region: <%= @region_name %>
 
 accessedViaHttps: false
 
@@ -10,50 +10,50 @@ maxQueryLimit: 1000000
 
 kafka:
   brokerUris:
-    - <%= kafka_brokers %>
+    - <%= @kafka_brokers %>
   zookeeperUris:
-    - <%= zookeeper_servers %>
+    - <%= @zookeeper_servers %>
   healthCheckTopic: healthcheck
 
 mysql:
   driverClass: com.mysql.jdbc.Driver
-  url: jdbc:mysql://<%= sql_host %>:3306/mon?connectTimeout=5000&autoReconnect=true
-  user: <%= sql_user %>
-  password: <%= sql_password %>
+  url: jdbc:mysql://<%= @sql_host %>:3306/mon?connectTimeout=5000&autoReconnect=true
+  user: <%= @sql_user %>
+  password: <%= @sql_password %>
   maxWaitForConnection: 1s
   validationQuery: "/* MyService Health Check */ SELECT 1"
   minSize: 8
   maxSize: 32
-  checkConnectionWhileIdle: <%= check_conn_while_idle %>
+  checkConnectionWhileIdle: <%= @check_conn_while_idle %>
   checkConnectionOnBorrow: true
 
 databaseConfiguration:
-  databaseType: <%= database_type %>
+  databaseType: <%= @database_type %>
 
 influxDB:
   name: mon
   version: V9
   maxHttpConnections: 100
-  gzip: <%= gzip_setting %>
+  gzip: <%= @gzip_setting %>
   replicationFactor: 1
-  url: http://<%= database_host %>:8086
-  user: <%= api_db_user %>
-  password: <%= api_db_password %>
+  url: http://<%= @database_host %>:8086
+  user: <%= @api_db_user %>
+  password: <%= @api_db_password %>
 
 vertica:
   driverClass: com.vertica.jdbc.Driver
-  url: jdbc:vertica://<%= database_host %>:5433/mon
+  url: jdbc:vertica://<%= @database_host %>:5433/mon
   user: dbadmin
-  password: <%= db_admin_password %>
+  password: <%= @db_admin_password %>
   maxWaitForConnection: 5s
   validationQuery: "/* MyService Health Check */ SELECT 1"
   minSize: 4
   maxSize: 32
-  checkConnectionWhileIdle: <%= check_conn_while_idle %>
+  checkConnectionWhileIdle: <%= @check_conn_while_idle %>
 
 middleware:
   enabled: true
-  serverVIP: <%= keystone_endpoint %>
+  serverVIP: <%= @keystone_endpoint %>
   serverPort: 5000
   connTimeout: 5000
   connSSLClientAuth: true
@@ -65,13 +65,13 @@ middleware:
   connPoolMinIdleTime: 600000
   connRetryTimes: 2
   connRetryInterval: 50
-  defaultAuthorizedRoles: <%= roles_default %>
-  agentAuthorizedRoles: <%= roles_agent %>
-  delegateAuthorizedRole: <%= role_delegate %>
-  adminAuthMethod: <%= auth_method %>
-  adminUser: <%= admin_name %>
-  adminPassword: <%= admin_password %>
-  adminToken: <%= keystone_admin_token %>
+  defaultAuthorizedRoles: <%= @roles_default %>
+  agentAuthorizedRoles: <%= @roles_agent %>
+  delegateAuthorizedRole: <%= @role_delegate %>
+  adminAuthMethod: <%= @auth_method %>
+  adminUser: <%= @admin_name %>
+  adminPassword: <%= @admin_password %>
+  adminToken: <%= @keystone_admin_token %>
   timeToCacheToken: 600
   maxTokenCacheSize: 1048576
 
@@ -79,7 +79,7 @@ server:
   applicationConnectors:
     - type: http
       maxRequestHeaderSize: 16KiB
-      port: <%= monasca_api_port %>
+      port: <%= @monasca_api_port %>
 
 logging:
 

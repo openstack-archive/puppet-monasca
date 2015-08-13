@@ -1,13 +1,13 @@
 #!/bin/bash
 #
-# /etc/init.d/storm-<%= storm_service %>
+# /etc/init.d/storm-<%= @storm_service %>
 #
-# Startup script for storm-<%= storm_service %>
+# Startup script for storm-<%= @storm_service %>
 #
-# description: Starts and stops storm-<%= storm_service %>
+# description: Starts and stops storm-<%= @storm_service %>
 #
-stormBin=<%= storm_install_dir %>/bin/storm
-stormSvc=<%= storm_service %>
+stormBin=<%= @storm_install_dir %>/bin/storm
+stormSvc=<%= @storm_service %>
 desc="Storm $stormSvc daemon"
 outFile="/var/log/storm/storm-$stormSvc.out"
 
@@ -18,7 +18,7 @@ fi
 
 start() {
   echo "Starting $desc (storm-$stormSvc): "
-  su <%= storm_user %> -c "nohup $stormBin <%= storm_service %> >>$outFile 2>&1 &"
+  su <%= @storm_user %> -c "nohup $stormBin <%= @storm_service %> >>$outFile 2>&1 &"
   RETVAL=$?
   sleep 2
   return $RETVAL
