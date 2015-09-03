@@ -44,13 +44,13 @@
 #   openstack region name for this install
 #
 # [*role_delegate*]
-#   name of the monasca delegate role
+#   name of the role allowed to write cross tenant metrics
 #
 # [*roles_default*]
-#   name of the monasca default role
+#   names of roles allowed to read and write metrics
 #
 # [*roles_agent*]
-#   name of the monasca agent role
+#   names of roles allowed to write metrics
 #
 # [*zookeeper_servers*]
 #   list of zookeeper servers and ports
