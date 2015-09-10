@@ -65,19 +65,25 @@ describe 'basic monasca_config resource' do
     end
 
     describe file('/etc/monasca/monasca.conf') do
-      it { should exist }
-      it { should contain('thisshouldexist=foo') }
-      it { should contain('thisshouldexist2=<SERVICE DEFAULT>') }
+      it { is_expected.to exist }
+      it { is_expected.to contain('thisshouldexist=foo') }
+      it { is_expected.to contain('thisshouldexist2=<SERVICE DEFAULT>') }
 
-      its(:content) { should_not match /thisshouldnotexist/ }
+      describe '#content' do
+        subject { super().content }
+        it { is_expected.to_not match /thisshouldnotexist/ }
+      end
     end
 
     describe file('/etc/monasca/agent/agent.conf') do
-      it { should exist }
-      it { should contain('thisshouldexist=foo') }
-      it { should contain('thisshouldexist2=<SERVICE DEFAULT>') }
+      it { is_expected.to exist }
+      it { is_expected.to contain('thisshouldexist=foo') }
+      it { is_expected.to contain('thisshouldexist2=<SERVICE DEFAULT>') }
 
-      its(:content) { should_not match /thisshouldnotexist/ }
+      describe '#content' do
+        subject { super().content }
+        it { is_expected.to_not match /thisshouldnotexist/ }
+      end
     end
 
   end
