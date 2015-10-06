@@ -158,5 +158,5 @@ class monasca::api (
     mode   => '0755',
     owner  => 'root',
     group  => 'root',
-  }
+  } ~> Service['monasca-api']
 }
