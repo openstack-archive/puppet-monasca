@@ -11,4 +11,4 @@ respawn limit 25 5
 
 setgid monasca
 setuid monasca-notification
-exec <%= @virtual_env %>/bin/monasca-notification
+exec <%= @virtual_env %>/bin/monasca-notification > /dev/null
