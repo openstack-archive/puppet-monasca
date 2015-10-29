@@ -69,6 +69,15 @@ class monasca::vertica::config (
     require => File[$install_dir],
   }
 
+  file { '/usr/sbin/update_vertica_stats.sh':
+    ensure  => file,
+    source  => "${files}/update_vertica_stats.sh",
+    mode    => '0755',
+    owner   => $db_user,
+    group   => $db_group,
+    require => File[$install_dir],
+  }
+
   file { "${install_dir}/${grants_schema}":
     ensure  => file,
     source  => "${files}/${grants_schema}",
