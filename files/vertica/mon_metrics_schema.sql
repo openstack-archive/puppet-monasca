@@ -40,7 +40,7 @@ CREATE PROJECTION Measurements_DBD_1_rep_MonMetrics /*+createtype(D)*/
  definition_dimensions_id ENCODING RLE,
  time_stamp ENCODING COMMONDELTA_COMP,
  value ENCODING AUTO,
- value_meta ENCODING RLE
+ value_meta ENCODING AUTO
 )
 AS
  SELECT definition_dimensions_id,
@@ -49,7 +49,7 @@ AS
         value_meta
  FROM MonMetrics.Measurements
  ORDER BY definition_dimensions_id,
-          value_meta
+          time_stamp
 SEGMENTED BY MODULARHASH (definition_dimensions_id) ALL NODES OFFSET 0;
 
 CREATE PROJECTION Definitions_DBD_2_rep_MonMetrics /*+createtype(D)*/
