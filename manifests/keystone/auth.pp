@@ -63,7 +63,7 @@
 #    Internal address for endpoint. Optional. Defaults to '127.0.0.1'.
 #
 # [*port*]
-#    Default port for enpoints. Optional. Defaults to '8082'.
+#    Default port for enpoints. Optional. Defaults to '8070'.
 #
 # [*region*]
 #    Region for endpoint. Optional. Defaults to 'RegionOne'.

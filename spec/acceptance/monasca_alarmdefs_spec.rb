@@ -8,7 +8,7 @@ describe 'alarmdefs class' do
       pp = <<-EOS
         class { '::monasca::alarmdefs':
           admin_password => 'foo',
-          api_server_url => 'http://127.0.0.1:8082',
+          api_server_url => 'http://127.0.0.1:8070',
           auth_url       => 'http://127.0.0.1:5000',
           project_name   => 'project_foo',
         }
