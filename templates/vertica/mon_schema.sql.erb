@@ -24,7 +24,10 @@ SELECT SET_CONFIG_PARAMETER ('MoveOutSizePct', 75); -- default 0
 SELECT SET_CONFIG_PARAMETER ('MoveOutInterval', 300); -- default 300
 SELECT SET_CONFIG_PARAMETER ('MergeOutInterval', 300); -- default 600
 
+CREATE RESOURCE POOL <%= @api_pool %> MEMORYSIZE '<%= @api_pool_mem_size %>' MAXMEMORYSIZE '<%= @api_pool_max_mem_size %>' PLANNEDCONCURRENCY <%= @api_pool_planned_con %> MAXCONCURRENCY <%= @api_pool_max_con %> RUNTIMEPRIORITY <%= @api_pool_runtime_priority %> RUNTIMEPRIORITYTHRESHOLD <%= @api_pool_runtime_priority_thresh %> PRIORITY <%= @api_pool_priority %>;
+CREATE RESOURCE POOL <%= @pers_pool %> MEMORYSIZE '<%= @pers_pool_mem_size %>' MAXMEMORYSIZE '<%= @pers_pool_max_mem_size %>' PLANNEDCONCURRENCY <%= @pers_pool_planned_con %> MAXCONCURRENCY <%= @pers_pool_max_con %> RUNTIMEPRIORITY <%= @pers_pool_runtime_priority %> RUNTIMEPRIORITYTHRESHOLD <%= @pers_pool_runtime_priority_thresh %> PRIORITY <%= @pers_pool_priority %>;
+
 -- Create users
-CREATE USER monitor IDENTIFIED BY '<%= monitor_password %>';
+CREATE USER <%= @monitor_user %> IDENTIFIED BY '<%= @monitor_password %>';
 GRANT pseudosuperuser TO monitor; -- This is the only way I know to allow the monitor user to see some user permissions.
 ALTER USER monitor DEFAULT ROLE pseudosuperuser;

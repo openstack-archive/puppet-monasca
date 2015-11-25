@@ -3,4 +3,4 @@
 # Simple script to execute vertica sql commands
 #
 
-/opt/vertica/bin/vsql -U <%= db_user %> -w <%= db_admin_password %> "$@"
+/opt/vertica/bin/vsql -U <%= @db_user %> -w <%= @db_admin_password %> "$@"

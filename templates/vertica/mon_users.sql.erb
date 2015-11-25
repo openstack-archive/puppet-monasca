@@ -1,2 +1,7 @@
-CREATE USER mon_persister IDENTIFIED BY '<%= mon_persister_password %>';
-CREATE USER mon_api IDENTIFIED BY '<%= mon_api_password %>';
+CREATE USER <%= @pers_db_user %> IDENTIFIED BY '<%= @pers_db_password %>';
+GRANT USAGE ON RESOURCE POOL <%= @pers_pool %> to <%= @pers_db_user %>;
+ALTER USER <%= @pers_db_user %> RESOURCE POOL <%= @pers_pool %>;
+
+CREATE USER <%= @api_db_user %> IDENTIFIED BY '<%= @api_db_password %>';
+GRANT USAGE ON RESOURCE POOL <%= @api_pool %> to <%= @api_db_user %>;
+ALTER USER <%= @api_db_user %> RESOURCE POOL <%= @api_pool %>;

@@ -43,8 +43,8 @@ influxDB:
 vertica:
   driverClass: com.vertica.jdbc.Driver
   url: jdbc:vertica://<%= @database_host %>:5433/mon
-  user: dbadmin
-  password: <%= @db_admin_password %>
+  user: <%= @api_db_user %>
+  password: <%= @api_db_password %>
   maxWaitForConnection: 5s
   validationQuery: "/* MyService Health Check */ SELECT 1"
   minSize: 4

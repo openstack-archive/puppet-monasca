@@ -53,22 +53,30 @@
 # [*persister_config_defaults*]
 #   defaults for monasca persister settings
 #
+# [*pers_db_user*]
+#   name of the monasca persister user for the database
+#
+# [*pers_db_password*]
+#   password for the monasca persister database user
+#
 class monasca::params(
-    $api_db_user     = 'mon_api',
-    $api_db_password = undef,
-    $port            = '8070',
-    $api_version     = 'v2.0',
-    $region          = 'RegionOne',
-    $admin_name      = 'monasca-admin',
-    $agent_name      = 'monasca-agent',
-    $user_name       = 'monasca-user',
-    $auth_method     = 'token',
-    $admin_password  = undef,
-    $agent_password  = undef,
-    $user_password   = undef,
-    $sql_host        = undef,
-    $sql_user        = undef,
-    $sql_password    = undef,
+    $api_db_user      = 'mon_api',
+    $api_db_password  = undef,
+    $port             = '8070',
+    $api_version      = 'v2.0',
+    $region           = 'RegionOne',
+    $admin_name       = 'monasca-admin',
+    $agent_name       = 'monasca-agent',
+    $user_name        = 'monasca-user',
+    $auth_method      = 'token',
+    $admin_password   = undef,
+    $agent_password   = undef,
+    $user_password    = undef,
+    $sql_host         = undef,
+    $sql_user         = undef,
+    $sql_password     = undef,
+    $pers_db_user     = 'mon_persister',
+    $pers_db_password = undef,
     $persister_config_defaults = {
       'admin_port'         => 8091,
       'application_port'   => 8090,

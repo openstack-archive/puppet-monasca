@@ -56,7 +56,6 @@ define monasca::persister::config (
   $db_admin_password     = $monasca::persister::db_admin_password,
   $gzip_setting          = true,
   $num_threads           = $monasca::persister::num_threads,
-  $pers_db_user          = 'mon_persister',
   $pers_user             = $monasca::persister::pers_user,
   $replication_factor    = 1,
   $retention_policy      = 'raw',
@@ -67,7 +66,8 @@ define monasca::persister::config (
 
   $persister_service_name = $name
   $pers_cfg_file = "/etc/monasca/${persister_service_name}.yml"
-  $api_db_password = $::monasca::params::api_db_password
+  $pers_db_user     = $::monasca::params::pers_db_user
+  $pers_db_password = $::monasca::params::pers_db_password
 
   file { $pers_cfg_file:
     ensure  => file,

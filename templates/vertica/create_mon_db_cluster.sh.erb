@@ -20,17 +20,17 @@ fi
 nodes=`grep install_opts /opt/vertica/config/admintools.conf | cut -d\  -f 4 |cut -d\' -f 2`
 
 # create the db
-/opt/vertica/bin/admintools -t create_db -s $nodes -d mon -p <%= db_admin_password %>
+/opt/vertica/bin/admintools -t create_db -s $nodes -d mon -p <%= @db_admin_password %>
 
 # start the db
-/opt/vertica/bin/admintools -t start_db -p <%= db_admin_password %> -d mon
+/opt/vertica/bin/admintools -t start_db -p <%= @db_admin_password %> -d mon
 
 # Add in the schemas
-/opt/vertica/bin/vsql -w <%= db_admin_password %> < /var/vertica/mon_schema.sql
-/opt/vertica/bin/vsql -w <%= db_admin_password %> < /var/vertica/mon_metrics_schema.sql
-/opt/vertica/bin/vsql -w <%= db_admin_password %> < /var/vertica/mon_alarms_schema.sql
-/opt/vertica/bin/vsql -w <%= db_admin_password %> < /var/vertica/mon_users.sql
-/opt/vertica/bin/vsql -w <%= db_admin_password %> < /var/vertica/mon_grants.sql
+/opt/vertica/bin/vsql -w <%= @db_admin_password %> < /var/vertica/mon_schema.sql
+/opt/vertica/bin/vsql -w <%= @db_admin_password %> < /var/vertica/mon_metrics_schema.sql
+/opt/vertica/bin/vsql -w <%= @db_admin_password %> < /var/vertica/mon_alarms_schema.sql
+/opt/vertica/bin/vsql -w <%= @db_admin_password %> < /var/vertica/mon_users.sql
+/opt/vertica/bin/vsql -w <%= @db_admin_password %> < /var/vertica/mon_grants.sql
 
 # Set restart policy to ksafe
 /opt/vertica/bin/admintools -t set_restart_policy -d mon -p ksafe
@@ -44,6 +44,6 @@ then
     ssh $node 'ln -s /var/vertica/server* /var/vertica/catalog/mon/v*/'
   done
 
-  /opt/vertica/bin/admintools -t stop_db -F -p <%= db_admin_password %> -d mon
-  /opt/vertica/bin/admintools -t start_db -p <%= db_admin_password %> -d mon
+  /opt/vertica/bin/admintools -t stop_db -F -p <%= @db_admin_password %> -d mon
+  /opt/vertica/bin/admintools -t start_db -p <%= @db_admin_password %> -d mon
 fi
