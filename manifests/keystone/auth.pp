@@ -188,21 +188,18 @@ class monasca::keystone::auth (
       ensure   => present,
       password => $admin_password,
       email    => $admin_email,
-      tenant   => $tenant,
       before   => Python::Pip['monasca-agent'],
     }
     keystone_user { $agent_name:
       ensure   => present,
       password => $agent_password,
       email    => $agent_email,
-      tenant   => $tenant,
       before   => Python::Pip['monasca-agent'],
     }
     keystone_user { $user_name:
       ensure   => present,
       password => $user_password,
       email    => $user_email,
-      tenant   => $tenant,
       before   => Python::Pip['monasca-agent'],
     }
   }
