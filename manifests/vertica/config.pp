@@ -5,12 +5,6 @@
 #
 # === Parameters
 #
-# [*api_db_password*]
-#   database api user password
-#
-# [*api_db_user*]
-#   database api user name
-#
 # [*api_pool*]
 #   name of the resource pool for monasca api process
 #
@@ -77,15 +71,7 @@
 # [*pers_pool_priority*]
 #   priority threshold persister resource pool
 #
-# [*pers_db_password*]
-#   database persister user password
-#
-# [*pers_db_user*]
-#   database persister user name
-#
 class monasca::vertica::config (
-  $api_db_password                   = unset,
-  $api_db_user                       = 'mon_api',
   $api_pool                          = 'api_pool',
   $api_pool_mem_size                 = '5G',
   $api_pool_max_mem_size             = '15G',
@@ -100,8 +86,6 @@ class monasca::vertica::config (
   $metrics_schema                    = 'puppet:///modules/monasca/vertica/mon_metrics_schema.sql',
   $monitor_password                  = unset,
   $monitor_user                      = 'monitor',
-  $pers_db_password                  = unset,
-  $pers_db_user                      = 'mon_persister',
   $pers_pool                         = 'persister_pool',
   $pers_pool_mem_size                = '5G',
   $pers_pool_max_mem_size            = '15G',
@@ -111,6 +95,13 @@ class monasca::vertica::config (
   $pers_pool_runtime_priority_thresh = '2',
   $pers_pool_priority                = '60',
 ) {
+
+  include ::monasca::params
+
+  $api_db_user = $::monasca::params::api_db_user
+  $api_db_password = $::monasca::params::api_db_password
+  $pers_db_user = $::monasca::params::pers_db_user
+  $pers_db_password = $::monasca::params::pers_db_password
 
   $files = 'puppet:///modules/monasca/vertica/'
   $templates = 'monasca/vertica'

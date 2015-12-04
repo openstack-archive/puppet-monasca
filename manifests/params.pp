@@ -86,7 +86,12 @@ class monasca::params(
     }
 ) {
   validate_string($admin_password)
+  validate_string($user_password)
   validate_string($agent_password)
+  validate_string($sql_password)
+  validate_string($sql_host)
+  validate_string($api_db_password)
+  validate_string($pers_db_password)
 
   if $::osfamily == 'Debian' {
     $agent_package = 'monasca-agent'

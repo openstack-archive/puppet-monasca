@@ -23,7 +23,7 @@ Main:
 <%- end -%>
   dimensions:
 <%- @dimensions.each_pair do |key, value| -%>
-    <%= @key %>: <%= @value %>
+    <%= key %>: <%= value %>
 <%- end -%>
   recent_point_threshold: <%= @recent_point_threshold %>
   check_freq: <%= @check_freq %>
