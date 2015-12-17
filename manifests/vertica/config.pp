@@ -1,8 +1,6 @@
 #
 # Class for vertica specific files
 #
-#
-#
 # === Parameters
 #
 # [*api_pool*]
@@ -28,6 +26,9 @@
 #
 # [*api_pool_priority*]
 #   priority threshold api resource pool
+#
+# [*api_pool_exec_parallel*]
+#   execution parallelism for api resource pool
 #
 # [*db_admin_password*]
 #   database admin password
@@ -71,6 +72,9 @@
 # [*pers_pool_priority*]
 #   priority threshold persister resource pool
 #
+# [*pers_pool_exec_parallel*]
+#   execution parallelism for persister resource pool
+#
 class monasca::vertica::config (
   $api_pool                          = 'api_pool',
   $api_pool_mem_size                 = '5G',
@@ -80,6 +84,7 @@ class monasca::vertica::config (
   $api_pool_runtime_priority         = 'MEDIUM',
   $api_pool_runtime_priority_thresh  = '2',
   $api_pool_priority                 = '50',
+  $api_pool_exec_parallel            = '2',
   $db_user                           = 'dbadmin',
   $db_group                          = 'verticadba',
   $db_admin_password                 = unset,
@@ -94,6 +99,7 @@ class monasca::vertica::config (
   $pers_pool_runtime_priority        = 'MEDIUM',
   $pers_pool_runtime_priority_thresh = '2',
   $pers_pool_priority                = '60',
+  $pers_pool_exec_parallel           = '1',
 ) {
 
   include ::monasca::params
