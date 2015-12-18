@@ -1,0 +1,219 @@
+#!<%= @virtual_env %>/bin/python
+#
+# TODO: Once monasca supports per-project retention policy,
+#       use the monasca client to retrieve the policy and
+#       honor that.  For now, -l and -i can be used to accomplish
+#       the same thing.
+#
+from datetime import datetime
+from prettytable import PrettyTable
+
+import keystoneclient.v2_0.client as keystone_client
+import argparse
+import json
+import sys
+import subprocess
+import time
+import os
+
+VSQL = "/usr/sbin/vsql"
+MON_TABLES = ["Definitions",
+              "Dimensions",
+              "DefinitionDimensions",
+              "Measurements"]
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group()
+
+    help_text = """
+    Limit pruning to just this list of tenant name(s).
+    """
+    group.add_argument('-l', '--limit', required=False,
+                       nargs='+', help=help_text)
+
+    help_text = """
+    Ignore pruning for this list of tenant name(s).
+    """
+    group.add_argument('-i', '--ignore', required=False,
+                       nargs='+', help=help_text)
+    help_text = """
+    The name of the admin tenant.  This tenant will not be
+    pruned, and libvirt metrics that are cross-posted here will
+    be pruned.
+    """
+    parser.add_argument('-a', '--admin_tenant', required=True,
+                        help=help_text)
+
+    help_text = """
+    Number of days of measurements to retain.
+    """
+    parser.add_argument('-r', '--retain_days', required=True,
+                        help=help_text)
+
+    args = parser.parse_args()
+    before_counts = get_table_counts(MON_TABLES)
+    prune_tables(args)
+    display_pruning_result(before_counts)
+
+
+def prune_tables(args):
+    now = time.time()
+    start_time = get_isotime(now)
+    retain_time = get_isotime(now - (int(args.retain_days) * 60 * 60 * 24))
+    tenants = get_tenant_list()
+    admin_id = get_tenant_id(tenants, args.admin_tenant)
+    print "Database pruning executing at %s" % start_time
+    print "Keeping records later than %s" % retain_time
+    print "Admin project '%s' (%s)" % (args.admin_tenant, admin_id)
+
+    and_clause = "AND def.tenant_id != '%s'" % admin_id
+    or_clause = "OR (def.tenant_id = '%s' AND def.name like 'vm.%%')" % \
+                admin_id
+
+    if args.limit:
+        limited_in_list = get_tenant_id_in_list(tenants, args.limit)
+        and_clause = "AND def.tenant_id IN (%s)" % limited_in_list
+        or_clause = ""
+
+    if args.ignore:
+        ignore_in_list = get_tenant_id_in_list(tenants, args.ignore)
+        and_clause = \
+            "AND (def.tenant_id != '%s' AND def.tenant_id NOT IN (%s))" \
+            % (admin_id, ignore_in_list)
+
+    delete_measurements_sql = """
+       DELETE
+       FROM MonMetrics.Measurements
+       WHERE time_stamp < '%s'
+       AND definition_dimensions_id IN (SELECT
+         defdims.id
+       FROM MonMetrics.Definitions def,
+            MonMetrics.DefinitionDimensions defdims
+            LEFT OUTER JOIN MonMetrics.Dimensions dims
+              ON dims.dimension_set_id = defdims.dimension_set_id
+       WHERE def.id = defdims.definition_id
+       %s %s);
+       COMMIT;
+    """ % (retain_time, and_clause, or_clause)
+
+    delete_defdims_sql = """
+       DELETE FROM MonMetrics.DefinitionDimensions
+       WHERE id NOT IN (SELECT DISTINCT
+           definition_dimensions_id
+         FROM MonMetrics.measurements);
+       COMMIT;
+    """
+
+    delete_dims_sql = """
+       DELETE FROM monmetrics.dimensions
+       WHERE dimension_set_id NOT IN (SELECT DISTINCT
+           dimension_set_id
+         FROM monmetrics.definitiondimensions);
+       COMMIT;
+    """
+
+    delete_defs_sql = """
+       DELETE FROM monmetrics.definitions
+       WHERE id NOT IN (SELECT DISTINCT
+           definition_id
+         FROM monmetrics.definitiondimensions);
+       COMMIT;
+    """
+
+    vsql(delete_measurements_sql)
+    vsql(delete_defdims_sql)
+    vsql(delete_dims_sql)
+    vsql(delete_defs_sql)
+
+    vsql("select make_ahm_now();")
+    vsql("select purge();")
+
+
+def get_tenant_list():
+    kc = get_keystone_client()
+    return kc.tenants.list()
+
+
+def get_tenant_id_in_list(tenants, names):
+    tenant_ids = []
+    for tenant_name in names:
+        tenant_id = get_tenant_id(tenants, tenant_name)
+        tenant_ids.append(tenant_id)
+    in_list = str(tenant_ids).strip('[]')
+    return in_list
+
+
+def get_tenant_id(tenants, tenant_name):
+    tenant_id = None
+    for tenant in tenants:
+        if tenant.name == tenant_name:
+            tenant_id = tenant.id
+            break
+    if not tenant_id:
+        print "Unable to find '%s' project -- aborting!" % tenant_name
+        sys.exit(1)
+
+    return str(tenant_id)
+
+
+def get_keystone_client():
+    kwargs = {
+        'username': os.environ['OS_USERNAME'],
+        'tenant_name': os.environ['OS_TENANT_NAME'],
+        'password': os.environ['OS_PASSWORD'],
+        'auth_url': os.environ['OS_AUTH_URL'],
+        'region_name': os.environ['OS_REGION_NAME'],
+    }
+
+    return keystone_client.Client(**kwargs)
+
+
+def get_table_counts(tables):
+    counts = {}
+    for table in tables:
+        sql = "SELECT COUNT(*) FROM MonMetrics.%s" % table
+        counts[table] = vsql(sql)
+    return counts
+
+
+def display_pruning_result(before):
+    display_table = PrettyTable(["Monasca Table", "Count Before",
+                                 "Count After", "Rows Pruned"])
+    after = get_table_counts(MON_TABLES)
+    for table in MON_TABLES:
+        display_table.add_row([table,
+                              before[table],
+                              after[table],
+                              int(before[table]) - int(after[table])])
+    print display_table
+
+
+def vsql(sql):
+        p = subprocess.Popen([VSQL, "-c", sql],
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
+
+        out, err = p.communicate()
+        if p.returncode != 0:
+            print("vsql failed: %s %s" % (out, err))
+            return ""
+        result_next_line = False
+        for l in out.splitlines():
+            if '--' in l:
+                # we want the next row
+                result_next_line = True
+                continue
+            if result_next_line:
+                return l
+
+
+def get_isotime(time_stamp):
+    utc = str(datetime.utcfromtimestamp(time_stamp))
+    utc = utc.replace(" ", "T")[:-7] + 'Z'
+    return utc
+
+
+if __name__ == '__main__':
+    main()
