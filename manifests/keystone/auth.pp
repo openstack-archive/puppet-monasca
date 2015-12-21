@@ -264,13 +264,12 @@ class monasca::keystone::auth (
     }
   }
 
-  keystone_service { $real_service_name:
+  keystone_service { "${real_service_name}::${service_type}":
     ensure      => present,
-    type        => $service_type,
     description => $service_description,
   }
   if $configure_endpoint {
-    keystone_endpoint { "${region}/${real_service_name}":
+    keystone_endpoint { "${region}/${real_service_name}::${service_type}":
       ensure       => present,
       public_url   => $public_url_real,
       admin_url    => $admin_url_real,
