@@ -266,6 +266,7 @@ class monasca::keystone::auth (
 
   keystone_service { "${real_service_name}::${service_type}":
     ensure      => present,
+    type        => $service_type,
     description => $service_description,
   }
   if $configure_endpoint {
