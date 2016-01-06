@@ -158,12 +158,6 @@ class monasca::vertica::config (
     require => [Package['python-virtualenv'],Package['python-dev']],
   }
 
-  python::pip { 'python-keystoneclient' :
-    virtualenv => $virtual_env,
-    owner      => 'root',
-    require    => Python::Virtualenv[$virtual_env],
-  }
-
   file { $prune_script:
     ensure  => file,
     content => template("${templates}/${prune_script_name}.erb"),

@@ -63,20 +63,6 @@ class monasca::alarmdefs(
     require => [Package['python-virtualenv'],Package['python-dev']],
   }
 
-  python::pip { 'python-keystoneclient' :
-    virtualenv => $virtual_env,
-    owner      => 'root',
-    require    => Python::Virtualenv[$virtual_env],
-    before     => Exec[$script],
-  }
-
-  python::pip { 'python-monascaclient' :
-    virtualenv => $virtual_env,
-    owner      => 'root',
-    require    => Python::Virtualenv[$virtual_env],
-    before     => Exec[$script],
-  }
-
   file { $script:
     ensure  => file,
     content => template("monasca/${script_name}.erb"),
