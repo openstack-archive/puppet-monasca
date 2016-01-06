@@ -75,6 +75,10 @@
 # [*pers_pool_exec_parallel*]
 #   execution parallelism for persister resource pool
 #
+# [*virtual_env*]
+#   location of python virtual environment to install to for any
+#   python utilities
+#
 class monasca::vertica::config (
   $api_pool                          = 'api_pool',
   $api_pool_mem_size                 = '5G',
@@ -100,6 +104,7 @@ class monasca::vertica::config (
   $pers_pool_runtime_priority_thresh = '2',
   $pers_pool_priority                = '60',
   $pers_pool_exec_parallel           = '1',
+  $virtual_env                       = '/var/lib/vertica',
 ) {
 
   include ::monasca::params
@@ -118,6 +123,8 @@ class monasca::vertica::config (
   $users_schema = 'mon_users.sql'
   $cluster_script = 'create_mon_db_cluster.sh'
   $single_node_script = 'create_mon_db.sh'
+  $prune_script_name = 'prune_vertica.py'
+  $prune_script = "${virtual_env}/bin/${prune_script_name}"
 
   file { $install_dir:
     ensure => directory,
@@ -138,6 +145,28 @@ class monasca::vertica::config (
   file { '/usr/sbin/vsql':
     ensure  => file,
     content => template("${templates}/vsql.erb"),
+    mode    => '0755',
+    owner   => $db_user,
+    group   => $db_group,
+    require => File[$install_dir],
+  }
+
+  python::virtualenv { $virtual_env :
+    owner   => 'root',
+    group   => 'root',
+    before  => [File[$prune_script]],
+    require => [Package['python-virtualenv'],Package['python-dev']],
+  }
+
+  python::pip { 'python-keystoneclient' :
+    virtualenv => $virtual_env,
+    owner      => 'root',
+    require    => Python::Virtualenv[$virtual_env],
+  }
+
+  file { $prune_script:
+    ensure  => file,
+    content => template("${templates}/${prune_script_name}.erb"),
     mode    => '0755',
     owner   => $db_user,
     group   => $db_group,
