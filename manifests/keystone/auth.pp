@@ -188,19 +188,19 @@ class monasca::keystone::auth (
       ensure   => present,
       password => $admin_password,
       email    => $admin_email,
-      before   => Python::Pip['monasca-agent'],
+      before   => Service['monasca-agent'],
     }
     keystone_user { $agent_name:
       ensure   => present,
       password => $agent_password,
       email    => $agent_email,
-      before   => Python::Pip['monasca-agent'],
+      before   => Service['monasca-agent'],
     }
     keystone_user { $user_name:
       ensure   => present,
       password => $user_password,
       email    => $user_email,
-      before   => Python::Pip['monasca-agent'],
+      before   => Service['monasca-agent'],
     }
   }
 
@@ -249,18 +249,18 @@ class monasca::keystone::auth (
       ensure  => present,
       roles   => [$role_agent, $role_delegate],
       require => $real_user_roles_agent,
-      before  => Python::Pip['monasca-agent'],
+      before  => Service['monasca-agent'],
     }
     keystone_user_role { "${admin_name}@${tenant}":
       ensure => present,
       roles  => $real_user_roles_admin,
-      before => Python::Pip['monasca-agent'],
+      before => Service['monasca-agent'],
     }
     keystone_user_role { "${user_name}@${tenant}":
       ensure  => present,
       roles   => [$role_user],
       require => $real_user_roles_user,
-      before  => Python::Pip['monasca-agent'],
+      before  => Service['monasca-agent'],
     }
   }
 

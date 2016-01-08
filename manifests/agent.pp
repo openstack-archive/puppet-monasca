@@ -96,13 +96,19 @@
 #   port of the syslog server
 #
 # [*virtual_env*]
-#   directory of python virtual environment
+#   path of python virtual environment symlink
+#
+# [*virtual_env_dir*]
+#   directory for python virtual environments
+#
+# [*virtual_env_reqs*]
+#   requirements file for the agent venv
+#
+# [*virtual_envs*]
+#   a hash of virtual envs to build
 #
 # [*agent_user*]
 #   name of the monasca agent user
-#
-# [*agent_ensure*]
-#   install ensure option (present, latest..)
 #
 # [*install_python_deps*]
 #   flag for whether or not to install python dependencies
@@ -145,8 +151,10 @@ class monasca::agent(
   $syslog_host             = undef ,
   $syslog_port             = undef,
   $virtual_env             = '/var/lib/monasca-agent',
+  $virtual_env_dir         = '/var/lib/monasca-agent-venvs',
+  $virtual_env_reqs        = 'puppet:///modules/monasca/agent_requirements.txt',
+  $virtual_envs            = {'default'=> {'venv_active'=> true}},
   $agent_user              = 'monasca-agent',
-  $agent_ensure            = 'latest',
   $install_python_deps     = true,
   $python_dep_ensure       = 'present',
   $pip_install_args        = '',
@@ -158,28 +166,26 @@ class monasca::agent(
   $additional_checksd = "${agent_dir}/checks.d"
   $conf_dir = "${agent_dir}/conf.d"
 
-  if $::monasca::params::agent_package {
-    if $install_python_deps {
-      package { ['python-virtualenv', 'python-dev']:
-        ensure => $python_dep_ensure,
-        before => Python::Virtualenv[$virtual_env],
-      }
-    }
-
-    python::virtualenv { $virtual_env :
-      owner   => 'root',
-      group   => 'root',
-      require => [Package['python-virtualenv'],Package['python-dev']],
-      before  => Python::Pip['monasca-agent'],
-    }
-    python::pip { 'monasca-agent' :
-      ensure       => $agent_ensure,
-      pkgname      => $::monasca::params::agent_package,
-      virtualenv   => $virtual_env,
-      owner        => 'root',
-      install_args => $pip_install_args,
+  if $install_python_deps {
+    package { ['python-virtualenv', 'python-dev']:
+      ensure => $python_dep_ensure,
     }
   }
+
+  file { $virtual_env_dir:
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+  $defaults = {
+    symlink           => $virtual_env,
+    basedir           => $virtual_env_dir,
+    venv_extra_args   => $pip_install_args,
+    venv_requirements => $virtual_env_reqs,
+  }
+  create_resources('::monasca::virtualenv::agent_instance', $virtual_envs,
+    $defaults)
 
   user { $agent_user:
     ensure  => present,
@@ -244,16 +250,6 @@ class monasca::agent(
     group   => 'root',
     mode    => '0755',
     content => template('monasca/monasca-agent.init.erb'),
-    require => Python::Pip['monasca-agent'],
-    before  => Service['monasca-agent'],
-  }
-
-  file { "${virtual_env}/share/monasca/agent/supervisor.conf":
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    content => template('monasca/supervisor.conf.erb'),
-    require => Python::Pip['monasca-agent'],
     before  => Service['monasca-agent'],
   }
 
