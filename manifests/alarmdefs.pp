@@ -7,6 +7,12 @@
 # [*alarm_definition_config_source*]
 #   location of alarm definitions to bootstrap in mysql database
 #
+# [*notification_config_source*]
+#   location of notification methods to bootstrap in mysql database
+#
+# [*notification_assignments_source*]
+#   location of notification assignments to bootstrap in mysql database
+#
 # [*admin_username*]
 #   name of the monasca admin user
 #
@@ -33,6 +39,8 @@
 #
 class monasca::alarmdefs(
   $alarm_definition_config_source = 'puppet:///modules/monasca/alarm_definition_config.json',
+  $notification_config_source = 'puppet:///modules/monasca/notification_config.json',
+  $notification_assignments_source = 'puppet:///modules/monasca/notification_assignments.json',
   $admin_username = 'monasca-admin',
   $admin_password = undef,
   $api_server_url = undef,
@@ -46,6 +54,8 @@ class monasca::alarmdefs(
   include ::monasca::params
 
   $alarm_definition_config = '/tmp/alarm_definition_config.json'
+  $notification_config = '/tmp/notification_config.json'
+  $notification_assignments = '/tmp/notification_assignments.json'
   $script_name = 'bootstrap-alarm-definitions.py'
   $script = "${virtual_env}/bin/${script_name}"
 
@@ -79,8 +89,24 @@ class monasca::alarmdefs(
     group  => 'root',
   }
 
+  file { $notification_config:
+    ensure => file,
+    source => $notification_config_source,
+    mode   => '0755',
+    owner  => 'root',
+    group  => 'root',
+  }
+
+  file { $notification_assignments:
+    ensure => file,
+    source => $notification_assignments_source,
+    mode   => '0755',
+    owner  => 'root',
+    group  => 'root',
+  }
+
   exec { $script:
-    subscribe   => [File[$script], File[$alarm_definition_config]],
+    subscribe   => [File[$script], File[$alarm_definition_config], File[$notification_config], File[$notification_assignments]],
     path        => '/bin:/sbin:/usr/bin:/usr/sbin:/tmp',
     cwd         => "${virtual_env}/bin",
     user        => 'root',
