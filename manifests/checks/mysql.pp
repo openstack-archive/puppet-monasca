@@ -1,6 +1,7 @@
 # == Class: monasca::checks::mysql
 #
 # Sets up the monasca mysql check.
+# Requires MySQL-python
 #
 # === Parameters
 #
@@ -28,7 +29,6 @@ class monasca::checks::mysql(
   $instances = undef,
 ){
   $conf_dir = $::monasca::agent::conf_dir
-  $virtual_env = $::monasca::agent::virtual_env
 
   if($instances){
     Concat["${conf_dir}/mysql.yaml"] ~> Service['monasca-agent']
@@ -45,13 +45,5 @@ class monasca::checks::mysql(
       content => "---\ninit_config: null\ninstances:\n",
     }
     create_resources('monasca::checks::instances::mysql', $instances)
-  }
-
-  python::pip { 'MySQL-python' :
-    virtualenv   => $virtual_env,
-    owner        => 'root',
-    require      => Python::Virtualenv[$virtual_env],
-    before       => Service['monasca-agent'],
-    install_args => $::monasca::agent::pip_install_args,
   }
 }

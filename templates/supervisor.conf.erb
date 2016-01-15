@@ -18,7 +18,7 @@ pidfile = /var/run/monasca-agent-supervisord.pid
 logfile_backups = 10
 
 [program:collector]
-command=<%= @virtual_env %>/bin/monasca-collector foreground
+command=<%= @venv_path %>/bin/monasca-collector foreground
 stdout_logfile=NONE
 stderr_logfile=NONE
 priority=999
@@ -26,7 +26,7 @@ startsecs=2
 user=monasca-agent
 
 [program:forwarder]
-command=<%= @virtual_env %>/bin/monasca-forwarder
+command=<%= @venv_path %>/bin/monasca-forwarder
 stdout_logfile=NONE
 stderr_logfile=NONE
 startsecs=3
@@ -34,7 +34,7 @@ priority=998
 user=monasca-agent
 
 [program:monstatsd]
-command=<%= @virtual_env %>/bin/monasca-statsd
+command=<%= @venv_path %>/bin/monasca-statsd
 stdout_logfile=NONE
 stderr_logfile=NONE
 startsecs=3
