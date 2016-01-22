@@ -14,6 +14,9 @@ group :development, :test do
   gem 'puppet-lint-numericvariable',          :require => 'false'
   gem 'json',                                 :require => 'false'
   gem 'r10k',                                 :require => 'false'
+  gem 'puppet-openstack_spec_helper',
+      :git => 'https://git.openstack.org/openstack/puppet-openstack_spec_helper',
+      :require => false
 end
 
 group :system_tests do
