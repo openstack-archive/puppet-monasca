@@ -35,6 +35,9 @@
 # [*admin_password*]
 #   password for the monasca admin user
 #
+# [*admin_project_name*]
+#   project name for the monasca admin user
+#
 # [*agent_password*]
 #   password for the monasca agent user
 #
@@ -60,23 +63,24 @@
 #   password for the monasca persister database user
 #
 class monasca::params(
-    $api_db_user      = 'mon_api',
-    $api_db_password  = undef,
-    $port             = '8070',
-    $api_version      = 'v2.0',
-    $region           = 'RegionOne',
-    $admin_name       = 'monasca-admin',
-    $agent_name       = 'monasca-agent',
-    $user_name        = 'monasca-user',
-    $auth_method      = 'token',
-    $admin_password   = undef,
-    $agent_password   = undef,
-    $user_password    = undef,
-    $sql_host         = undef,
-    $sql_user         = undef,
-    $sql_password     = undef,
-    $pers_db_user     = 'mon_persister',
-    $pers_db_password = undef,
+    $api_db_user        = 'mon_api',
+    $api_db_password    = undef,
+    $port               = '8070',
+    $api_version        = 'v2.0',
+    $region             = 'RegionOne',
+    $admin_name         = 'monasca-admin',
+    $agent_name         = 'monasca-agent',
+    $user_name          = 'monasca-user',
+    $auth_method        = 'token',
+    $admin_password     = undef,
+    $admin_project_name = undef,
+    $agent_password     = undef,
+    $user_password      = undef,
+    $sql_host           = undef,
+    $sql_user           = undef,
+    $sql_password       = undef,
+    $pers_db_user       = 'mon_persister',
+    $pers_db_password   = undef,
     $persister_config_defaults = {
       'admin_port'         => 8091,
       'application_port'   => 8090,
@@ -86,6 +90,7 @@ class monasca::params(
     }
 ) {
   validate_string($admin_password)
+  validate_string($admin_project_name)
   validate_string($user_password)
   validate_string($agent_password)
   validate_string($sql_password)

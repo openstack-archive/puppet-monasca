@@ -184,12 +184,6 @@ class monasca::keystone::auth (
   }
 
   if $configure_user {
-    keystone_user { $admin_name:
-      ensure   => present,
-      password => $admin_password,
-      email    => $admin_email,
-      before   => Service['monasca-agent'],
-    }
     keystone_user { $agent_name:
       ensure   => present,
       password => $agent_password,
@@ -251,11 +245,6 @@ class monasca::keystone::auth (
       require => $real_user_roles_agent,
       before  => Service['monasca-agent'],
     }
-    keystone_user_role { "${admin_name}@${tenant}":
-      ensure => present,
-      roles  => $real_user_roles_admin,
-      before => Service['monasca-agent'],
-    }
     keystone_user_role { "${user_name}@${tenant}":
       ensure  => present,
       roles   => [$role_user],
@@ -264,17 +253,26 @@ class monasca::keystone::auth (
     }
   }
 
-  keystone_service { "${real_service_name}::${service_type}":
-    ensure      => present,
-    type        => $service_type,
-    description => $service_description,
+  keystone::resource::service_identity { 'Monasca Service':
+    configure_user      => $configure_user,
+    configure_user_role => $configure_user_role,
+    configure_endpoint  => $configure_endpoint,
+    service_type        => $service_type,
+    service_description => $service_description,
+    service_name        => $real_service_name,
+    region              => $region,
+    roles               => $real_user_roles_admin,
+    auth_name           => $admin_name,
+    password            => $admin_password,
+    email               => $admin_email,
+    tenant              => $tenant,
+    public_url          => $public_url_real,
+    admin_url           => $admin_url_real,
+    internal_url        => $internal_url_real,
   }
+
   if $configure_endpoint {
-    keystone_endpoint { "${region}/${real_service_name}::${service_type}":
-      ensure       => present,
-      public_url   => $public_url_real,
-      admin_url    => $admin_url_real,
-      internal_url => $internal_url_real,
-    }
+    Keystone_endpoint["${region}/${real_service_name}::${service_type}"] ~>
+      Service <| name == 'monasca-api' |>
   }
 }

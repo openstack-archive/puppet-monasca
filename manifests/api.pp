@@ -111,6 +111,7 @@ class monasca::api (
 
   #Variables for the template
   $admin_password = $::monasca::params::admin_password
+  $admin_project_name = $::monasca::params::admin_project_name
   $admin_name = $::monasca::params::admin_name
   $auth_method = $::monasca::params::auth_method
   $sql_host = $::monasca::params::sql_host
