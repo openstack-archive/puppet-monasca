@@ -53,6 +53,11 @@ def main():
                         help=help_text)
 
     args = parser.parse_args()
+
+    if args.limit and args.admin_tenant in args.limit:
+        print "Pruning the admin project is not allowed!"
+        sys.exit(1)
+
     before_counts = get_table_counts(MON_TABLES)
     prune_tables(args)
     display_pruning_result(before_counts)
@@ -68,22 +73,7 @@ def prune_tables(args):
     print "Keeping records later than %s" % retain_time
     print "Admin project '%s' (%s)" % (args.admin_tenant, admin_id)
 
-    and_clause = "AND def.tenant_id != '%s'" % admin_id
-    or_clause = "OR (def.tenant_id = '%s' AND def.name like 'vm.%%')" % \
-                admin_id
-
-    if args.limit:
-        limited_in_list = get_tenant_id_in_list(tenants, args.limit)
-        and_clause = "AND def.tenant_id IN (%s)" % limited_in_list
-        or_clause = ""
-
-    if args.ignore:
-        ignore_in_list = get_tenant_id_in_list(tenants, args.ignore)
-        and_clause = \
-            "AND (def.tenant_id != '%s' AND def.tenant_id NOT IN (%s))" \
-            % (admin_id, ignore_in_list)
-
-    delete_measurements_sql = """
+    delete_sql = """
        DELETE
        FROM MonMetrics.Measurements
        WHERE time_stamp < '%s'
@@ -94,9 +84,35 @@ def prune_tables(args):
             LEFT OUTER JOIN MonMetrics.Dimensions dims
               ON dims.dimension_set_id = defdims.dimension_set_id
        WHERE def.id = defdims.definition_id
-       %s %s);
+       %s);
        COMMIT;
-    """ % (retain_time, and_clause, or_clause)
+    """
+    admin_clause = "AND def.tenant_id = '%s' AND def.name like 'vm.%%'" % \
+                   admin_id
+
+    if args.limit:
+
+        print "Limiting pruning to projects '%s'" % args.limit
+        limited_in_list = get_tenant_id_in_list(tenants, args.limit)
+        non_admin_with_limit_clause = \
+            "AND def.tenant_id != '%s' AND def.tenant_id IN (%s)" \
+            % (admin_id, limited_in_list)
+        vsql(delete_sql % (retain_time, non_admin_with_limit_clause))
+
+    elif args.ignore:
+
+        print "Ignoring pruning for projects '%s'" % args.ignore
+        ignore_in_list = get_tenant_id_in_list(tenants, args.ignore)
+        non_admin_with_ignore_clause = \
+            "AND def.tenant_id != '%s' AND def.tenant_id NOT IN (%s)" \
+            % (admin_id, ignore_in_list)
+        vsql(delete_sql % (retain_time, non_admin_with_ignore_clause))
+        vsql(delete_sql % (retain_time, admin_clause))
+
+    else:
+        non_admin_clause = "AND def.tenant_id != '%s'" % admin_id
+        vsql(delete_sql % (retain_time, non_admin_clause))
+        vsql(delete_sql % (retain_time, admin_clause))
 
     delete_defdims_sql = """
        DELETE FROM MonMetrics.DefinitionDimensions
@@ -122,7 +138,6 @@ def prune_tables(args):
        COMMIT;
     """
 
-    vsql(delete_measurements_sql)
     vsql(delete_defdims_sql)
     vsql(delete_dims_sql)
     vsql(delete_defs_sql)
