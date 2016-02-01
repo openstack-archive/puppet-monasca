@@ -50,7 +50,7 @@ AS
  FROM MonMetrics.Measurements
  ORDER BY definition_dimensions_id,
           time_stamp
-SEGMENTED BY MODULARHASH (definition_dimensions_id) ALL NODES OFFSET 0;
+UNSEGMENTED ALL NODES;
 
 CREATE PROJECTION Definitions_DBD_2_rep_MonMetrics /*+createtype(D)*/
 (
