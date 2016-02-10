@@ -24,7 +24,7 @@ Setup
 
 **What the monasca module affects:**
 
-* monasca, monitoring as a service for Openstack.
+* monasca, monitoring as a service for OpenStack.
 * storm, Apache's distributed realtime computational system.
 * kafka, Apache's publish-subscribe messaging system.
 * influxdb, a stand-alone open-source distributes time series database.
