@@ -53,6 +53,9 @@
 # [*sql_password*]
 #   password for the mysql user
 #
+# [*sql_port*]
+#   port for the mysql instance
+#
 # [*persister_config_defaults*]
 #   defaults for monasca persister settings
 #
@@ -79,6 +82,7 @@ class monasca::params(
     $sql_host           = undef,
     $sql_user           = undef,
     $sql_password       = undef,
+    $sql_port           = 3306,
     $pers_db_user       = 'mon_persister',
     $pers_db_password   = undef,
     $persister_config_defaults = {

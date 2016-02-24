@@ -27,9 +27,10 @@ class monasca::thresh (
   include ::monasca::params
 
   # variables for the template
-  $sql_host = $::monasca::params::sql_host
-  $sql_user = $::monasca::params::sql_user
+  $sql_host     = $::monasca::params::sql_host
+  $sql_user     = $::monasca::params::sql_user
   $sql_password = $::monasca::params::sql_password
+  $sql_port     = $::monasca::params::sql_port
 
   $thresh_fetch_url = "http://${blobmirror}/repos/monasca/monasca_thresh"
   $latest_thresh_deb = "/tmp/${mon_thresh_deb}"

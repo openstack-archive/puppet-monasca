@@ -8,6 +8,7 @@ class monasca::db::mysql {
   $sql_host            = $::monasca::params::sql_host
   $sql_user            = $::monasca::params::sql_user
   $sql_password        = $::monasca::params::sql_password
+  $sql_port            = $::monasca::params::sql_port
   $monsql              = '/tmp/mon.sql'
   $mysql_user_class    = 'mysql_user'
   $monasca_remote      = 'monasca@%'

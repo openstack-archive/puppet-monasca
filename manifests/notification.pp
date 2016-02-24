@@ -62,9 +62,10 @@ class monasca::notification(
   include ::monasca::params
 
   # variables for the template
-  $sql_host = $::monasca::params::sql_host
-  $sql_user = $::monasca::params::sql_user
+  $sql_host     = $::monasca::params::sql_host
+  $sql_user     = $::monasca::params::sql_user
   $sql_password = $::monasca::params::sql_password
+  $sql_port     = $::monasca::params::sql_port
 
   $cfg_file = '/etc/monasca/notification.yaml'
   $startup_script = '/etc/init/monasca-notification.conf'

@@ -77,7 +77,7 @@ sporadicMetricNamespaces:
 
 database:
   driverClass: com.mysql.jdbc.Driver
-  url: jdbc:mysql://<%= @sql_host %>:3306/mon?connectTimeout=5000&autoReconnect=true
+  url: jdbc:mysql://<%= @sql_host %>:<%= @sql_port %>/mon?connectTimeout=5000&autoReconnect=true
   user: <%= @sql_user %>
   password: <%= @sql_password %>
   properties:
