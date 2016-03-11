@@ -58,6 +58,11 @@ class monasca::alarmdefs(
   $notification_assignments = '/tmp/notification_assignments.json'
   $script_name = 'bootstrap-alarm-definitions.py'
   $script = "${virtual_env}/bin/${script_name}"
+  $cleanup_script = "${virtual_env}/bin/vm_alarm_cleanup.py"
+  $sql_host = $::monasca::params::sql_host
+  $sql_user = $::monasca::params::sql_user
+  $sql_password = $::monasca::params::sql_password
+  $sql_port = $::monasca::params::sql_port
 
   if $install_python_deps {
     package { ['python-virtualenv', 'python-dev']:
@@ -119,4 +124,14 @@ class monasca::alarmdefs(
     refreshonly => true,
     require     => Service['monasca-api'],
   }
+
+  file { $cleanup_script:
+    ensure  => file,
+    content => template('monasca/vm_alarm_cleanup.py.erb'),
+    mode    => '0755',
+    owner   => 'root',
+    group   => 'root',
+    require => Python::Virtualenv[$virtual_env],
+  }
+
 }

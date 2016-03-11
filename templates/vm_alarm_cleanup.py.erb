@@ -1,0 +1,100 @@
+#!<%= @virtual_env %>/bin/python
+
+import MySQLdb
+import os
+import os_client_config
+import shade
+
+OS_VARS = ['OS_REGION_NAME',
+           'OS_USERNAME',
+           'OS_PASSWORD',
+           'OS_TENANT_NAME',
+           'OS_AUTH_URL']
+
+DELETE_SQL = """
+    DELETE a FROM alarm a WHERE a.id IN (%s); COMMIT;
+    """
+
+GET_SQL = """
+    SELECT
+      a.id AS alarm_id,
+      mdg.dimensions AS metric_dimensions
+    FROM alarm AS a
+    INNER JOIN alarm_definition ad
+      ON ad.id = a.alarm_definition_id
+    INNER JOIN alarm_metric AS am
+      ON am.alarm_id = a.id
+    INNER JOIN metric_definition_dimensions AS mdd
+      ON mdd.id = am.metric_definition_dimensions_id
+    INNER JOIN metric_definition AS md
+      ON md.id = mdd.metric_definition_id
+    LEFT OUTER JOIN (SELECT
+      dimension_set_id,
+      name,
+      value,
+      group_concat(name, '=', value) AS dimensions
+    FROM metric_dimension
+    GROUP BY dimension_set_id) AS mdg
+      ON mdg.dimension_set_id = mdd.metric_dimension_set_id
+    WHERE ad.deleted_at IS NULL
+    AND a.state = 'UNDETERMINED'
+    AND mdg.dimensions LIKE '%component=vm%'
+    AND mdg.dimensions LIKE '%region={}%'
+    ORDER BY a.id;
+    """
+
+
+def validate_env():
+    for os_var in OS_VARS:
+        if not os.environ.get(os_var):
+            print "Error: %s not found." % os_var
+            sys.exit(1)
+
+
+def get_cloud():
+    validate_env()
+    client_config = os_client_config.OpenStackConfig()
+    cloud_config = client_config.get_one_cloud()
+    return shade.OpenStackCloud(cloud_config=cloud_config)
+
+
+def prune_alarms(active_vm_ids):
+
+    db = MySQLdb.connect(user = '<%= sql_user %>',
+                         passwd = '<%= @sql_password %>',
+                         host = '<%= @sql_host %>',
+                         port = <%= @sql_port %>,
+                         db = 'mon')
+
+    try:
+        c = db.cursor()
+        c.execute(GET_SQL.format(os.environ.get('OS_REGION_NAME')))
+
+        alarms = {}
+        for (alarm_id, dims) in c:
+            dim_dict = dict(s.split('=') for s in dims.split(','))
+            if 'resource_id' in dim_dict.keys():
+                alarms[alarm_id] = dim_dict['resource_id']
+
+        alarm_ids_to_delete = []
+        for (alarm_id, resource_id) in alarms.iteritems():
+            if resource_id not in active_vm_ids:
+                alarm_ids_to_delete.append(alarm_id)
+                print "Deleting alarm id '%s' for deleted vm '%s'" % \
+                      (alarm_id, resource_id)
+
+        if len(alarm_ids_to_delete) > 0:
+            c.execute(DELETE_SQL % str(alarm_ids_to_delete).strip('[]'))
+
+    finally:
+        c.close()
+        db.close()
+
+
+def main():
+    cloud = get_cloud()
+    servers = cloud.nova_client.servers.list(search_opts={'all_tenants': 1})
+    prune_alarms(list(server.id for server in servers))
+
+if __name__ == '__main__':
+    main()
