@@ -52,6 +52,12 @@ def main():
     parser.add_argument('-r', '--retain_days', required=True,
                         help=help_text)
 
+    help_text = """
+    Metric name(s) to delete, only works with -l (limit) argument.
+    """
+    parser.add_argument('-m', '--metric_name', required=False,
+                        nargs='+', help=help_text)
+
     args = parser.parse_args()
 
     if args.limit and args.admin_tenant in args.limit:
@@ -94,10 +100,16 @@ def prune_tables(args):
 
         print "Limiting pruning to projects '%s'" % args.limit
         limited_in_list = get_tenant_id_in_list(tenants, args.limit)
-        non_admin_with_limit_clause = \
-            "AND def.tenant_id != '%s' AND def.tenant_id IN (%s)" \
-            % (admin_id, limited_in_list)
-        vsql(delete_sql % (retain_time, non_admin_with_limit_clause))
+        if args.metric_name:
+            print "Only pruning '%s' metrics" % args.metric_name
+            limit_clause = \
+                "AND def.name IN (%s) AND def.tenant_id IN (%s)" \
+                % (str(args.metric_name).strip('[]'), limited_in_list)
+        else:
+            limit_clause = \
+                "AND def.tenant_id != '%s' AND def.tenant_id IN (%s)" \
+                % (admin_id, limited_in_list)
+        vsql(delete_sql % (retain_time, limit_clause))
 
     elif args.ignore:
 
