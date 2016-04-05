@@ -29,7 +29,7 @@ define monasca::kafka::topics (
     cwd     => $install_dir,
     user    => 'root',
     group   => 'root',
-    onlyif  => "kafka-topics.sh --topic ${name} --list --zookeeper ${kafka_zookeeper_connections}"
+    onlyif  => "kafka-topics.sh --topic ${name} --list --zookeeper ${kafka_zookeeper_connections} | grep -q ${name}; test $? -ne 0"
   } ->
   exec { "Ensure ${name} is has ${partitions} partitions":
     command =>"kafka-topics.sh --alter --zookeeper ${kafka_zookeeper_connections} --partitions ${partitions} --topic ${name}",
@@ -37,5 +37,6 @@ define monasca::kafka::topics (
     cwd     => $install_dir,
     user    => 'root',
     group   => 'root',
+    onlyif  => "kafka-topics.sh --describe --zookeeper ${kafka_zookeeper_connections} --topic ${name} | grep 'PartitionCount:${partitions}'; test $? -ne 0"
   }
 }
