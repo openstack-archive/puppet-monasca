@@ -58,6 +58,12 @@ def main():
     parser.add_argument('-m', '--metric_name', required=False,
                         nargs='+', help=help_text)
 
+    help_text = """
+    Dimension name(s) to delete, only works with -m (name) argument.
+    """
+    parser.add_argument('-d', '--dimensions', required=False,
+                        nargs='+', help=help_text)
+
     args = parser.parse_args()
 
     if args.limit and args.admin_tenant in args.limit:
@@ -101,14 +107,20 @@ def prune_tables(args):
         print "Limiting pruning to projects '%s'" % args.limit
         limited_in_list = get_tenant_id_in_list(tenants, args.limit)
         if args.metric_name:
-            print "Only pruning '%s' metrics" % args.metric_name
             limit_clause = \
                 "AND def.name IN (%s) AND def.tenant_id IN (%s)" \
                 % (str(args.metric_name).strip('[]'), limited_in_list)
+            if args.dimensions:
+                print "Only pruning '%s' with '%s' dimensions " % \
+                        (args.metric_name, args.dimensions)
+                limit_clause += get_dimensions_sql(args.dimensions)
+            else:
+                print "Only pruning '%s' metrics" % args.metric_name
         else:
             limit_clause = \
                 "AND def.tenant_id != '%s' AND def.tenant_id IN (%s)" \
                 % (admin_id, limited_in_list)
+
         vsql(delete_sql % (retain_time, limit_clause))
 
     elif args.ignore:
@@ -161,6 +173,36 @@ def prune_tables(args):
 def get_tenant_list():
     kc = get_keystone_client()
     return kc.tenants.list()
+
+
+def get_dimensions_sql(dimensions):
+
+    sql = """
+      and defDims.dimension_set_id in (select
+            dimension_set_id
+         from
+            MonMetrics.Dimensions
+         where
+    """
+
+    key_val_dict = dict(s.split('=') for s in dimensions)
+    first_time = True
+    for key, value in key_val_dict.iteritems():
+        if not first_time:
+            sql += " or "
+        sql += " name = '%s' and value = '%s'" % (key, value)
+        first_time = False
+
+    sql += """
+       group by
+          dimension_set_id
+       having
+          count(*) = %d
+       order by
+         dimension_set_id)
+    """ % len(key_val_dict)
+
+    return sql
 
 
 def get_tenant_id_in_list(tenants, names):
