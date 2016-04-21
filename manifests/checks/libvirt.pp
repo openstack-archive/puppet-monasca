@@ -20,6 +20,9 @@
 # [*region_name*]
 #   openstack keystone region for this install
 #
+# [*heat_scale_group*]
+#   flag to indicate if scale group should be posted
+#
 # [*cache_dir*]
 #   Cache directory to persist data.
 # [*vm_probation*]
@@ -35,6 +38,7 @@ class monasca::checks::libvirt(
   $admin_user,
   $admin_password,
   $admin_tenant_name,
+  $heat_scale_group  = false,
   $identity_uri,
   $region_name       = undef,
   $cache_dir         = '/dev/shm',
