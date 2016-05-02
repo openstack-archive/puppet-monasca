@@ -1,6 +1,7 @@
 [
    {
       "alarm_definition_name":"http_status",
-      "notification_methods": ["sample_email"]
+      "notification_methods": ["sample_email"],
+      "actions": ["ALARM", "OK", "UNDETERMINED"]
    }
 ]

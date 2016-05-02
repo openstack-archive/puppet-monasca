@@ -42,7 +42,7 @@ def get_current_notif_names(client):
         names.append(notification['name'])
     return names
 
-def build_alarm_def(current_def, new_id):
+def build_alarm_def(current_def, new_id, method, actions):
     new_def = {}
     new_def['alarm_id'] = current_def['id']
     new_def['name'] = current_def['name']
@@ -55,29 +55,40 @@ def build_alarm_def(current_def, new_id):
     new_def['ok_actions'] = current_def['ok_actions']
     new_def['undetermined_actions'] = current_def['undetermined_actions']
 
-    if new_id not in new_def['alarm_actions']:
+    if 'ALARM' in actions and new_id not in new_def['alarm_actions']:
+        print("Adding ALARM action for method '%s' to '%s'" % (method, new_def['name']))
         new_def['alarm_actions'].append(new_id)
-    if new_id not in new_def['ok_actions']:
+    if 'OK' in actions and new_id not in new_def['ok_actions']:
+        print("Adding OK action for method '%s' to '%s'" % (method, new_def['name']))
         new_def['ok_actions'].append(new_id)
-    if new_id not in new_def['undetermined_actions']:
+    if 'UNDETERMINED' in actions and new_id not in new_def['undetermined_actions']:
+        print("Adding UNDETERMINED action for method '%s' to '%s'" % (method, new_def['name']))
         new_def['undetermined_actions'].append(new_id)
 
     return new_def
 
 
-def assign_notification_method(client, def_name, notification_methods):
+def assign_notification_method(client, assignment):
+
+    def_name = assignment['alarm_definition_name']
+    methods = assignment['notification_methods']
+    actions = assignment['actions']
+
     current_definitions = client.alarm_definitions.list()
     current_notifications = client.notifications.list()
     for definition in current_definitions:
         if def_name == definition['name']:
-            for method in notification_methods:
+            for method in methods:
                 for notification in current_notifications:
                     if method == notification['name']:
                         new_id = notification['id']
                         if new_id in definition['alarm_actions']:
                             print("Skipping assignment of notification method '%s' to '%s', already there." % (method, def_name))
                             continue
-                        new_def = build_alarm_def(definition, notification['id'])
+                        new_def = build_alarm_def(definition,
+                                                  notification['id'],
+                                                  method,
+                                                  actions)
                         client.alarm_definitions.update(**new_def)
                         print("Assigned notification method '%s' to '%s'" % (method, def_name))
 
@@ -119,8 +130,7 @@ def main():
         # alarm definitions defined in assignment file.
         #
         for assignment in notification_assignments:
-            def_name = assignment['alarm_definition_name']
-            assign_notification_method(client, def_name, assignment['notification_methods'])
+            assign_notification_method(client, assignment)
 
     except exc.HTTPException as he:
         raise exc.CommandError('HTTPException code=%s message=%s' %
