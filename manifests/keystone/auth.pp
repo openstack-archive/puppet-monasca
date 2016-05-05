@@ -225,8 +225,7 @@ class monasca::keystone::auth (
     if $user_roles_agent {
       $real_user_roles_agent = $user_roles_agent
     } else {
-      $real_user_roles_agent = [Keystone_role[$role_agent],
-                                Keystone_role[$role_delegate]]
+      $real_user_roles_agent = [$role_agent, $role_delegate]
     }
     if $user_roles_admin {
       $real_user_roles_admin = $user_roles_admin
@@ -236,20 +235,18 @@ class monasca::keystone::auth (
     if $user_roles_user {
       $real_user_roles_user = $user_roles_user
     } else {
-      $real_user_roles_user = [Keystone_role[$role_user]]
+      $real_user_roles_user = [$role_user]
     }
 
     keystone_user_role { "${agent_name}@${tenant}":
-      ensure  => present,
-      roles   => [$role_agent, $role_delegate],
-      require => $real_user_roles_agent,
-      before  => Service['monasca-agent'],
+      ensure => present,
+      roles  => $real_user_roles_agent,
+      before => Service['monasca-agent'],
     }
     keystone_user_role { "${user_name}@${tenant}":
-      ensure  => present,
-      roles   => [$role_user],
-      require => $real_user_roles_user,
-      before  => Service['monasca-agent'],
+      ensure => present,
+      roles  => $real_user_roles_user,
+      before => Service['monasca-agent'],
     }
   }
 
