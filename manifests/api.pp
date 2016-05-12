@@ -34,6 +34,9 @@
 # [*keystone_admin_token*]
 #   token for keystone admin
 #
+# [*max_query_limit*]
+#   maximum number of records to be returned from db
+#
 # [*mon_api_build_ver*]
 #   build version of the monasca api debian package
 #
@@ -66,6 +69,7 @@ class monasca::api (
   $kafka_brokers         = undef,
   $keystone_endpoint     = undef,
   $keystone_admin_token  = undef,
+  $max_query_limit       = 10000,
   $mon_api_build_ver     = undef,
   $mon_api_deb           = undef,
   $region_name           = 'NA',
