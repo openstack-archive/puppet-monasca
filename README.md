@@ -43,12 +43,12 @@ monasca is a combination of Puppet manifest that configures the monasca client a
 The `monasca_config` provider is a children of the ini_setting provider. It allows one to write an entry in the `/etc/monasca/monasca.conf` file.
 
 ```puppet
-monasca_config { 'DEFAULT/verbose' :
+monasca_config { 'DEFAULT/debug' :
   value => true,
 }
 ```
 
-This will write `verbose=true` in the `[DEFAULT]` section.
+This will write `debug=true` in the `[DEFAULT]` section.
 
 ##### name
 
