@@ -1,0 +1,17 @@
+---
+init_config:
+  admin_password: <%= @admin_password %>
+  admin_tenant_name: <%= @admin_tenant_name %>
+  admin_user: <%= @admin_user %>
+  cache_dir: <%= @cache_dir %>
+  check_router_ha: <%= @check_router_ha %>
+  identity_uri: <%= @identity_uri %>
+  network_use_bits: <%= @network_use_bits %>
+  neutron_refresh: <%= @neutron_refresh %>
+  ovs_cmd: '<%= @ovs_cmd %>'
+<%- if @region_name -%>
+  region_name: <%= @region_name %>
+<%- end -%>
+
+instances:
+ - {}
