@@ -44,9 +44,6 @@ define monasca::virtualenv::agent_instance(
   validate_re($ensure, $valid_values,
     "Unknown value '${ensure}' for ensure, must be present or absent")
 
-  $req_dest = "${basedir}/${venv_prefix}-requirements.txt"
-  $venv_path = "${basedir}/${venv_prefix}-venv"
-
   monasca::virtualenv::instance { $name:
     ensure            => $ensure,
     basedir           => $basedir,
@@ -57,14 +54,5 @@ define monasca::virtualenv::agent_instance(
     venv_extra_args   => $venv_extra_args,
     require           => [File[$basedir],Package['python-virtualenv'],
       Package['python-dev']],
-  }
-  ->
-  file { "${venv_path}/share/monasca/agent/supervisor.conf":
-    ensure  => $ensure,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    content => template('monasca/supervisor.conf.erb'),
-    notify  => Service['monasca-agent'],
   }
 }

@@ -253,6 +253,16 @@ class monasca::agent(
     before  => Service['monasca-agent'],
   }
 
+  $log_dir = "${::monasca::log_dir}/agent"
+  file { "${agent_dir}/supervisor.conf":
+    ensure  => $ensure,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('monasca/supervisor.conf.erb'),
+    notify  => Service['monasca-agent'],
+  }
+
   if $enabled {
     $ensure = 'running'
   } else {
