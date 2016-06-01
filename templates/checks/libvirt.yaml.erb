@@ -9,9 +9,11 @@ init_config:
 <%- end -%>
   cache_dir: <%= @cache_dir %>
   nova_refresh: <%= @nova_refresh %>
-<%- if @heat_scale_group -%>
-  metadata:
-  - scale_group
+<%- if @metadata -%>
+  metadata: <%= @metadata %>
+<%- end -%>
+<%- if @customer_metadata -%>
+  customer_metadata: <%= @customer_metadata %>
 <%- end -%>
   vm_probation: <%= @vm_probation %>
 

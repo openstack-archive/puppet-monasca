@@ -12,6 +12,7 @@
 #       collect_connection_state (default = False)
 #       excluded_interfaces
 #       excluded_interface_re: A regular expression for excluded interfaces
+#       use_bits
 #       dimensions
 #   e.g.
 #   instances:

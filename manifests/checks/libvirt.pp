@@ -17,11 +17,14 @@
 # [*identity_uri*]
 #   uri of the keystone instance
 #
+# [*metadata*]
+#   a list of instance metadata to be submitted as dimensions with service data.
+#
+# [*customer_metadata*]
+#   a list of instance metadata to be submitted as dimensions with cusomter data.
+#
 # [*region_name*]
 #   openstack keystone region for this install
-#
-# [*heat_scale_group*]
-#   flag to indicate if scale group should be posted
 #
 # [*cache_dir*]
 #   Cache directory to persist data.
@@ -38,8 +41,9 @@ class monasca::checks::libvirt(
   $admin_user,
   $admin_password,
   $admin_tenant_name,
-  $heat_scale_group  = false,
   $identity_uri,
+  $metadata          = undef,
+  $customer_metadata = undef,
   $region_name       = undef,
   $cache_dir         = '/dev/shm',
   $vm_probation      = '300',

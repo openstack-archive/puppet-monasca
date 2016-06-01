@@ -13,6 +13,9 @@
 # [*excluded_interface_re*]
 #   regular expression for interfaces to be ignored
 #
+# [*use_bits*]
+#   submits metrics in bits rather than bytes
+#
 # [*dimensions*]
 #   any additional dimensions for the check
 #
@@ -20,6 +23,7 @@ define monasca::checks::instances::network (
   $collect_connection_state = undef,
   $excluded_interfaces      = undef,
   $excluded_interface_re    = undef,
+  $use_bits                 = undef,
   $dimensions               = undef,
 ) {
   $conf_dir = $::monasca::agent::conf_dir
