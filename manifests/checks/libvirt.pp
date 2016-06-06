@@ -26,6 +26,9 @@
 # [*region_name*]
 #   openstack keystone region for this install
 #
+# [*network_use_bits*]
+#   submit network metrics in bits rather than bytes
+#
 # [*cache_dir*]
 #   Cache directory to persist data.
 # [*vm_probation*]
@@ -45,6 +48,7 @@ class monasca::checks::libvirt(
   $metadata          = undef,
   $customer_metadata = undef,
   $region_name       = undef,
+  $network_use_bits  = undef,
   $cache_dir         = '/dev/shm',
   $vm_probation      = '300',
   $nova_refresh      = '14400'

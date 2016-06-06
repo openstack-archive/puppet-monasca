@@ -9,6 +9,9 @@ init_config:
 <%- end -%>
   cache_dir: <%= @cache_dir %>
   nova_refresh: <%= @nova_refresh %>
+<%- if @network_use_bits -%>
+  network_use_bits: <%= @network_use_bits %>
+<%- end -%>
 <%- if @metadata -%>
   metadata: <%= @metadata %>
 <%- end -%>
