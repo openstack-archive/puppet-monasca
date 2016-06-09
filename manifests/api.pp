@@ -58,6 +58,9 @@
 # [*vertica_db_hint*]
 #   database hint to pass to vertica
 #
+# [*valid_notif_periods*]
+#   list of valid notification periods in seconds (defaults to 60)
+#
 # [*zookeeper_servers*]
 #   list of zookeeper servers and ports
 #
@@ -79,6 +82,7 @@ class monasca::api (
   $role_delegate         = 'monitoring-delegate',
   $roles_default         = ['admin','monasca-user','_member_'],
   $roles_agent           = ['monasca-agent'],
+  $valid_notif_periods   = [60],
   $vertica_db_hint       = '',
   $zookeeper_servers     = undef,
 ) {

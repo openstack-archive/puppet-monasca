@@ -8,6 +8,13 @@ eventsTopic: events
 
 maxQueryLimit: <%= @max_query_limit %>
 
+<% if @valid_notif_periods and not @valid_notif_periods.empty? -%>
+validNotificationPeriods:
+<%   @valid_notif_periods.each do |period| -%>
+ - <%= period %>
+<%-   end -%>
+<% end -%>
+
 kafka:
   brokerUris:
     - <%= @kafka_brokers %>
