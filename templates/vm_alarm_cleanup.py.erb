@@ -93,7 +93,8 @@ def prune_alarms(active_vm_ids):
 
 def main():
     cloud = get_cloud()
-    servers = cloud.nova_client.servers.list(search_opts={'all_tenants': 1})
+    servers = cloud.nova_client.servers.list(search_opts={'all_tenants': 1},
+                                             limit=-1)
     prune_alarms(list(server.id for server in servers))
 
 if __name__ == '__main__':
