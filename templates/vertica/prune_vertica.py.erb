@@ -75,7 +75,9 @@ def main():
     help_text = """
     Dimension key/value pairs to delete, only works with -m (name)
     argument.  Syntax is the same as the monasca command:
-    -d 'region=dev02,hostname=dev02-keystone-001'
+    -d 'region=dev02,hostname=dev02-keystone-001'.  Note that
+    multiple dimensions are supported -- but only if part of
+    a common dimension set (not multiple dimension sets).
     """
     parser.add_argument('-d', '--dimensions', required=False,
                         help=help_text)
@@ -224,12 +226,19 @@ def get_dimensions_sql(dimensions):
         kv = pair.split('=')
         if first_time:
             sql += " ( "
-        else: 
+        else:
             sql += " or "
         sql += " (name = '%s' and value = '%s')" % (kv[0], kv[1])
         first_time = False
 
-    sql += ") group by dimension_set_id)"
+
+    sql += """
+       ) group by
+          dimension_set_id
+       having
+          count(*) = %d)
+    """ % len(pairs)
+
     return sql
 
 
