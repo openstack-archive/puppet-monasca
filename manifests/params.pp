@@ -93,6 +93,7 @@ class monasca::params(
       'database_type'      => 'influxdb',
     }
 ) {
+  include ::openstacklib::defaults
   validate_string($admin_password)
   validate_string($admin_project_name)
   validate_string($user_password)
