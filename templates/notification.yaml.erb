@@ -5,6 +5,12 @@ kafka:
     notification_topic: alarm-notifications
     notification_retry_topic: retry-notifications
     max_offset_lag: 600
+<% if @periodic_kafka_topics and not @periodic_kafka_topics.empty? -%>
+    periodic:
+<%   @periodic_kafka_topics.each do |periodic_kafka_topic| -%>
+        <%= periodic_kafka_topic %>
+<%-   end -%>
+<% end -%>
 
 mysql:
     host: <%= @sql_host %>
@@ -51,6 +57,12 @@ zookeeper:
     url: <%= @zookeeper_servers %>
     notification_path: /notification/alarms
     notification_retry_path: /notification/retry
+<% if @periodic_zookeeper_paths and not @periodic_zookeeper_paths.empty? -%>
+    periodic_path:
+<%   @periodic_zookeeper_paths.each do |periodic_zookeeper_path| -%>
+        <%= periodic_zookeeper_path %>
+<%-   end -%>
+<% end -%>
 
 logging:
     version: 1

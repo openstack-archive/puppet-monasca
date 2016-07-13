@@ -19,6 +19,14 @@
 # [*pagerduty_url*]
 #   url of pager duty if used as a notification method
 #
+# [*periodic_kafka_topics*]
+#   list of periodic notification kafka topics, defaults
+#   to '60: 60-seconds-notifications'
+#
+# [*periodic_zookeeper_paths*]
+#   list of periodic notification zookeeper paths, defaults
+#   to '60: /notification/60_seconds'
+#
 # [*python_dep_ensure*]
 #   flag for whether or not to ensure/update python dependencies
 #
@@ -44,19 +52,21 @@
 #   list of zookeeper servers and ports
 #
 class monasca::notification(
-  $notification_user   = 'monasca-notification',
-  $from_email_address  = '',
-  $install_python_deps = true,
-  $kafka_brokers       = 'localhost:9092',
-  $pagerduty_url       = 'https://events.pagerduty.com/generic/2010-04-15/create_event.json',
-  $python_dep_ensure   = 'present',
-  $smtp_password       = '',
-  $smtp_port           = 25,
-  $smtp_server         = 'localhost',
-  $smtp_user           = '',
-  $virtual_env         = '/var/www/monasca-notification',
-  $webhook_url         = '',
-  $zookeeper_servers   = 'localhost:2181',
+  $notification_user        = 'monasca-notification',
+  $from_email_address       = '',
+  $install_python_deps      = true,
+  $kafka_brokers            = 'localhost:9092',
+  $pagerduty_url            = 'https://events.pagerduty.com/generic/2010-04-15/create_event.json',
+  $periodic_kafka_topics    = ['60: 60-seconds-notifications'],
+  $periodic_zookeeper_paths = ['60: /notification/60_seconds'],
+  $python_dep_ensure        = 'present',
+  $smtp_password            = '',
+  $smtp_port                = 25,
+  $smtp_server              = 'localhost',
+  $smtp_user                = '',
+  $virtual_env              = '/var/www/monasca-notification',
+  $webhook_url              = '',
+  $zookeeper_servers        = 'localhost:2181',
 )
 {
   include ::monasca::params
