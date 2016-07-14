@@ -27,9 +27,9 @@ start() {
 stop() {
   echo "Shutting down $desc (storm-$stormSvc): "
   if [ $stormSvc == "ui" ]; then
-    procname="backtype.storm.ui.core"
+    procname="storm.ui.core"
   else
-    procname="backtype.storm.daemon.$stormSvc"
+    procname="storm.daemon.$stormSvc"
   fi
 
   pkill -f $procname
@@ -42,9 +42,9 @@ restart() {
 
 status() {
   if [ $stormSvc == "ui" ]; then
-    pid=$(pgrep -f backtype.storm.ui.core)
+    pid=$(pgrep -f storm.ui.core)
   else
-    pid=$(pgrep -f backtype.storm.daemon.$stormSvc)
+    pid=$(pgrep -f storm.daemon.$stormSvc)
   fi
 
   if [ -z $pid ]; then
