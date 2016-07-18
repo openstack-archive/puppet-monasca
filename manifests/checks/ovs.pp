@@ -5,49 +5,75 @@
 # === Parameters
 #
 # [*admin_user*]
-#   name of the monasca admin
+#   (Required) Name of the monasca admin.
 #
 # [*admin_password*]
-#   password for the monasca admin
+#   (Required) Password for the monasca admin.
 #
 # [*admin_tenant_name*]
-#   name of the monasca admin tenant/project
+#   (Required) Name of the monasca admin tenant/project.
 #
 # [*identity_uri*]
-#   uri of the keystone instance
+#   (Required) URI of the keystone instance.
+#
+# [*included_interface_re*]
+#   (Optional) Regular expression of interfaces to publish metrics for.
+#   Defaults to 'qg.*'.
 #
 # [*region_name*]
-#   openstack keystone region for this install
+#   (Required) Openstack keystone region for this install.
 #
 # [*cache_dir*]
-#   Cache directory to persist data.
+#   (Optional) Cache directory to persist data.
+#   Defaults to /dev/shm.
 #
 # [*neutron_refresh*]
-#   Interval to force data refresh from neutron.
+#   (Optional) Interval to force data refresh from neutron.
+#   Defaults to 14400 seconds (4 hours)..
 #
 # [*check_router_ha*]
-#   Flag to indicate if additional neutron calls should be
+#   (Optional) Flag to indicate if additional neutron calls should be
 #   made to determine if an HA router is active or standby.
+#   Defaults to true.
 #
 # [*network_use_bits*]
-#   Flag to indicate bits should be reported instead of
-#   bytes.
+#   (Optional) Flag to indicate bits should be reported instead of bytes.
+#   Defaults to true.
 #
 # [*ovs_cmd*]
-#   Command to run to get ovs data.
+#   (Optional) Command to run to get ovs data.
+#   Defaults to 'sudo /usr/bin/ovs-vsctl'.
+#
+# [*use_absolute_metrics*]
+#   (Optional) Flag indicating if absolute metrics should be published
+#   for interfaces.
+#   Defaults to true.
+#
+# [*use_health_metrics*]
+#   (Optional) Flag indicating if health metrics should be published
+#   for interfaces.
+#   Defaults to true.
+#
+# [*use_rate_metrics*]
+#   (Optional) Flag indicating if rate metrics should be published
+#   for interfaces.
+#   Defaults to true.
 #
 class monasca::checks::ovs(
-  $admin_user        = undef,
-  $admin_password    = undef,
-  $admin_tenant_name = undef,
-  $cache_dir         = '/dev/shm',
-  $check_router_ha   = true,
-  $identity_uri      = undef,
-  $network_use_bits  = true,
-  $neutron_refresh   = '14400',
-  $ovs_cmd           = 'sudo /usr/bin/ovs-vsctl',
-  $region_name       = undef,
-
+  $admin_user            = undef,
+  $admin_password        = undef,
+  $admin_tenant_name     = undef,
+  $cache_dir             = '/dev/shm',
+  $check_router_ha       = true,
+  $identity_uri          = undef,
+  $included_interface_re = 'qg.*',
+  $network_use_bits      = true,
+  $neutron_refresh       = '14400',
+  $ovs_cmd               = 'sudo /usr/bin/ovs-vsctl',
+  $region_name           = undef,
+  $use_absolute_metrics  = true,
+  $use_health_metrics    = true,
+  $use_rate_metrics      = true,
 ){
   $conf_dir = $::monasca::agent::conf_dir
 

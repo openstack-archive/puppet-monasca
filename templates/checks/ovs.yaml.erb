@@ -12,6 +12,10 @@ init_config:
 <%- if @region_name -%>
   region_name: <%= @region_name %>
 <%- end -%>
+  included_interface_re: <%= @included_interface_re %>
+  use_absolute_metrics: <%= @use_absolute_metrics %>
+  use_rate_metrics: <%= @use_rate_metrics %>
+  use_health_metrics: <%= @use_health_metrics %>
 
 instances:
  - {}
