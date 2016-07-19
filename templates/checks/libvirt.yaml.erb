@@ -19,6 +19,14 @@ init_config:
   customer_metadata: <%= @customer_metadata %>
 <%- end -%>
   vm_probation: <%= @vm_probation %>
+  ping_check: <%= @ping_check %>
+  alive_only: <%= @alive_only %>
+  disk_collection_period: <%= @disk_collection_period %>
+  vm_cpu_check_enable: <%= @vm_cpu_check_enable %>
+  vm_disks_check_enable: <%= @vm_disks_check_enable %>
+  vm_network_check_enable: <%= @vm_network_check_enable %>
+  vm_ping_check_enable: <%= @vm_ping_check_enable %>
+  vm_extended_disks_check_enable: <%= @vm_extended_disks_check_enable %>
 
 instances:
  - {}
