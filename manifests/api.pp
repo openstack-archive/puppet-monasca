@@ -5,64 +5,91 @@
 # === Parameters:
 #
 # [*api_user*]
-#   name of the monasca api user
+#   (Optional) Name of the monasca api user.
+#   Defaults to 'monasca_api'.
 #
 # [*blobmirror*]
-#   url of server to install debians from
+#   (Optional) URL of server to install debians from.
+#   Defaults to undef.
 #
 # [*check_conn_while_idle*]
-#   flag for whether db connection should stay alive while idle
+#   (Optional) Flag for whether db connection should stay alive while idle.
+#   Defaults to true.
 #
 # [*database_type*]
-#   type of database backend, influxdb or vertica
+#   (Optional) Type of database backend, influxdb or vertica.
+#   Defaults to influxdb.
 #
 # [*database_host*]
-#   host of database backend, defaults to localhost
+#   (Optional) Host of database backend.
+#   Defaults to localhost.
 #
 # [*db_admin_password*]
-#   database admin password
+#   (Optional) Database admin password.
+#   Defaults to undef.
 #
 # [*gzip_setting*]
-#   flag for whether to use gzip for monasca api and persister
+#   (Optional) Flag for whether to use gzip for monasca api and persister.
+#   Defaults to true.
 #
 # [*kafka_brokers*]
-#   list of kafka brokers and ports
+#   (Optional) List of kafka brokers and ports.
+#   Defaults to undef.
 #
 # [*keystone_endpoint*]
-#   url of keystone server
+#   (Optional) URL of keystone server.
+#   Defaults to undef.
 #
 # [*keystone_admin_token*]
-#   token for keystone admin
+#   (Optional) Token for keystone admin.
+#   Defaults to undef.
 #
 # [*max_query_limit*]
-#   maximum number of records to be returned from db
+#   (Optional) Maximum number of records to be returned from db.
+#   Defaults to 10000.
 #
 # [*mon_api_build_ver*]
-#   build version of the monasca api debian package
+#   (Optional) Build version of the monasca api debian package.
+#   Defaults to undef.
 #
 # [*mon_api_deb*]
-#   name of the monasca api debian package
+#   (Optional) Name of the monasca api debian package.
+#   Defaults to undef.
 #
 # [*region_name*]
-#   openstack region name for this install
-#
-# [*role_delegate*]
-#   name of the role allowed to write cross tenant metrics
-#
-# [*roles_default*]
-#   names of roles allowed to read and write metrics
+#   (Optional) Openstack region name for this install.
+#   Defaults to NA.
 #
 # [*roles_agent*]
-#   names of roles allowed to write metrics
+#   (Optional) List with the names of roles allowed to write metrics.
+#   Defaults to ['monasca-agent'].
+#
+# [*role_delegate*]
+#   (Optional) Name of the role allowed to write cross tenant metrics.
+#   Defaults to 'monitoring-delegate'.
+#
+# [*roles_default*]
+#   (Optional) List with the names of roles allowed to read and write metrics.
+#   Defaults to ['admin','monasca-user', '_member_'].
+#
+# [*roles_read_only*]
+#   (Optional) List with the names of roles allowed only to read metrics.
+#   Defaults to [].
 #
 # [*vertica_db_hint*]
-#   database hint to pass to vertica
+#   (Optional) Database hint to pass to vertica.
+#   Defaults to "".  Setting this to "/*+KV*/" tells vertica to satisfy the
+#   query locally without talking to other nodes in the cluster -- which reduces
+#   network chatter when projections are replicated on each node.
 #
 # [*valid_notif_periods*]
-#   list of valid notification periods in seconds (defaults to 60)
+#   (Optional) List of valid notification periods in seconds.
+#   Defaults to [60].
 #
 # [*zookeeper_servers*]
-#   list of zookeeper servers and ports
+#   (Optional) Comma separated list of zookeeper servers and ports.
+#   Defaults to undef.
+#   Example: "zookeeper_host_1:2181,zookeeper_host_2:2181"
 #
 class monasca::api (
   $api_user              = 'monasca_api',
@@ -80,8 +107,9 @@ class monasca::api (
   $mon_api_deb           = undef,
   $region_name           = 'NA',
   $role_delegate         = 'monitoring-delegate',
-  $roles_default         = ['admin','monasca-user','_member_'],
   $roles_agent           = ['monasca-agent'],
+  $roles_default         = ['admin','monasca-user','_member_'],
+  $roles_read_only       = [],
   $valid_notif_periods   = [60],
   $vertica_db_hint       = '',
   $zookeeper_servers     = undef,
