@@ -1,6 +1,15 @@
-*~
-*.pyc
-.*.swp
+pkg/
 Gemfile.lock
-.vagrant
-spec/fixtures
+vendor/
+spec/fixtures/
+.vagrant/
+.bundle/
+coverage/
+.idea/
+*.swp
+*.iml
+openstack/
+
+# Files created by releasenotes build
+releasenotes/build
+.tox
