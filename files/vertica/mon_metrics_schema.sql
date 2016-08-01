@@ -52,6 +52,23 @@ AS
           time_stamp
 UNSEGMENTED ALL NODES;
 
+CREATE PROJECTION Measurements_time_order_rep_MonMetrics /*+createtype(D)*/
+(
+ definition_dimensions_id ENCODING RLE,
+ time_stamp ENCODING COMMONDELTA_COMP,
+ value ENCODING AUTO,
+ value_meta ENCODING AUTO
+)
+AS
+ SELECT definition_dimensions_id,
+        time_stamp,
+        value,
+        value_meta
+ FROM MonMetrics.Measurements
+ ORDER BY time_stamp,
+          definition_dimensions_id
+UNSEGMENTED ALL NODES;
+
 CREATE PROJECTION Definitions_DBD_2_rep_MonMetrics /*+createtype(D)*/
 (
  id ENCODING AUTO,
