@@ -74,6 +74,9 @@ middleware:
   connRetryTimes: 2
   connRetryInterval: 50
   defaultAuthorizedRoles: <%= @roles_default %>
+<%- if @roles_read_only and not @roles_read_only.empty? -%>
+  readOnlyAuthorizedRoles: <%= @roles_read_only %>
+<%- end -%>
   agentAuthorizedRoles: <%= @roles_agent %>
   delegateAuthorizedRole: <%= @role_delegate %>
   adminAuthMethod: <%= @auth_method %>
