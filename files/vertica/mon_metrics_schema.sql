@@ -103,6 +103,22 @@ AS
           value
 UNSEGMENTED ALL NODES;
 
+CREATE PROJECTION MonMetrics.Dimensions_rep_set_id /*+createtype(D)*/
+(
+dimension_set_id,
+name ENCODING RLE,
+value
+)
+AS
+SELECT Dimensions.dimension_set_id,
+        Dimensions.name,
+        Dimensions.value
+FROM MonMetrics.Dimensions
+ORDER BY Dimensions.dimension_set_id,
+          Dimensions.name,
+          Dimensions.value
+UNSEGMENTED ALL NODES;
+
 CREATE PROJECTION DefinitionDimensions_DBD_4_rep_MonMetrics /*+createtype(D)*/
 (
  id ENCODING AUTO,
@@ -116,6 +132,21 @@ AS
  FROM MonMetrics.DefinitionDimensions
  ORDER BY definition_id,
           dimension_set_id
+UNSEGMENTED ALL NODES;
+
+CREATE PROJECTION MonMetrics.DefinitionDimensions_rep_set_id /*+createtype(D)*/
+(
+id ENCODING AUTO,
+definition_id ENCODING AUTO,
+dimension_set_id ENCODING RLE
+)
+AS
+SELECT id,
+        definition_id,
+        dimension_set_id
+FROM MonMetrics.DefinitionDimensions
+ORDER BY dimension_set_id,
+          definition_id
 UNSEGMENTED ALL NODES;
 
 select refresh('MonMetrics.Measurements, MonMetrics.Definitions, MonMetrics.Dimensions, MonMetrics.DefinitionDimensions');
