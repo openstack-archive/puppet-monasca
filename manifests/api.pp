@@ -4,6 +4,26 @@
 #
 # === Parameters:
 #
+# [*api_db_thread_min*]
+#   (Optional) Minimum number of threads for db connection pool.
+#   Defaults to 4.
+#
+# [*api_db_thread_max*]
+#   (Optional) Maximum number of threads for db connection pool.
+#   Defaults to 32.
+#
+# [*api_db_wait*]
+#   (Optional) Amount of time to wait for db connection.  Can specify
+#   any string supported by io.dropwizard Duration class, for example:
+#
+#     '1ns' is 1 nanosecond
+#     '1s'  is 1 seconds
+#     '1m'  is 1 minute
+#     '1h'  is 1 hour
+#     '1d'  is 1 day
+#
+#   Defaults to '5s' (5 seconds).
+#
 # [*api_user*]
 #   (Optional) Name of the monasca api user.
 #   Defaults to 'monasca_api'.
@@ -92,6 +112,9 @@
 #   Example: "zookeeper_host_1:2181,zookeeper_host_2:2181"
 #
 class monasca::api (
+  $api_db_thread_min     = 4,
+  $api_db_thread_max     = 32,
+  $api_db_wait           = '5s',
   $api_user              = 'monasca_api',
   $blobmirror            = undef,
   $check_conn_while_idle = true,

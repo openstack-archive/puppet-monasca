@@ -52,10 +52,10 @@ vertica:
   url: jdbc:vertica://<%= @database_host %>:5433/mon
   user: <%= @api_db_user %>
   password: <%= @api_db_password %>
-  maxWaitForConnection: 5s
+  maxWaitForConnection: <%= @api_db_wait %>
   validationQuery: "/* MyService Health Check */ SELECT 1"
-  minSize: 4
-  maxSize: 32
+  minSize: <%= @api_db_thread_min %>
+  maxSize: <%= @api_db_thread_max %>
   checkConnectionWhileIdle: <%= @check_conn_while_idle %>
   dbHint: <%= @vertica_db_hint %>
 
