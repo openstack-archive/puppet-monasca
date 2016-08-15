@@ -68,23 +68,54 @@ status() {
 start() {
     for x in $(get_up_list)
     do
-        STATUS=$(service $x status 2>&1)
+        STATUS=$(is_service_running $x)
         #
         # Only start a service if it isn't currently running
         #
-        if [ $? != 0 ] || [[ "$STATUS" == *"stop/waiting"* ]]
+        if [ $STATUS != 0 ]
         then
             service $x start
-            sleep 2
+            #
+            # Many of these services are java -- give them
+            # some time to come up before starting a dependent
+            # service.
+            #
+            sleep 10
+        fi
+        STATUS=$(is_service_running $x)
+        if [ $STATUS != 0 ]
+        then
+            echo "$x did not start -- diagnose and try starting the stack again!"
+            exit 1
         fi
     done
+}
+
+is_service_running() {
+    STATUS=$(service $1 status 2>&1)
+    if [ $? != 0 ] || [[ "$STATUS" == *"stop/waiting"* ]]
+    then
+        echo "1"
+    else
+        echo "0"
+    fi
 }
 
 stop() {
     for x in $(get_down_list)
     do
         service $x stop
-        sleep 2
+        #
+        # Give the service time to clean up and stop before
+        # moving on.
+        #
+        sleep 10
+        STATUS=$(is_service_running $x)
+        if [ $STATUS != 1 ]
+        then
+            echo "$x did not stop -- diagnose and try stopping the stack again!"
+            exit 1
+        fi
     done
 }
 
