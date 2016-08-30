@@ -134,7 +134,7 @@ def prune_tables(args):
        %s);
        COMMIT;
     """
-    admin_clause = "AND def.tenant_id = '%s' AND def.name like 'vm.%%'" % \
+    admin_clause = "AND def.tenant_id = '%s' AND REGEXP_LIKE(def.name, '^(vm|ovs)\.')" % \
                    admin_id
 
     if args.limit:
