@@ -255,7 +255,6 @@ class monasca::agent(
 
   $log_dir = "${::monasca::log_dir}/agent"
   file { "${agent_dir}/supervisor.conf":
-    ensure  => $ensure,
     owner   => 'root',
     group   => 'root',
     mode    => '0644',
@@ -271,6 +270,7 @@ class monasca::agent(
 
   service { 'monasca-agent':
     ensure => $ensure,
+    enable => $enabled,
     name   => $::monasca::params::agent_service,
   }
 }
