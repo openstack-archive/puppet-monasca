@@ -23,10 +23,14 @@
   ],
   "description": "Installs and configures OpenStack Monasca (Monitoring as a Service).",
   "dependencies": [
-    { "name": "jdowning/influxdb", "version_requirement": ">=0.3.0 <1.0.0" },
-    { "name": "opentable/kafka", "version_requirement": ">=1.0.0 <2.0.0" },
-    { "name": "deric/zookeeper", "version_requirement": ">=0.0.1 <1.0.0" },
     { "name": "deric/storm", "version_requirement": ">=0.0.1 <1.0.0" },
-    { "name": "puppetlabs/stdlib", "version_requirement": ">=4.0.0 <5.0.0" }
+    { "name": "deric/zookeeper", "version_requirement": ">=0.0.1 <1.0.0" },
+    { "name": "jdowning/influxdb", "version_requirement": ">=0.3.0 <1.0.0" },
+    { "name": "maestrodev/wget", "version_requirement": ">=0.0.1 <2.0.0" },
+    { "name": "openstack/keystone", "version_requirement": ">=9.1.0 <10.0.0" },
+    { "name": "openstack/openstacklib", "version_requirement": ">=9.1.0 <10.0.0" },
+    { "name": "opentable/kafka", "version_requirement": ">=1.0.0 <2.0.0" },
+    { "name": "puppetlabs/stdlib", "version_requirement": ">=4.0.0 <5.0.0" },
+    { "name": "stankevich/python", "version_requirement": ">=0.0.1 <2.0.0" }
   ]
 }
