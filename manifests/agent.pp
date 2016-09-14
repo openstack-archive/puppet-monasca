@@ -4,9 +4,6 @@
 #
 # === Parameters
 #
-# [*enabled*]
-#   flag to enable/disable the monasca agent
-#
 # [*url*]
 #   url of the monasca api server to POST metrics to
 #
@@ -18,6 +15,9 @@
 #
 # [*keystone_url*]
 #   keystone endpoint for authentication
+#
+# [*enabled*]
+#   flag to enable/disable the monasca agent
 #
 # [*project_name*]
 #   name of keystone project to POST metrics for
@@ -120,11 +120,11 @@
 #   arguments to pass to the pip install command
 #
 class monasca::agent(
-  $enabled                 = true,
   $url,
   $username,
   $password,
   $keystone_url,
+  $enabled                 = true,
   $project_name            = 'null',
   $project_domain_id       = 'null',
   $project_domain_name     = 'null',

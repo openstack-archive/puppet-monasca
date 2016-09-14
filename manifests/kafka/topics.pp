@@ -24,7 +24,9 @@ define monasca::kafka::topics (
 ) {
 
   exec { "Ensure ${name} is created":
-    command =>"kafka-topics.sh --create --zookeeper ${kafka_zookeeper_connections} --replication-factor ${kafka_replication_factor} --partitions ${partitions} --topic ${name}",
+    # lint:ignore:140chars
+    command => "kafka-topics.sh --create --zookeeper ${kafka_zookeeper_connections} --replication-factor ${kafka_replication_factor} --partitions ${partitions} --topic ${name}",
+    # lint:endignore
     path    => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${install_dir}/bin",
     cwd     => $install_dir,
     user    => 'root',
@@ -32,11 +34,13 @@ define monasca::kafka::topics (
     onlyif  => "kafka-topics.sh --topic ${name} --list --zookeeper ${kafka_zookeeper_connections} | grep -q ${name}; test $? -ne 0"
   } ->
   exec { "Ensure ${name} is has ${partitions} partitions":
-    command =>"kafka-topics.sh --alter --zookeeper ${kafka_zookeeper_connections} --partitions ${partitions} --topic ${name}",
+    command => "kafka-topics.sh --alter --zookeeper ${kafka_zookeeper_connections} --partitions ${partitions} --topic ${name}",
     path    => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${install_dir}/bin",
     cwd     => $install_dir,
     user    => 'root',
     group   => 'root',
+    # lint:ignore:140chars
     onlyif  => "kafka-topics.sh --describe --zookeeper ${kafka_zookeeper_connections} --topic ${name} | grep 'PartitionCount:${partitions}'; test $? -ne 0"
+    # lint:endignore
   }
 }
