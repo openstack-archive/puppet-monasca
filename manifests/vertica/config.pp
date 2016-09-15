@@ -125,6 +125,8 @@ class monasca::vertica::config (
   $single_node_script = 'create_mon_db.sh'
   $prune_script_name = 'prune_vertica.py'
   $prune_script = "${virtual_env}/bin/${prune_script_name}"
+  $partition_drop_script_name = 'drop_vertica_partitions.py'
+  $partition_drop_script = "${virtual_env}/bin/${partition_drop_script_name}"
 
   file { $install_dir:
     ensure => directory,
@@ -154,13 +156,22 @@ class monasca::vertica::config (
   python::virtualenv { $virtual_env :
     owner   => 'root',
     group   => 'root',
-    before  => [File[$prune_script]],
+    before  => [File[$prune_script], File[$partition_drop_script]],
     require => [Package['python-virtualenv'],Package['python-dev']],
   }
 
   file { $prune_script:
     ensure  => file,
     content => template("${templates}/${prune_script_name}.erb"),
+    mode    => '0755',
+    owner   => $db_user,
+    group   => $db_group,
+    require => File[$install_dir],
+  }
+
+  file { $partition_drop_script:
+    ensure  => file,
+    content => template("${templates}/${partition_drop_script_name}.erb"),
     mode    => '0755',
     owner   => $db_user,
     group   => $db_group,

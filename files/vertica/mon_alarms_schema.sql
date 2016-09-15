@@ -11,4 +11,4 @@ CREATE TABLE MonAlarms.StateHistory(
     reason VARCHAR(65000),
     reason_data VARCHAR(65000),
     time_stamp TIMESTAMP NOT NULL
-) PARTITION BY EXTRACT('year' FROM time_stamp)*10000 + EXTRACT('month' FROM time_stamp)*100 + EXTRACT('day' FROM time_stamp);
+) PARTITION BY EXTRACT('year' FROM time_stamp)*100 + EXTRACT('month' FROM time_stamp);

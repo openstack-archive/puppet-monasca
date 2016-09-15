@@ -7,7 +7,7 @@ CREATE TABLE MonMetrics.Measurements (
     time_stamp TIMESTAMP NOT NULL,
     value FLOAT NOT NULL,
     value_meta VARCHAR(8192)
-) PARTITION BY EXTRACT('year' FROM time_stamp)*10000 + EXTRACT('month' FROM time_stamp)*100 + EXTRACT('day' FROM time_stamp);
+) PARTITION BY EXTRACT('year' FROM time_stamp)*100 + EXTRACT('month' FROM time_stamp);
 
 CREATE TABLE MonMetrics.Definitions(
     id BINARY(20) NOT NULL,
