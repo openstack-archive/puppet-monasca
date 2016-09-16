@@ -53,7 +53,7 @@ def drop_partitions(args):
             continue
         for key in keys:
             print "  Dropping '%s' partition for '%s'" % (key, table)
-            vsql(DROP_SQL % (table, drop_key))
+            vsql(DROP_SQL % (table, key))
 
 
 def vsql(sql):
