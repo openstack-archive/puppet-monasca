@@ -4,7 +4,8 @@ MONASCA_TABLES="\
   MonMetrics.Dimensions \
   MonMetrics.Definitions \
   MonMetrics.DefinitionDimensions \
-  MonMetrics.Measurements"
+  MonMetrics.Measurements \
+  MonAlarms.StateHistory"
 
 
 for table in $MONASCA_TABLES
