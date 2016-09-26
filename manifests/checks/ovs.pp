@@ -27,6 +27,13 @@
 #   (Optional) Cache directory to persist data.
 #   Defaults to /dev/shm.
 #
+# [*metadata*]
+#   (Optional) A list of router metadata to be submitted as dimensions
+#   with service data.  For example, 'tenant_name' in the list will
+#   add the tenant name dimension to router metrics posted to the
+#   infrastructure project.
+#   Defaults to an empty list in the config file.
+#
 # [*neutron_refresh*]
 #   (Optional) Interval to force data refresh from neutron.
 #   Defaults to 14400 seconds (4 hours)..
@@ -67,6 +74,7 @@ class monasca::checks::ovs(
   $check_router_ha       = true,
   $identity_uri          = undef,
   $included_interface_re = 'qg.*',
+  $metadata              = [],
   $network_use_bits      = true,
   $neutron_refresh       = '14400',
   $ovs_cmd               = 'sudo /usr/bin/ovs-vsctl',

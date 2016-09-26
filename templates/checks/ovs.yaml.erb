@@ -6,6 +6,9 @@ init_config:
   cache_dir: <%= @cache_dir %>
   check_router_ha: <%= @check_router_ha %>
   identity_uri: <%= @identity_uri %>
+<%- if @metadata -%>
+  metadata: <%= @metadata %>
+<%- end -%>
   network_use_bits: <%= @network_use_bits %>
   neutron_refresh: <%= @neutron_refresh %>
   ovs_cmd: '<%= @ovs_cmd %>'

@@ -15,19 +15,19 @@
 PATH=$PATH:/usr/local/bin # supervisord might live here
 PATH=$PATH:/sbin
 
-AGENTPATH="<%= virtual_env %>/bin/monasca-collector"
-AGENTCONF="<%= agent_dir %>/agent.yaml"
-MONASCASTATSDPATH="<%= virtual_env %>/bin/monasca-statsd"
-AGENTUSER="<%= agent_user %>"
-FORWARDERPATH="<%= virtual_env %>/bin/monasca-forwarder"
+AGENTPATH="<%= @virtual_env %>/bin/monasca-collector"
+AGENTCONF="<%= @agent_dir %>/agent.yaml"
+MONASCASTATSDPATH="<%= @virtual_env %>/bin/monasca-statsd"
+AGENTUSER="<%= @agent_user %>"
+FORWARDERPATH="<%= @virtual_env %>/bin/monasca-forwarder"
 NAME="monasca-agent"
 DESC="Monasca Monitoring Agent"
 AGENT_PID_PATH="/var/tmp/monasca-agent.pid"
 SUPERVISOR_PIDFILE="/var/tmp/monasca-agent-supervisord.pid"
-SUPERVISOR_FILE="<%= agent_dir %>/supervisor.conf"
+SUPERVISOR_FILE="<%= @agent_dir %>/supervisor.conf"
 SUPERVISOR_SOCK="/var/tmp/monasca-agent-supervisor.sock"
-SUPERVISORD="<%= virtual_env %>/bin/supervisord"
-SUPERVISORCTL="<%= virtual_env %>/bin/supervisorctl"
+SUPERVISORD="<%= @virtual_env %>/bin/supervisord"
+SUPERVISORCTL="<%= @virtual_env %>/bin/supervisorctl"
 
 # This script is considered a configuration file and will not be
 # removed by dpkg unless the --purge option it set. Therefore we

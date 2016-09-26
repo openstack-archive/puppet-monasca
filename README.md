@@ -40,7 +40,7 @@ monasca is a combination of Puppet manifest that configures the monasca client a
 
 #### monasca_config
 
-The `monasca_config` provider is a children of the ini_setting provider. It allows one to write an entry in the `/etc/monasca/monasca.conf` file.
+The `monasca_config` provider is a child of the ini_setting provider. It allows one to write an entry in the `/etc/monasca/monasca.conf` file.
 
 ```puppet
 monasca_config { 'DEFAULT/debug' :
