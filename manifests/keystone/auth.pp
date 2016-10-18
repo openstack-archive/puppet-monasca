@@ -44,7 +44,7 @@
 #   Should roles be configured on Monasca service user? Optional. Defaults to 'true'.
 #
 # [*service_name*]
-#   Name of the service. Optional. Defaults to value of auth_name.
+#   Name of the service. Optional. Defaults to 'monasca'.
 #
 # [*service_type*]
 #    Type of service. Optional. Defaults to 'monitoring'.
@@ -126,7 +126,7 @@ class monasca::keystone::auth (
   $user_email          = 'monasca@localhost',
   $configure_user      = true,
   $configure_user_role = true,
-  $service_name        = undef,
+  $service_name        = 'monasca',
   $service_type        = 'monitoring',
   $service_description = 'Openstack Monitoring Service',
   $public_address      = '127.0.0.1',
@@ -175,12 +175,6 @@ class monasca::keystone::auth (
     $internal_url_real = $internal_url
   } else {
     $internal_url_real = "${internal_protocol}://${internal_address}:${port}/${api_version}"
-  }
-
-  if $service_name {
-    $real_service_name = $service_name
-  } else {
-    $real_service_name = $auth_name
   }
 
   if $configure_user {
@@ -250,13 +244,13 @@ class monasca::keystone::auth (
     }
   }
 
-  keystone::resource::service_identity { 'Monasca Service':
+  keystone::resource::service_identity { 'monasca':
     configure_user      => $configure_user,
     configure_user_role => $configure_user_role,
     configure_endpoint  => $configure_endpoint,
     service_type        => $service_type,
     service_description => $service_description,
-    service_name        => $real_service_name,
+    service_name        => $service_name,
     region              => $region,
     roles               => $real_user_roles_admin,
     auth_name           => $admin_name,
@@ -269,7 +263,7 @@ class monasca::keystone::auth (
   }
 
   if $configure_endpoint {
-    Keystone_endpoint["${region}/${real_service_name}::${service_type}"] ~>
+    Keystone_endpoint["${region}/${service_name}::${service_type}"] ~>
       Service <| name == 'monasca-api' |>
   }
 }
