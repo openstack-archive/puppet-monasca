@@ -5,34 +5,59 @@
 # === Parameters:
 #
 # [*rabbitmq_api_url*]
-#   url of rabbit server
+#   (Required) url of rabbit server
 #
 # [*rabbitmq_user*]
-#   username for rabbit server
+#   (Optional) username for rabbit server
+#   Defaults to undef.
 #
 # [*rabbitmq_pass*]
-#   password for rabbit server
+#   (Optional) password for rabbit server
+#   Defaults to undef.
 #
 # [*queues*]
-#   rabbit queues to check
+#   (Optional) an explicit list of rabbit queues to check
+#   Defaults to undef.
 #
 # [*nodes*]
-#   rabbit nodes to check
+#   (Optional) an explicit list of rabbit nodes to check
+#   Defaults to undef.
 #
 # [*exchanges*]
-#   rabbit exchanges to check
+#   (Optional) an explicit list of rabbit exchanges to check
+#   Defaults to undef.
+#
+# [*queues_regexes*]
+#   (Optional) a list of regex for rabbit queues to check
+#   Defaults to undef.
+#
+# [*nodes_regexes*]
+#   (Optional) a list of regex for rabbit nodes to check
+#   Defaults to undef.
+#
+# [*exchanges_regexes*]
+#   (Optional) a list of regex for rabbit exchanges to check
+#   Defaults to undef.
 #
 # [*max_detailed_queues*]
-#   maximum number of detailed queues to check
+#   (Optional) maximum number of detailed queues to check
+#   Defaults to undef.
 #
 # [*max_detailed_exchanges*]
-#   maximum number of detailed exchanges to check
+#   (Optional) maximum number of detailed exchanges to check
+#   Defaults to undef.
 #
 # [*max_detailed_nodes*]
-#   maximum number of detailed nodes to check
+#   (Optional) maximum number of detailed nodes to check
+#   Defaults to undef.
+#
+# [*whitelist*]
+#   (Optional) A dictionary of the node, queue and exchange metrics to collect
+#   Defaults to undef.
 #
 # [*dimensions*]
-#   any additional dimensions for the check
+#   (Optional) any additional dimensions for the check
+#   Defaults to undef.
 #
 define monasca::checks::instances::rabbitmq (
   $rabbitmq_api_url,
@@ -41,9 +66,13 @@ define monasca::checks::instances::rabbitmq (
   $queues                 = undef,
   $nodes                  = undef,
   $exchanges              = undef,
+  $queues_regexes         = undef,
+  $nodes_regexes          = undef,
+  $exchanges_regexes      = undef,
   $max_detailed_queues    = undef,
   $max_detailed_exchanges = undef,
   $max_detailed_nodes     = undef,
+  $whitelist              = undef,
   $dimensions             = undef,
 ) {
   $conf_dir = $::monasca::agent::conf_dir

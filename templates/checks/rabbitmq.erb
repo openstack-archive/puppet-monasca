@@ -15,6 +15,15 @@
 <%- if @exchanges -%>
    exchanges: <%= @exchanges %>
 <%- end -%>
+<%- if @queues_regexes -%>
+   queues_regexes: <%= @queues_regexes %>
+<%- end -%>
+<%- if @nodes_regexes -%>
+   nodes_regexes: <%= @nodes_regexes %>
+<%- end -%>
+<%- if @exchanges_regexes -%>
+   exchanges_regexes: <%= @exchanges_regexes %>
+<%- end -%>
 <%- if @max_detailed_queues -%>
    max_detailed_queues: <%= @max_detailed_queues %>
 <%- end -%>
@@ -23,6 +32,9 @@
 <%- end -%>
 <%- if @max_detailed_nodes -%>
    max_detailed_nodes: <%= @max_detailed_nodes %>
+<%- end -%>
+<%- if @whitelist -%>
+   whitelist: <%= @whitelist %>
 <%- end -%>
 <%- if @dimensions -%>
    dimensions: <%= @dimensions %>
