@@ -60,7 +60,7 @@ def get_cloud():
 
 def prune_alarms(active_vm_ids):
 
-    db = MySQLdb.connect(user = '<%= sql_user %>',
+    db = MySQLdb.connect(user = '<%= @sql_user %>',
                          passwd = '<%= @sql_password %>',
                          host = '<%= @sql_host %>',
                          port = <%= @sql_port %>,
