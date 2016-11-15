@@ -20,6 +20,10 @@ mysql:
     db: mon
 
 notification_types:
+    plugins:
+     - monasca_notification.plugins.hipchat_notifier:HipChatNotifier
+     - monasca_notification.plugins.slack_notifier:SlackNotifier
+
     email:
         server: <%= @smtp_server %>
         port: <%= @smtp_port %>
@@ -35,6 +39,16 @@ notification_types:
     pagerduty:
         timeout: 5
         url: <%= @pagerduty_url %>
+
+    hipchat:
+        timeout: 5
+        ca_certs: <%= @hipchat_ca_certs %>
+        insecure: <%= @hipchat_insecure %>
+
+    slack:
+        timeout: 5
+        ca_certs: <%= @slack_ca_certs %>
+        insecure: <%= @slack_insecure %>
 
 processors:
     alarm:

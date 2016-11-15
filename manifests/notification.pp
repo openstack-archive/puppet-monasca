@@ -1,65 +1,99 @@
-# == Class: monasca::notifications
+# == Class: monasca::notification
 #
 # Class for configuring monasca notifications
 #
 # === Parameters:
 #
-# [*notification_user*]
-#   name of the monasca notification user
-#
 # [*from_email_address*]
-#   email address to send notifications from
+#   (Optional) Email address to send notifications from.
+#   Defaults to empty string.
+#
+# [*hipchat_ca_certs*]
+#   (Optional) CA cert file for hipchat notifications
+#   Defaults to "/etc/ssl/certs/ca-certificates.crt"
+#
+# [*hipchat_insecure*]
+#   (Optional) Flag to indicate if hipchat notification calls should
+#   be insecure.
+#   Defaults to False
 #
 # [*install_python_deps*]
-#   flag for whether or not to install python dependencies
+#   (Optional) Flag for whether or not to install python dependencies.
+#   Defaults to true.
 #
 # [*kafka_brokers*]
-#   list of kafka broker servers and ports
+#   (Optional) List of kafka broker servers and ports.
+#   Defaults to 'localhost:9092'.
+#
+# [*notification_user*]
+#   (Optional) Name of the monasca notification user.
+#   Defaults to 'monasca-notification'.
 #
 # [*pagerduty_url*]
-#   url of pager duty if used as a notification method
+#   (Optional) URL of pager duty if used as a notification method.
+#   Defaults to 'https://events.pagerduty.com/generic/2010-04-15/create_event.json'.
 #
 # [*periodic_kafka_topics*]
-#   list of periodic notification kafka topics, defaults
-#   to '60: 60-seconds-notifications'
+#   (Optional) List of periodic notification kafka topics
+#   Defaults to '60: 60-seconds-notifications'
 #
 # [*periodic_zookeeper_paths*]
-#   list of periodic notification zookeeper paths, defaults
-#   to '60: /notification/60_seconds'
+#   (Optional) List of periodic notification zookeeper paths
+#   Defaults to '60: /notification/60_seconds'
 #
 # [*python_dep_ensure*]
-#   flag for whether or not to ensure/update python dependencies
+#   (Optional) Flag for whether or not to ensure/update python dependencies.
+#   Defaults to 'present'.
+#
+# [*slack_ca_certs*]
+#   (Optional) CA cert file for slack notifications.
+#   Defaults to "/etc/ssl/certs/ca-certificates.crt".
+#
+# [*slack_insecure*]
+#   (Optional) Flag to indicate if slack notification calls should
+#   be insecure.
+#   Defaults to False.
 #
 # [*smtp_password*]
-#   password for the smtp server
+#   (Optional) Password for the smtp server.
+#   Defaults to empty string.
 #
 # [*smtp_port*]
-#   port on the smtp server to send mail to
+#   (Optional) Port on the smtp server to send mail to.
+#   Defaults to 25.
 #
 # [*smtp_server*]
-#   host of the smtp server
+#   (Optional) Host of the smtp server.
+#   Defaults to 'localhost'.
 #
 # [*smtp_user*]
-#   name to use when authenticating agains the smtp server
+#   (Optional) Name to use when authenticating agains the smtp server.
+#   Defaults to empty string.
 #
 # [*virtual_env*]
 #   directory of python virtual environment
 #
 # [*webhook_url*]
-#   url for webhook notifications
+#   (Optional) URL for webhook notifications.
+#   Defaults to empty string.
 #
 # [*zookeeper_servers*]
-#   list of zookeeper servers and ports
+#   (Optional) List of zookeeper servers and ports.
+#   Defaults to 'localhost:2181'.
 #
 class monasca::notification(
-  $notification_user        = 'monasca-notification',
   $from_email_address       = '',
+  $hipchat_ca_certs         = '/etc/ssl/certs/ca-certificates.crt',
+  $hipchat_insecure         = false,
   $install_python_deps      = true,
   $kafka_brokers            = 'localhost:9092',
+  $notification_user        = 'monasca-notification',
   $pagerduty_url            = 'https://events.pagerduty.com/generic/2010-04-15/create_event.json',
   $periodic_kafka_topics    = ['60: 60-seconds-notifications'],
   $periodic_zookeeper_paths = ['60: /notification/60_seconds'],
   $python_dep_ensure        = 'present',
+  $slack_ca_certs           = '/etc/ssl/certs/ca-certificates.crt',
+  $slack_insecure           = false,
   $smtp_password            = '',
   $smtp_port                = 25,
   $smtp_server              = 'localhost',
