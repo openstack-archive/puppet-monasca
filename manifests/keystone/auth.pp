@@ -107,6 +107,9 @@
 # [*role_delegate*]
 #   name for the monasca delegate role
 #
+# [*role_admin*]
+#   name for the monasca admin role
+#
 # [*role_user*]
 #   name for the monasca user role
 #
@@ -142,6 +145,7 @@ class monasca::keystone::auth (
   $internal_url        = undef,
   $role_agent          = 'monasca-agent',
   $role_delegate       = 'monitoring-delegate',
+  $role_admin          = 'monasca-admin',
   $role_user           = 'monasca-user',
   $user_roles_agent    = undef,
   $user_roles_admin    = undef,
@@ -207,6 +211,11 @@ class monasca::keystone::auth (
     }
     if !defined(Keystone_role[$role_delegate]) {
       keystone_role { $role_delegate:
+        ensure => present,
+      }
+    }
+    if !defined(Keystone_role[$role_admin]) {
+      keystone_role { $role_admin:
         ensure => present,
       }
     }

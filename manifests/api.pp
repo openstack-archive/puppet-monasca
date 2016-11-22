@@ -88,6 +88,11 @@
 #   (Optional) Name of the role allowed to write cross tenant metrics.
 #   Defaults to 'monitoring-delegate'.
 #
+# [*role_admin*]
+#   (Optional) Name of the role with extended permissions. Includes ability to
+#   publish metrics older than two weeks.
+#   Defaults to 'monasca-admin'.
+#
 # [*roles_default*]
 #   (Optional) List with the names of roles allowed to read and write metrics.
 #   Defaults to ['admin','monasca-user', '_member_'].
@@ -130,6 +135,7 @@ class monasca::api (
   $mon_api_deb           = undef,
   $region_name           = 'NA',
   $role_delegate         = 'monitoring-delegate',
+  $role_admin            = 'monasca-admin',
   $roles_agent           = ['monasca-agent'],
   $roles_default         = ['admin','monasca-user','_member_'],
   $roles_read_only       = [],
