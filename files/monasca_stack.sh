@@ -19,7 +19,7 @@ get_up_list() {
 
     echo "zookeeper kafka storm-supervisor"
 
-    if grep nimbus.host $STORM_FILE | grep -e $(hostname) -e localhost > /dev/null
+    if grep nimbus.seeds $STORM_FILE | grep -e $(hostname) -e localhost > /dev/null
     then
         echo "storm-nimbus storm-ui monasca-thresh"
     fi

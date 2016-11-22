@@ -19,9 +19,6 @@
 # [*log_dir*]
 #   directory for storm logs
 #
-# [*nimbus_server*]
-#   name of the nimbus server
-#
 class monasca::storm::config (
   $storm_version = 'apache-storm-0.9.3',
   $mirror = 'http://apache.arvixe.com/storm',
@@ -29,7 +26,6 @@ class monasca::storm::config (
   $storm_user = 'storm',
   $storm_group = 'storm',
   $log_dir = '/var/log/storm',
-  $nimbus_server = undef,
 ) {
   $cache_dir = '/var/cache/storm'
   $storm_local = '/storm-local'
@@ -104,13 +100,11 @@ class monasca::storm::config (
       storm_user        => $storm_user,
   }
 
-  if ($nimbus_server == 'localhost' or $nimbus_server == $::fqdn) {
-    File[$install_dir] -> File[$storm_local] ->
-    monasca::storm::startup_script {
-      '/etc/init.d/storm-nimbus':
-        storm_service     => 'nimbus',
-        storm_install_dir => "${install_dir}/current",
-        storm_user        => $storm_user,
-    }
+  File[$install_dir] -> File[$storm_local] ->
+  monasca::storm::startup_script {
+    '/etc/init.d/storm-nimbus':
+      storm_service     => 'nimbus',
+      storm_install_dir => "${install_dir}/current",
+      storm_user        => $storm_user,
   }
 }
