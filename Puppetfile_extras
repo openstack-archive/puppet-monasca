@@ -1,0 +1,3 @@
+mod 'wget',
+  :git => "https://github.com/maestrodev/puppet-wget.git",
+  :tag => 'v1.7.3'
