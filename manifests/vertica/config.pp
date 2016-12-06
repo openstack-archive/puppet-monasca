@@ -157,7 +157,7 @@ class monasca::vertica::config (
     owner   => 'root',
     group   => 'root',
     before  => [File[$prune_script], File[$partition_drop_script]],
-    require => [Package['python-virtualenv'],Package['python-dev']],
+    require => [Package['virtualenv'],Package['python-dev']],
   }
 
   file { $prune_script:

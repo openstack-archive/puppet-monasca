@@ -65,7 +65,14 @@ class monasca::alarmdefs(
   $sql_port = $::monasca::params::sql_port
 
   if $install_python_deps {
-    package { ['python-virtualenv', 'python-dev']:
+    # Name virtualenv instead of python-virtualenv for compat with puppet-python
+    package { 'virtualenv':
+      ensure => $python_dep_ensure,
+      name   => 'python-virtualenv',
+      before => Python::Virtualenv[$virtual_env],
+    }
+
+    package { 'python-dev':
       ensure => $python_dep_ensure,
       before => Python::Virtualenv[$virtual_env],
     }
@@ -75,7 +82,7 @@ class monasca::alarmdefs(
     owner   => 'root',
     group   => 'root',
     before  => [Exec[$script], File[$script]],
-    require => [Package['python-virtualenv'],Package['python-dev']],
+    require => [Package['virtualenv'],Package['python-dev']],
   }
 
   file { $script:

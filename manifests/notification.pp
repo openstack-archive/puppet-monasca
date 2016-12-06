@@ -115,7 +115,14 @@ class monasca::notification(
   $startup_script = '/etc/init/monasca-notification.conf'
 
   if $install_python_deps {
-    package { ['python-virtualenv', 'python-dev']:
+    # Name virtualenv instead of python-virtualenv for compat with puppet-python
+    package { 'virtualenv':
+      ensure => $python_dep_ensure,
+      name   => 'python-virtualenv',
+      before => Python::Virtualenv[$virtual_env],
+    }
+
+    package { 'python-dev':
       ensure => $python_dep_ensure,
       before => Python::Virtualenv[$virtual_env],
     }
@@ -124,7 +131,7 @@ class monasca::notification(
   python::virtualenv { $virtual_env :
     owner   => 'root',
     group   => 'root',
-    require => [Package['python-virtualenv'],Package['python-dev']],
+    require => [Package['virtualenv'],Package['python-dev']],
   }
 
   python::pip { 'monasca-notification' :
