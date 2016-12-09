@@ -3,6 +3,7 @@
 MIRROR_FILE="/etc/monasca/monasca-persister-mirror.yml"
 STORM_FILE="/opt/storm/current/conf/storm.yaml"
 INFLUXDB_FILE="/etc/opt/influxdb/influxdb.conf"
+INCLUDE_THRESH="include_thresh_flag"
 
 #
 # Get the list of monasca services in the order they should be
@@ -12,16 +13,17 @@ INFLUXDB_FILE="/etc/opt/influxdb/influxdb.conf"
 #
 get_up_list() {
 
+
     if [ -e $INFLUXDB_FILE ]
     then
         echo "influxdb"
     fi
 
-    echo "zookeeper kafka storm-supervisor"
+    echo "zookeeper kafka storm-supervisor storm-nimbus storm-ui"
 
-    if grep nimbus.seeds $STORM_FILE | grep -e $(hostname) -e localhost > /dev/null
+    if [ "$1" = "$INCLUDE_THRESH" ]
     then
-        echo "storm-nimbus storm-ui monasca-thresh"
+        echo "monasca-thresh"
     fi
 
     if [ -e $MIRROR_FILE ]
@@ -45,12 +47,12 @@ get_down_list() {
         echo "monasca-persister-mirror"
     fi
 
-    if grep nimbus.host $STORM_FILE | grep -e $(hostname) -e localhost > /dev/null
+    if [ "$1" = "$INCLUDE_THRESH" ]
     then
-        echo "monasca-thresh storm-ui storm-nimbus"
+        echo "monasca-thresh"
     fi
 
-    echo "storm-supervisor kafka zookeeper"
+    echo "storm-ui storm-nimbus storm-supervisor kafka zookeeper"
 
     if [ -e $INFLUXDB_FILE ]
     then
@@ -59,14 +61,14 @@ get_down_list() {
 }
 
 status() {
-    for x in $(get_up_list)
+    for x in $(get_up_list $INCLUDE_THRESH)
     do
         service $x status
     done
 }
 
 start() {
-    for x in $(get_up_list)
+    for x in $(get_up_list $1)
     do
         STATUS=$(is_service_running $x)
         #
@@ -102,7 +104,7 @@ is_service_running() {
 }
 
 stop() {
-    for x in $(get_down_list)
+    for x in $(get_down_list $1)
     do
         service $x stop
         #
@@ -134,12 +136,11 @@ tail_metrics() {
 
 lag() {
     #
-    # Print the consumer lag -- ignore java log warnings
+    # Print the consumer lag
     #
-    /opt/kafka/bin/kafka-run-class.sh  kafka.tools.ConsumerOffsetChecker \
-                                       --zkconnect localhost:2181 \
-                                       --topic metrics --group $1 2>&1 \
-                                       | grep -v SLF4J
+    /opt/kafka/bin/kafka-run-class.sh kafka.admin.ConsumerGroupCommand \
+                                      --zookeeper localhost:2181 \
+                                      --group $1 --describe 2>&1
 }
 
 case "$1" in
@@ -149,13 +150,24 @@ case "$1" in
   start)
     start
         ;;
+  start-cluster)
+    start $INCLUDE_THRESH
+        ;;
   stop)
     stop
+        ;;
+  stop-cluster)
+    stop $INCLUDE_THRESH
         ;;
   restart)
     stop
     sleep 2
     start
+        ;;
+  restart-cluster)
+    stop $INCLUDE_THRESH
+    sleep 2
+    start $INCLUDE_THRESH
         ;;
   tail-logs)
     tail_logs
@@ -170,6 +182,6 @@ case "$1" in
     lag '2_metrics'
         ;;
   *)
-        echo "Usage: "$1" {status|start|stop|restart|tail-logs|tail-metrics|local-lag|mirror-lag}"
+        echo "Usage: "$1" {status|start|start-cluster|stop|stop-cluster|restart|restart-cluster|tail-logs|tail-metrics|local-lag|mirror-lag}"
         exit 1
 esac
