@@ -54,6 +54,18 @@ def main():
                             help=help_text)
 
     help_text = """
+    Filename containing whitelist of metric names to not prune from the admin
+    tenant.  Valid only with -a and -r.  Format of the file:
+    [
+      "metric_name_one",
+      "metric_name_two",
+      "metric_name_three"
+    ]
+    """
+    parser.add_argument('-w', '--whitelist', required=False,
+                        help=help_text)
+
+    help_text = """
     Start time of the pruning period.
     """
     date_group.add_argument('-s', '--start_time', required=False,
@@ -100,6 +112,10 @@ def main():
         print "Error: Please provide metric name with dimensions."
         sys.exit(1)
 
+    if args.whitelist and not (args.admin_tenant and args.retain_days):
+        print "Error: Whitelist file only valid with -a and -r."
+        sys.exit(1)
+
     before_counts = get_table_counts(MON_TABLES)
     prune_tables(args)
     display_pruning_result(before_counts)
@@ -120,6 +136,16 @@ def prune_tables(args):
         print "Pruning records between %s and %s" % (args.start_time, args.end_time)
         time_clause = "time_stamp >= '%s' and time_stamp <= '%s'" % (args.start_time, args.end_time)
 
+    if args.whitelist:
+        msg = "Only retaining metrics specified in '%s' for '%s' project"
+        print msg % (args.whitelist, args.admin_tenant)
+        whitelist = read_whitelist_file(args.whitelist)
+        admin_clause = "AND def.tenant_id = '%s' AND def.name NOT IN (%s)" % \
+                       (admin_id, whitelist)
+    else:
+        admin_clause = "AND def.tenant_id = '%s' AND REGEXP_LIKE(def.name, '^(vm|ovs)\.')" % \
+                       admin_id
+
     delete_sql = """
        DELETE
        FROM MonMetrics.Measurements
@@ -134,8 +160,6 @@ def prune_tables(args):
        %s);
        COMMIT;
     """
-    admin_clause = "AND def.tenant_id = '%s' AND REGEXP_LIKE(def.name, '^(vm|ovs)\.')" % \
-                   admin_id
 
     if args.limit:
 
@@ -203,6 +227,20 @@ def prune_tables(args):
 
     vsql("select make_ahm_now();")
     vsql("select purge();")
+
+
+def read_whitelist_file(white_list_file):
+    try:
+        metrics = [str(metric) for metric in json.load(open(white_list_file))]
+        if len(metrics) <= 0:
+            msg = "Whitelist file '{}' didn't contain any metrics!"
+            print msg.format(white_list_file)
+            sys.exit(1)
+        return str(metrics).strip('[]')
+    except Exception as e:
+        msg = "Caught exception '{}' trying to open and parse '{}'."
+        print msg.format(e, white_list_file)
+        sys.exit(1)
 
 
 def get_tenant_list():
