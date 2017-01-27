@@ -51,6 +51,11 @@
 #   (Optional) Command to run to get ovs data.
 #   Defaults to 'sudo /usr/bin/ovs-vsctl'.
 #
+# [*publish_router_capacity*]
+#   (Optional) Flag indicating if router capacity metrics should be
+#   published.
+#   Defaults to true.
+#
 # [*use_absolute_metrics*]
 #   (Optional) Flag indicating if absolute metrics should be published
 #   for interfaces.
@@ -67,21 +72,22 @@
 #   Defaults to true.
 #
 class monasca::checks::ovs(
-  $admin_user            = undef,
-  $admin_password        = undef,
-  $admin_tenant_name     = undef,
-  $cache_dir             = '/dev/shm',
-  $check_router_ha       = true,
-  $identity_uri          = undef,
-  $included_interface_re = 'qg.*',
-  $metadata              = [],
-  $network_use_bits      = true,
-  $neutron_refresh       = '14400',
-  $ovs_cmd               = 'sudo /usr/bin/ovs-vsctl',
-  $region_name           = undef,
-  $use_absolute_metrics  = true,
-  $use_health_metrics    = true,
-  $use_rate_metrics      = true,
+  $admin_user              = undef,
+  $admin_password          = undef,
+  $admin_tenant_name       = undef,
+  $cache_dir               = '/dev/shm',
+  $check_router_ha         = true,
+  $identity_uri            = undef,
+  $included_interface_re   = 'qg.*',
+  $metadata                = [],
+  $network_use_bits        = true,
+  $neutron_refresh         = '14400',
+  $ovs_cmd                 = 'sudo /usr/bin/ovs-vsctl',
+  $publish_router_capacity = true,
+  $region_name             = undef,
+  $use_absolute_metrics    = true,
+  $use_health_metrics      = true,
+  $use_rate_metrics        = true,
 ){
   $conf_dir = $::monasca::agent::conf_dir
 

@@ -44,6 +44,7 @@ describe 'monasca::checks::ovs' do
         is_expected.to contain_file(ovs_file).with_content(/^\s*use_absolute_metrics: true$/)
         is_expected.to contain_file(ovs_file).with_content(/^\s*use_rate_metrics: true$/)
         is_expected.to contain_file(ovs_file).with_content(/^\s*use_health_metrics: true$/)
+        is_expected.to contain_file(ovs_file).with_content(/^\s*publish_router_capacity: true$/)
     end
   end
 end
