@@ -36,6 +36,12 @@
 #   period, it will be ignored.
 #   Defaults to 0.
 #
+# [*host_aggregate_re*]
+#   (Optional) Regular expression of host aggregate names to match, which
+#   will add a 'host_aggregate' dimension to libvirt metrics for the operations
+#   project.
+#   Defaults to undef -- causing the flag to not be set in the config file.
+#
 # [*identity_uri*]
 #   (Required) URI of the keystone instance.
 #
@@ -98,6 +104,7 @@ class monasca::checks::libvirt(
   $cache_dir                      = '/dev/shm',
   $customer_metadata              = [],
   $disk_collection_period         = 0,
+  $host_aggregate_re              = undef,
   $identity_uri                   = undef,
   $metadata                       = [],
   $network_use_bits               = true,

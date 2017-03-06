@@ -27,6 +27,9 @@ init_config:
   vm_network_check_enable: <%= @vm_network_check_enable %>
   vm_ping_check_enable: <%= @vm_ping_check_enable %>
   vm_extended_disks_check_enable: <%= @vm_extended_disks_check_enable %>
+<%- if @host_aggregate_re -%>
+  host_aggregate_re: <%= @host_aggregate_re %>
+<%- end -%>
 
 instances:
  - {}
