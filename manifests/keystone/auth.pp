@@ -197,12 +197,12 @@ class monasca::keystone::auth (
   }
 
   if $configure_user_role {
-    Keystone_user_role["${admin_name}@${tenant}"] ~>
-      Service <| name == 'monasca-api' |>
-    Keystone_user_role["${agent_name}@${tenant}"] ~>
-      Service <| name == 'monasca-api' |>
-    Keystone_user_role["${user_name}@${tenant}"] ~>
-      Service <| name == 'monasca-api' |>
+    Keystone_user_role["${admin_name}@${tenant}"]
+      ~> Service <| name == 'monasca-api' |>
+    Keystone_user_role["${agent_name}@${tenant}"]
+      ~> Service <| name == 'monasca-api' |>
+    Keystone_user_role["${user_name}@${tenant}"]
+      ~> Service <| name == 'monasca-api' |>
 
     if !defined(Keystone_role[$role_agent]) {
       keystone_role { $role_agent:
@@ -272,7 +272,7 @@ class monasca::keystone::auth (
   }
 
   if $configure_endpoint {
-    Keystone_endpoint["${region}/${service_name}::${service_type}"] ~>
-      Service <| name == 'monasca-api' |>
+    Keystone_endpoint["${region}/${service_name}::${service_type}"]
+      ~> Service <| name == 'monasca-api' |>
   }
 }

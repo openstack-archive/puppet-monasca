@@ -32,8 +32,8 @@ define monasca::kafka::topics (
     user    => 'root',
     group   => 'root',
     onlyif  => "kafka-topics.sh --topic ${name} --list --zookeeper ${kafka_zookeeper_connections} | grep -q ${name}; test $? -ne 0"
-  } ->
-  exec { "Ensure ${name} is has ${partitions} partitions":
+  }
+  -> exec { "Ensure ${name} is has ${partitions} partitions":
     command => "kafka-topics.sh --alter --zookeeper ${kafka_zookeeper_connections} --partitions ${partitions} --topic ${name}",
     path    => "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${install_dir}/bin",
     cwd     => $install_dir,

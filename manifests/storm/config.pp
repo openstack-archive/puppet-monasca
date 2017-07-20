@@ -84,25 +84,25 @@ class monasca::storm::config (
     ensure => directory,
   }
 
-  File[$install_dir] ->
   monasca::storm::startup_script {
     '/etc/init.d/storm-ui':
+      require           => File[$install_dir],
       storm_service     => 'ui',
       storm_install_dir => "${install_dir}/current",
       storm_user        => $storm_user,
   }
 
-  File[$install_dir] -> File[$storm_local] ->
   monasca::storm::startup_script {
     '/etc/init.d/storm-supervisor':
+      require           => [ File[$install_dir], File[$storm_local] ],
       storm_service     => 'supervisor',
       storm_install_dir => "${install_dir}/current",
       storm_user        => $storm_user,
   }
 
-  File[$install_dir] -> File[$storm_local] ->
   monasca::storm::startup_script {
     '/etc/init.d/storm-nimbus':
+      require           => [ File[$install_dir], File[$storm_local] ],
       storm_service     => 'nimbus',
       storm_install_dir => "${install_dir}/current",
       storm_user        => $storm_user,

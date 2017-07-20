@@ -51,8 +51,8 @@ class monasca::influxdb::bootstrap(
     group   => 'root',
   }
 
-  Package['influxdb'] ->
   exec { "/tmp/${script}":
+    require     => [ Package['influxdb'], Service['influxdb'] ],
     subscribe   => File["/tmp/${script}"],
     path        => '/bin:/sbin:/usr/bin:/usr/sbin:/tmp',
     cwd         => '/tmp',
@@ -63,6 +63,5 @@ class monasca::influxdb::bootstrap(
     environment => ["INFLUX_ADMIN_PASSWORD=${influxdb_password}",
                     "DB_USER_PASSWORD=${influxdb_dbuser_password}",
                     "DB_READ_ONLY_USER_PASSWORD=${influxdb_dbuser_ro_password}"],
-    require     => Service['influxdb'],
   }
 }
