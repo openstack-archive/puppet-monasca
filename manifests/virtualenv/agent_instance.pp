@@ -44,6 +44,10 @@ define monasca::virtualenv::agent_instance(
   validate_re($ensure, $valid_values,
     "Unknown value '${ensure}' for ensure, must be present or absent")
 
+  File[$basedir] ->  anchor { 'monasca::virtualenv::instance': }
+  Package<| name == 'python-virtualenv' |> -> Anchor['monasca::virtualenv::instance']
+  Package<| name == 'python-dev' |> -> Anchor['monasca::virtualenv::instance']
+
   monasca::virtualenv::instance { $name:
     ensure            => $ensure,
     basedir           => $basedir,
@@ -52,7 +56,7 @@ define monasca::virtualenv::agent_instance(
     venv_requirements => $venv_requirements,
     venv_active       => $venv_active,
     venv_extra_args   => $venv_extra_args,
-    require           => [File[$basedir],Package['python-virtualenv'],
-      Package['python-dev']],
+    require           => Anchor['monasca::virtualenv::instance'],
   }
+
 }

@@ -182,17 +182,21 @@ class monasca::keystone::auth (
   }
 
   if $configure_user {
+    Keystone_user_role[$agent_name]
+      ~> Service <| name == 'monasca-agent' |>
+    Keystone_user_role[$user_name]
+      ~> Service <| name == 'monasca-agent' |>
+
     keystone_user { $agent_name:
       ensure   => present,
       password => $agent_password,
       email    => $agent_email,
-      before   => Service['monasca-agent'],
     }
+
     keystone_user { $user_name:
       ensure   => present,
       password => $user_password,
       email    => $user_email,
-      before   => Service['monasca-agent'],
     }
   }
 
@@ -203,6 +207,10 @@ class monasca::keystone::auth (
       ~> Service <| name == 'monasca-api' |>
     Keystone_user_role["${user_name}@${tenant}"]
       ~> Service <| name == 'monasca-api' |>
+    Keystone_user_role["${agent_name}@${tenant}"]
+      ~> Service <| name == 'monasca-agent' |>
+    Keystone_user_role["${user_name}@${tenant}"]
+      ~> Service <| name == 'monasca-agent' |>
 
     if !defined(Keystone_role[$role_agent]) {
       keystone_role { $role_agent:
@@ -244,12 +252,10 @@ class monasca::keystone::auth (
     keystone_user_role { "${agent_name}@${tenant}":
       ensure => present,
       roles  => $real_user_roles_agent,
-      before => Service['monasca-agent'],
     }
     keystone_user_role { "${user_name}@${tenant}":
       ensure => present,
       roles  => $real_user_roles_user,
-      before => Service['monasca-agent'],
     }
   }
 
