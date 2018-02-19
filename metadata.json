@@ -1,36 +1,73 @@
 {
-  "name": "openstack-monasca",
-  "version": "1.0.0",
-  "author": "Time Warner Cable and OpenStack Contributors",
-  "summary": "Puppet module for OpenStack Monasca",
-  "license": "Apache-2.0",
-  "source": "git://github.com/openstack/puppet-monasca.git",
-  "project_page": "https://launchpad.net/puppet-monasca",
-  "issues_url": "https://bugs.launchpad.net/puppet-monasca",
-  "requirements": [
-    { "name": "pe","version_requirement": "3.x" },
-    { "name": "puppet","version_requirement": "3.x" }
-  ],
-  "operatingsystem_support": [
-    {
-      "operatingsystem": "Debian",
-      "operatingsystemrelease": ["8"]
-    },
-    {
-      "operatingsystem": "Ubuntu",
-      "operatingsystemrelease": ["14.04"]
-    }
-  ],
-  "description": "Installs and configures OpenStack Monasca (Monitoring as a Service).",
-  "dependencies": [
-    { "name": "deric/storm", "version_requirement": ">=0.0.1 <1.0.0" },
-    { "name": "deric/zookeeper", "version_requirement": ">=0.0.1 <1.0.0" },
-    { "name": "jdowning/influxdb", "version_requirement": ">=0.3.0 <1.0.0" },
-    { "name": "maestrodev/wget", "version_requirement": ">=0.0.1 <2.0.0" },
-    { "name": "openstack/keystone", "version_requirement": ">=9.1.0 <10.0.0" },
-    { "name": "openstack/openstacklib", "version_requirement": ">=9.1.0 <10.0.0" },
-    { "name": "opentable/kafka", "version_requirement": ">=1.0.0 <2.0.0" },
-    { "name": "puppetlabs/stdlib", "version_requirement": ">=4.0.0 <5.0.0" },
-    { "name": "stankevich/python", "version_requirement": ">=0.0.1 <2.0.0" }
-  ]
+    "name": "openstack-monasca",
+    "version": "1.1.0",
+    "author": "Time Warner Cable and OpenStack Contributors",
+    "summary": "Puppet module for OpenStack Monasca",
+    "license": "Apache-2.0",
+    "source": "git://github.com/openstack/puppet-monasca.git",
+    "project_page": "https://launchpad.net/puppet-monasca",
+    "issues_url": "https://bugs.launchpad.net/puppet-monasca",
+    "requirements": [
+        {
+            "name": "pe",
+            "version_requirement": "3.x"
+        },
+        {
+            "name": "puppet",
+            "version_requirement": "3.x"
+        }
+    ],
+    "operatingsystem_support": [
+        {
+            "operatingsystem": "Debian",
+            "operatingsystemrelease": [
+                "8"
+            ]
+        },
+        {
+            "operatingsystem": "Ubuntu",
+            "operatingsystemrelease": [
+                "14.04"
+            ]
+        }
+    ],
+    "description": "Installs and configures OpenStack Monasca (Monitoring as a Service).",
+    "dependencies": [
+        {
+            "name": "deric/storm",
+            "version_requirement": ">=0.0.1 <1.0.0"
+        },
+        {
+            "name": "deric/zookeeper",
+            "version_requirement": ">=0.0.1 <1.0.0"
+        },
+        {
+            "name": "jdowning/influxdb",
+            "version_requirement": ">=0.3.0 <1.0.0"
+        },
+        {
+            "name": "maestrodev/wget",
+            "version_requirement": ">=0.0.1 <2.0.0"
+        },
+        {
+            "name": "openstack/keystone",
+            "version_requirement": ">=12.3.0 <13.0.0"
+        },
+        {
+            "name": "openstack/openstacklib",
+            "version_requirement": ">=12.3.0 <13.0.0"
+        },
+        {
+            "name": "opentable/kafka",
+            "version_requirement": ">=1.0.0 <2.0.0"
+        },
+        {
+            "name": "puppetlabs/stdlib",
+            "version_requirement": ">=4.0.0 <5.0.0"
+        },
+        {
+            "name": "stankevich/python",
+            "version_requirement": ">=0.0.1 <2.0.0"
+        }
+    ]
 }
