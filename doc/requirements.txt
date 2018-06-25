@@ -1,0 +1,6 @@
+# This is required for the docs build jobs
+sphinx # BSD
+openstackdocstheme # Apache-2.0
+
+# This is required for the releasenotes build jobs
+reno # Apache-2.0
