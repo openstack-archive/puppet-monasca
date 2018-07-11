@@ -21,13 +21,13 @@
         {
             "operatingsystem": "Debian",
             "operatingsystemrelease": [
-                "8"
+                "9"
             ]
         },
         {
             "operatingsystem": "Ubuntu",
             "operatingsystemrelease": [
-                "14.04"
+                "16.04"
             ]
         }
     ],
