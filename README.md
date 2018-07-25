@@ -1,5 +1,5 @@
 puppet-monasca
-=============
+==============
 
 #### Table of Contents
 
@@ -114,3 +114,8 @@ Release Notes
 -------------
 
 * https://docs.openstack.org/releasenotes/puppet-monasca
+
+Repository
+----------
+
+* https://git.openstack.org/cgit/openstack/puppet-monasca
