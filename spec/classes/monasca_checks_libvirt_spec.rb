@@ -5,6 +5,7 @@ describe 'monasca::checks::libvirt' do
     let :facts do
     @default_facts.merge({
       :osfamily => 'Debian',
+      :os       => { 'family' => 'Debian' },
     })
     end
 

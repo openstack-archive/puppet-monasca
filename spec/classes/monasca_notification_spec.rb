@@ -5,6 +5,7 @@ describe 'monasca::notification' do
     let :facts do
     @default_facts.merge({
       :osfamily => 'Debian',
+      :os       => { 'family' => 'Debian' },
     })
     end
 
