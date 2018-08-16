@@ -9,10 +9,6 @@
     "issues_url": "https://bugs.launchpad.net/puppet-monasca",
     "requirements": [
         {
-            "name": "pe",
-            "version_requirement": "3.x"
-        },
-        {
             "name": "puppet",
             "version_requirement": "3.x"
         }
