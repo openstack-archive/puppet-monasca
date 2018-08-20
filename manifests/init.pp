@@ -4,6 +4,7 @@
 # across all monasca services.
 #
 # === Parameters:
+#
 # [*log_dir*]
 #
 # [*monasca_dir*]
