@@ -1,16 +1,9 @@
 require 'spec_helper'
 
 describe 'monasca::checks::ovs' do
-  describe 'on debian platforms' do
-    let :facts do
-    @default_facts.merge({
-      :osfamily => 'Debian',
-      :os       => { 'family' => 'Debian' },
-    })
-    end
-
+  shared_examples 'monasca::checks::ovs' do
     let :ovs_file do
-      "/etc/monasca/agent/conf.d/ovs.yaml"
+      '/etc/monasca/agent/conf.d/ovs.yaml'
     end
 
     let :pre_condition do
@@ -23,29 +16,43 @@ describe 'monasca::checks::ovs' do
      }"
     end
 
-    let(:params) { {
-      :admin_password => 'password',
-      :admin_tenant_name => 'tenant_name',
-      :admin_user => 'user',
-      :identity_uri => 'uri',
-      :metadata => ['tenant_name'],
-    } }
+    let :params do
+      {
+        :admin_password    => 'password',
+        :admin_tenant_name => 'tenant_name',
+        :admin_user        => 'user',
+        :identity_uri      => 'uri',
+        :metadata          => ['tenant_name'],
+      }
+    end
 
     it 'builds the ovs config file properly' do
-        is_expected.to contain_file(ovs_file).with_content(/^\s*admin_password: password$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*admin_tenant_name: tenant_name$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*admin_user: user$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*cache_dir: \/dev\/shm$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*identity_uri: uri$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*network_use_bits: true$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*metadata: \["tenant_name"\]$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*neutron_refresh: 14400$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*ovs_cmd: 'sudo \/usr\/bin\/ovs-vsctl'$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*included_interface_re: qg\.\*$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*use_absolute_metrics: true$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*use_rate_metrics: true$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*use_health_metrics: true$/)
-        is_expected.to contain_file(ovs_file).with_content(/^\s*publish_router_capacity: true$/)
+      should contain_file(ovs_file).with_content(/^\s*admin_password: password$/)
+      should contain_file(ovs_file).with_content(/^\s*admin_tenant_name: tenant_name$/)
+      should contain_file(ovs_file).with_content(/^\s*admin_user: user$/)
+      should contain_file(ovs_file).with_content(/^\s*cache_dir: \/dev\/shm$/)
+      should contain_file(ovs_file).with_content(/^\s*identity_uri: uri$/)
+      should contain_file(ovs_file).with_content(/^\s*network_use_bits: true$/)
+      should contain_file(ovs_file).with_content(/^\s*metadata: \["tenant_name"\]$/)
+      should contain_file(ovs_file).with_content(/^\s*neutron_refresh: 14400$/)
+      should contain_file(ovs_file).with_content(/^\s*ovs_cmd: 'sudo \/usr\/bin\/ovs-vsctl'$/)
+      should contain_file(ovs_file).with_content(/^\s*included_interface_re: qg\.\*$/)
+      should contain_file(ovs_file).with_content(/^\s*use_absolute_metrics: true$/)
+      should contain_file(ovs_file).with_content(/^\s*use_rate_metrics: true$/)
+      should contain_file(ovs_file).with_content(/^\s*use_health_metrics: true$/)
+      should contain_file(ovs_file).with_content(/^\s*publish_router_capacity: true$/)
+    end
+  end
+
+  on_supported_os({
+    :supported_os => OSDefaults.get_supported_os
+  }).each do |os,facts|
+    context "on #{os}" do
+      let (:facts) do
+        facts.merge!(OSDefaults.get_facts())
+      end
+
+      it_behaves_like 'monasca::checks::ovs'
     end
   end
 end

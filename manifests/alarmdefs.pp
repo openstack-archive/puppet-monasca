@@ -31,6 +31,8 @@
 # [*virtual_env*]
 #   location of python virtual environment to install to
 #
+## DEPRECATED PARAMS
+#
 # [*install_python_deps*]
 #   flag for whether or not to install python dependencies
 #
@@ -47,11 +49,19 @@ class monasca::alarmdefs(
   $auth_url = undef,
   $project_name = undef,
   $virtual_env = '/var/www/monasca-alarmdefs',
-  $install_python_deps     = true,
-  $python_dep_ensure       = 'present',
+  ## DEPRECATED PARAMS
+  $install_python_deps     = undef,
+  $python_dep_ensure       = undef,
 )
 {
   include ::monasca::params
+
+  if $install_python_deps {
+    warning('monasca::alarmdefs::install_python_deps is deprecated and has no effect')
+  }
+  if $python_dep_ensure {
+    warning('monasca::alarmdefs::python_dep_ensure is deprecated and has no effect')
+  }
 
   $alarm_definition_config = '/tmp/alarm_definition_config.json'
   $notification_config = '/tmp/notification_config.json'
@@ -63,20 +73,6 @@ class monasca::alarmdefs(
   $sql_user = $::monasca::params::sql_user
   $sql_password = $::monasca::params::sql_password
   $sql_port = $::monasca::params::sql_port
-
-  if $install_python_deps {
-    # Name virtualenv instead of python-virtualenv for compat with puppet-python
-    package { 'virtualenv':
-      ensure => $python_dep_ensure,
-      name   => 'python-virtualenv',
-      before => Python::Virtualenv[$virtual_env],
-    }
-
-    package { 'python-dev':
-      ensure => $python_dep_ensure,
-      before => Python::Virtualenv[$virtual_env],
-    }
-  }
 
   python::virtualenv { $virtual_env :
     owner   => 'root',
