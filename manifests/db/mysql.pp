@@ -43,7 +43,7 @@ class monasca::db::mysql {
 
   $user_resource = {
     ensure        => present,
-    password_hash => mysql_password($sql_password),
+    password_hash => mysql::password($sql_password),
     provider      => 'mysql',
     require       => Class['mysql::server'],
   }
