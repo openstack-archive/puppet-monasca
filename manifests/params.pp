@@ -93,15 +93,17 @@ class monasca::params(
       'database_type'      => 'influxdb',
     }
 ) {
+
   include ::openstacklib::defaults
-  validate_string($admin_password)
-  validate_string($admin_project_name)
-  validate_string($user_password)
-  validate_string($agent_password)
-  validate_string($sql_password)
-  validate_string($sql_host)
-  validate_string($api_db_password)
-  validate_string($pers_db_password)
+
+  validate_legacy(String, 'validate_string', $admin_password)
+  validate_legacy(String, 'validate_string', $admin_project_name)
+  validate_legacy(String, 'validate_string', $user_password)
+  validate_legacy(String, 'validate_string', $agent_password)
+  validate_legacy(String, 'validate_string', $sql_password)
+  validate_legacy(String, 'validate_string', $sql_host)
+  validate_legacy(String, 'validate_string', $api_db_password)
+  validate_legacy(String, 'validate_string', $pers_db_password)
 
   if $::osfamily == 'Debian' {
     $agent_package = 'monasca-agent'

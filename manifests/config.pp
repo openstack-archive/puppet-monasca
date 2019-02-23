@@ -31,8 +31,9 @@ class monasca::config (
   $monasca_config = {},
   $monasca_ini  = {},
 ) {
-  validate_hash($monasca_config)
-  validate_hash($monasca_ini)
+
+  validate_legacy(Hash, 'validate_hash', $monasca_config)
+  validate_legacy(Hash, 'validate_hash', $monasca_ini)
 
   create_resources('monasca_config', $monasca_config)
   create_resources('monasca_ini', $monasca_ini)
