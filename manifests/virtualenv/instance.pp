@@ -58,20 +58,23 @@ define monasca::virtualenv::instance(
   $venv_active       = false,
   $venv_extra_args   = undef,
 ) {
-  validate_string($ensure)
+
+  validate_legacy(String, 'validate_string', $ensure)
+
   $valid_values = [
     '^present$',
     '^absent$',
   ]
-  validate_re($ensure, $valid_values,
-    "Unknown value '${ensure}' for ensure, must be present or absent")
+
+  validate_legacy(Enum['present', 'absent'], 'validate_re', $ensure,
+    [$valid_values, "Unknown value '${ensure}' for ensure, must be present or absent"])
 
   $req_dest = "${basedir}/${venv_prefix}-requirements.txt"
   $venv_dir = "${basedir}/${venv_prefix}-venv"
   $venv_name = "${venv_prefix}-${name}"
 
   if $ensure == 'present' {
-    validate_string($venv_requirements)
+    validate_legacy(String, 'validate_string', $venv_requirements)
 
     file { $req_dest:
       ensure => 'file',

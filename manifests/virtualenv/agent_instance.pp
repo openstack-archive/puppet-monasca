@@ -36,13 +36,16 @@ define monasca::virtualenv::agent_instance(
   $venv_active       = false,
   $venv_extra_args   = undef,
 ) {
-  validate_string($ensure)
+
+  validate_legacy(String, 'validate_string', $ensure)
+
   $valid_values = [
     '^present$',
     '^absent$',
   ]
-  validate_re($ensure, $valid_values,
-    "Unknown value '${ensure}' for ensure, must be present or absent")
+
+  validate_legacy(Enum['present', 'absent'], 'validate_re', $ensure,
+    [$valid_values, "Unknown value '${ensure}' for ensure, must be present or absent"])
 
   File[$basedir] ->  anchor { 'monasca::virtualenv::instance': }
   Package<| name == 'python-virtualenv' |> -> Anchor['monasca::virtualenv::instance']
