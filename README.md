@@ -118,4 +118,4 @@ Release Notes
 Repository
 ----------
 
-* https://git.openstack.org/cgit/openstack/puppet-monasca
+* https://opendev.org/openstack/puppet-monasca
