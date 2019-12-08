@@ -143,8 +143,8 @@ class monasca::api (
   $vertica_db_hint       = '',
   $zookeeper_servers     = undef,
 ) {
-  include ::monasca
-  include ::monasca::params
+  include monasca
+  include monasca::params
 
   $api_fetch_url = "http://${blobmirror}/repos/monasca/monasca_api"
   $latest_api_deb = "/tmp/${mon_api_deb}"

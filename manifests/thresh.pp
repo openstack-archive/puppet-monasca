@@ -23,8 +23,8 @@ class monasca::thresh (
   $mon_thresh_deb       = undef,
   $zookeeper_servers    = undef,
 ) {
-  include ::monasca
-  include ::monasca::params
+  include monasca
+  include monasca::params
 
   # variables for the template
   $sql_host     = $::monasca::params::sql_host

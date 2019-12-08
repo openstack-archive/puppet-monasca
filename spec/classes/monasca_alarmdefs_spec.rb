@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe 'monasca::alarmdefs' do
   let :pre_condition do
-    "include ::monasca
-     include ::monasca::api"
+    "include monasca
+     include monasca::api"
   end
 
   shared_examples 'monasca::alarmdefs' do

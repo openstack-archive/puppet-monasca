@@ -103,7 +103,7 @@ class monasca::notification(
   $zookeeper_servers        = 'localhost:2181',
 )
 {
-  include ::monasca::params
+  include monasca::params
 
   # variables for the template
   $sql_host     = $::monasca::params::sql_host

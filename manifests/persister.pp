@@ -50,8 +50,8 @@ class monasca::persister (
   $pers_user          = 'persister',
   $zookeeper_servers  = undef,
 ) {
-  include ::monasca
-  include ::monasca::params
+  include monasca
+  include monasca::params
 
   $pers_fetch_url = "http://${blobmirror}/repos/monasca/monasca_persister"
   $latest_pers_deb = "/tmp/${mon_pers_deb}"

@@ -107,7 +107,7 @@ class monasca::vertica::config (
   $virtual_env                       = '/var/lib/vertica',
 ) {
 
-  include ::monasca::params
+  include monasca::params
 
   $api_db_user = $::monasca::params::api_db_user
   $api_db_password = $::monasca::params::api_db_password

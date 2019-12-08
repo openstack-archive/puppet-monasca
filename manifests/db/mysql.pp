@@ -3,7 +3,7 @@
 # for configuration of thresholds, alarms, etc.
 #
 class monasca::db::mysql {
-  include ::monasca::params
+  include monasca::params
 
   $sql_host            = $::monasca::params::sql_host
   $sql_user            = $::monasca::params::sql_user

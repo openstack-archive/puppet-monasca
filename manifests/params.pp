@@ -94,7 +94,7 @@ class monasca::params(
     }
 ) {
 
-  include ::openstacklib::defaults
+  include openstacklib::defaults
 
   validate_legacy(String, 'validate_string', $admin_password)
   validate_legacy(String, 'validate_string', $admin_project_name)

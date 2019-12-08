@@ -54,7 +54,7 @@ class monasca::alarmdefs(
   $python_dep_ensure       = undef,
 )
 {
-  include ::monasca::params
+  include monasca::params
 
   if $install_python_deps {
     warning('monasca::alarmdefs::install_python_deps is deprecated and has no effect')

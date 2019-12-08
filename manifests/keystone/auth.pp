@@ -151,7 +151,7 @@ class monasca::keystone::auth (
   $user_roles_admin    = undef,
   $user_roles_user     = undef,
 ) {
-  include ::monasca::params
+  include monasca::params
 
   $admin_name = $::monasca::params::admin_name
   $agent_name = $::monasca::params::agent_name

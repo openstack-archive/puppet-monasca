@@ -61,7 +61,7 @@ define monasca::persister::config (
   $retention_policy      = 'raw',
   $zookeeper_servers     = $monasca::persister::zookeeper_servers,
 ) {
-  include ::monasca::params
+  include monasca::params
   $persister_config = deep_merge($monasca::params::persister_config_defaults, $config)
 
   $persister_service_name = $name

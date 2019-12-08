@@ -35,7 +35,7 @@ class monasca::influxdb::bootstrap(
   $influxdb_retention_replication = 1,
 )
 {
-  include ::monasca::params
+  include monasca::params
 
   $influxdb_dbuser_password = $::monasca::params::api_db_password
   $script = 'bootstrap-influxdb.sh'

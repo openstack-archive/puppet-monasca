@@ -159,8 +159,8 @@ class monasca::agent(
   $python_dep_ensure       = 'present',
   $pip_install_args        = '',
 ) {
-  include ::monasca
-  include ::monasca::params
+  include monasca
+  include monasca::params
 
   $agent_dir = "${::monasca::monasca_dir}/agent"
   $additional_checksd = "${agent_dir}/checks.d"
