@@ -1,6 +1,6 @@
 {
     "name": "openstack-monasca",
-    "version": "5.2.0",
+    "version": "5.2.1",
     "author": "Time Warner Cable and OpenStack Contributors",
     "summary": "Puppet module for OpenStack Monasca",
     "license": "Apache-2.0",
