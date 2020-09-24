@@ -1,6 +1,6 @@
 {
     "name": "openstack-monasca",
-    "version": "6.3.0",
+    "version": "6.4.0",
     "author": "Time Warner Cable and OpenStack Contributors",
     "summary": "Puppet module for OpenStack Monasca",
     "license": "Apache-2.0",
@@ -51,11 +51,11 @@
         },
         {
             "name": "openstack/keystone",
-            "version_requirement": ">=17.3.0 <18.0.0"
+            "version_requirement": ">=17.4.0 <18.0.0"
         },
         {
             "name": "openstack/openstacklib",
-            "version_requirement": ">=17.3.0 <18.0.0"
+            "version_requirement": ">=17.4.0 <18.0.0"
         },
         {
             "name": "opentable/kafka",
