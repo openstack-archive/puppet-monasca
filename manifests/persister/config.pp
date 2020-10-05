@@ -31,9 +31,6 @@
 # [*num_threads*]
 #   number of persister threads to run
 #
-# [*pers_db_user*]
-#   name of the monasca perisister database user
-#
 # [*pers_user*]
 #   name of the monasca perisister default user
 #

@@ -6,25 +6,6 @@
 # [*auth_name*]
 #    Username for Monasca service. Optional. Defaults to 'monasca'.
 #
-# [*admin_name*]
-#    Username for Monasca admin service. Optional. Defaults to 'monasca-admin'.
-
-# [*user_name*]
-#    Username for vanilla Monasca user. Optional. Defaults to 'monasca-user'.
-#    This user can read and write data for their tenant.
-#
-# [*agent_name*]
-#    Username for Monasca agent service. Optional. Defaults to 'monasca-agent'.
-#
-# [*admin_password*]
-#    Password for Monasca admin user. Required.
-#
-# [*user_password*]
-#    Password for Monasca default user. Required.
-#
-# [*agent_password*]
-#    Password for Monasca agent user. Required.
-#
 # [*admin_email*]
 #   Email for Monasca admin user. Optional. Defaults to 'monasca@localhost'.
 #
@@ -61,12 +42,6 @@
 #
 # [*internal_address*]
 #    Internal address for endpoint. Optional. Defaults to '127.0.0.1'.
-#
-# [*port*]
-#    Default port for enpoints. Optional. Defaults to '8070'.
-#
-# [*region*]
-#    Region for endpoint. Optional. Defaults to 'RegionOne'.
 #
 # [*tenant*]
 #    Tenant for Monasca user. Optional. Defaults to 'services'.

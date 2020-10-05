@@ -2,9 +2,7 @@
 #
 # This class is used to manage arbitrary monasca configurations.
 #
-# === Parameters
-#
-# [*xxx_config*]
+# example xxx_config
 #   (optional) Allow configuration of arbitrary monasca configurations.
 #   The value is an hash of xxx_config resources. Example:
 #   { 'DEFAULT/foo' => { value => 'fooValue'},
@@ -17,6 +15,8 @@
 #       value: fooValue
 #     DEFAULT/bar:
 #       value: barValue
+#
+# === Parameters
 #
 # [*monasca_config*]
 #   (optional) Allow configuration of monasca.conf configurations.
