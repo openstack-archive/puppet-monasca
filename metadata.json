@@ -4,7 +4,7 @@
     "author": "Time Warner Cable and OpenStack Contributors",
     "summary": "Puppet module for OpenStack Monasca",
     "license": "Apache-2.0",
-    "source": "git://github.com/openstack/puppet-monasca.git",
+    "source": "https://opendev.org/openstack/puppet-monasca.git",
     "project_page": "https://launchpad.net/puppet-monasca",
     "issues_url": "https://bugs.launchpad.net/puppet-monasca",
     "requirements": [
