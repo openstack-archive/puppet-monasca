@@ -47,7 +47,7 @@
         },
         {
             "name": "puppetlabs/mysql",
-            "version_requirement": ">=6.0.0 <11.0.0"
+            "version_requirement": ">=6.0.0 <12.0.0"
         },
         {
             "name": "openstack/keystone",
@@ -63,11 +63,11 @@
         },
         {
             "name": "puppetlabs/stdlib",
-            "version_requirement": ">=5.0.0 <7.0.0"
+            "version_requirement": ">=5.0.0 <8.0.0"
         },
         {
             "name": "puppet/python",
-            "version_requirement": ">=2.1.1 <3.0.0"
+            "version_requirement": ">=2.1.1 <7.0.0"
         }
     ]
 }
