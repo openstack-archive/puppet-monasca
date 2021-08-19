@@ -1,7 +1,0 @@
-CREATE USER <%= @pers_db_user %> IDENTIFIED BY '<%= @pers_db_password %>';
-GRANT USAGE ON RESOURCE POOL <%= @pers_pool %> to <%= @pers_db_user %>;
-ALTER USER <%= @pers_db_user %> RESOURCE POOL <%= @pers_pool %>;
-
-CREATE USER <%= @api_db_user %> IDENTIFIED BY '<%= @api_db_password %>';
-GRANT USAGE ON RESOURCE POOL <%= @api_pool %> to <%= @api_db_user %>;
-ALTER USER <%= @api_db_user %> RESOURCE POOL <%= @api_pool %>;

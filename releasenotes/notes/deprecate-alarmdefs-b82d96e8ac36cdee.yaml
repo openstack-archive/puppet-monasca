@@ -1,5 +1,0 @@
----
-deprecations:
-  - |
-    The parameters install_python_deps and python_dep_ensure in monasca::alarmdefs
-    is deprecated, has no effect and will be removed in a future release.
